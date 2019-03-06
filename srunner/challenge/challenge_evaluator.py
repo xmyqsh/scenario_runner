@@ -122,6 +122,7 @@ class ChallengeEvaluator(object):
             self.ego_vehicle.destroy()
             self.ego_vehicle = None
 
+
     def setup_vehicle(self, model, spawn_point, hero=False, autopilot=False, random_location=False):
         """
         Function to setup the most relevant vehicle parameters,
@@ -362,6 +363,7 @@ class ChallengeEvaluator(object):
         self._carla_server.reset(args.host, args.port)
         self._carla_server.wait_until_ready()
 
+
         # Setup and run the scenarios for repetition times
         for _ in range(int(args.repetitions)):
 
@@ -392,6 +394,10 @@ class ChallengeEvaluator(object):
                 # running.
                 self.world = client.load_world(config.town)
 
+                # Start recording
+
+                client.start_recorder(config.name + ".log")
+
                 # Wait for the world to be ready
                 self.world.wait_for_tick(self.wait_for_world)
 
@@ -419,6 +425,7 @@ class ChallengeEvaluator(object):
                     print("The scenario cannot be loaded")
                     print(exception)
                     self.cleanup(ego=True)
+                    client.stop_recorder()
                     continue
 
                 # Load scenario and run it
@@ -445,6 +452,7 @@ class ChallengeEvaluator(object):
 
         # stop CARLA server
         self._carla_server.stop()
+        client.stop_recorder()
 
 
 if __name__ == '__main__':
