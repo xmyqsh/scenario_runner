@@ -24,6 +24,8 @@ RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-la
 RUN git clone https://github.com/felipecode/coiltraine.git
 # Set the directory as the new work dir
 WORKDIR /usr/coiltraine
+RUN pwd
+RUN ls
 
 ADD requirements.yaml /tmp/requirements.yaml
 RUN /opt/conda/bin/conda env create -f /tmp/requirements.yaml
