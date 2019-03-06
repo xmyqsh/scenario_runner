@@ -33,8 +33,14 @@ RUN TORCH_CUDA_ARCH_LIST="3.5 5.2 6.0 6.1 7.0+PTX" TORCH_NVCC_FLAGS="-Xfatbin -c
 
 RUN git clone https://github.com/pytorch/vision.git && cd vision && pip install -v .
 
+
+RUN git clone https://github.com/felipecode/coiltraine.git  && cd coiltraine && \
+              conda env create -f requirements.yaml
+
+
+
+
 WORKDIR /workspace
 RUN chmod -R a+w /workspace
 
-
-#CMD /bin/bash CarlaUE4.sh -carla-server
+CMD python3 view_model.py  -f baselines -e resnet34imnet -cp 180000 -cv 0.9
