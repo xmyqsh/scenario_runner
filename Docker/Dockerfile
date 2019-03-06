@@ -21,17 +21,23 @@ RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-la
      /opt/conda/bin/conda clean -ya
 
 
-RUN git clone https://github.com/felipecode/coiltraine.git
+RUN git clone https://github.com/felipecode/coiltraine.git && \
+    cd coiltraine \
+    RUN /opt/conda/bin/conda env create -f requirements.yaml \
+    RUN echo "source activate $(head -1 requirements.yaml | cut -d' ' -f2)" > ~/.bashrc
+
+
+ENV PATH /opt/conda/envs/$(head -1 requirements.yaml | cut -d' ' -f2)/bin:$PATH
+
 # Set the directory as the new work dir
 WORKDIR /usr/coiltraine
 RUN pwd
-RUN ls
 
-ADD requirements.yaml /tmp/requirements.yaml
-RUN /opt/conda/bin/conda env create -f /tmp/requirements.yaml
+#ADD requirements.yaml /tmp/requirements.yaml
+#RUN /opt/conda/bin/conda env create -f /tmp/requirements.yaml
 # Pull the requirements name out of the requirements.yml
-RUN echo "source activate $(head -1 /tmp/requirements.yaml | cut -d' ' -f2)" > ~/.bashrc
-ENV PATH /opt/conda/envs/$(head -1 /tmp/requirements.yaml | cut -d' ' -f2)/bin:$PATH
+#RUN echo "source activate $(head -1 /tmp/requirements.yaml | cut -d' ' -f2)" > ~/.bashrc
+#ENV PATH /opt/conda/envs/$(head -1 /tmp/requirements.yaml | cut -d' ' -f2)/bin:$PATH
 
 
 
