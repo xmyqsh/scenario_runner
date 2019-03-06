@@ -1,5 +1,5 @@
 FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04
-ARG PYTHON_VERSION=3.5
+ARG PYTHON_VERSION=3.7
 RUN apt-get update && apt-get install -y --no-install-recommends \
          build-essential \
          cmake \
