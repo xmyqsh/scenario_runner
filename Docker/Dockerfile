@@ -21,12 +21,17 @@ RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-la
      /opt/conda/bin/conda clean -ya
 
 
-RUN git clone https://github.com/felipecode/coiltraine.git /tmp/coiltraine
+RUN git clone https://github.com/felipecode/coiltraine.git
+# Set the directory as the new work dir
+WORKDIR /usr/coiltraine
 
-RUN /opt/conda/bin/conda env create -f /tmp/coiltraine/requirements.yml
+ADD requirements.yaml /tmp/requirements.yaml
+RUN /opt/conda/bin/conda env create -f /tmp/requirements.yaml
 # Pull the requirements name out of the requirements.yml
-RUN echo "source activate $(head -1 /tmp/coiltraine/requirements.yaml | cut -d' ' -f2)" > ~/.bashrc
-ENV PATH /opt/conda/envs/$(head -1 /tmp/coiltraine/requirements.yaml | cut -d' ' -f2)/bin:$PATH
+RUN echo "source activate $(head -1 /tmp/requirements.yaml | cut -d' ' -f2)" > ~/.bashrc
+ENV PATH /opt/conda/envs/$(head -1 /tmp/requirements.yaml | cut -d' ' -f2)/bin:$PATH
+
+
 
 RUN cd ..
 
@@ -37,3 +42,4 @@ RUN export PYTHONPATH=carla-0.9.4-py3.5-linux-x86_64.egg:/carla/PythonAPI:$PYTHO
 
 
 CMD python3 /tmp/coiltraine/view_model.py  -f baselines -e resnet34imnet -cp 180000 -cv 0.9
+
