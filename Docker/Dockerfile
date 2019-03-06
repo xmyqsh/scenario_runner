@@ -21,12 +21,15 @@ RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-la
      /opt/conda/bin/conda clean -ya
 
 
-RUN git clone https://github.com/felipecode/coiltraine.git  && cd coiltraine && \
-              /opt/conda/bin/conda env create -f requirements.yaml && \
-              /opt/conda/bin/conda init bash && \
-              /opt/conda/bin/conda activate coiltraine && \
-              cd ..
+RUN git clone https://github.com/felipecode/coiltraine.git  && cd coiltraine
 
+ADD requirements.yaml /tmp/requirements.yaml
+RUN /opt/conda/bin/conda env create -f /tmp/requirements.yml
+# Pull the requirements name out of the requirements.yml
+RUN echo "source activate $(head -1 /tmp/requirements.yaml | cut -d' ' -f2)" > ~/.bashrc
+ENV PATH /opt/conda/envs/$(head -1 /tmp/requirements.yaml | cut -d' ' -f2)/bin:$PATH
+
+RUN cd ..
 
 RUN git clone https://github.com/carla-simulator/carla.git
 
@@ -34,4 +37,4 @@ RUN git clone https://github.com/carla-simulator/carla.git
 RUN export PYTHONPATH=carla-0.9.4-py3.5-linux-x86_64.egg:/carla/PythonAPI:$PYTHONPATH
 
 
-CMD python3 view_model.py  -f baselines -e resnet34imnet -cp 180000 -cv 0.9
+CMD python3 coiltraine/view_model.py  -f baselines -e resnet34imnet -cp 180000 -cv 0.9
