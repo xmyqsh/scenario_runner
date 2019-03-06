@@ -22,8 +22,8 @@ RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-la
 
 
 RUN git clone https://github.com/felipecode/coiltraine.git  && cd coiltraine && \
-              /opt/conda/bin/conda env create -f requirements.yaml \
-              /opt/conda/bin/conda activate coiltraine \
+              /opt/conda/bin/conda env create -f requirements.yaml && \
+              /opt/conda/bin/conda activate coiltraine && \
               cd ..
 
 
