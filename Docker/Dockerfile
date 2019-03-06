@@ -23,7 +23,7 @@ RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-la
 
 RUN git clone https://github.com/felipecode/coiltraine.git  && cd coiltraine
 
-ADD requirements.yaml /tmp/requirements.yaml
+ADD coiltraine/requirements.yaml /tmp/requirements.yaml
 RUN /opt/conda/bin/conda env create -f /tmp/requirements.yml
 # Pull the requirements name out of the requirements.yml
 RUN echo "source activate $(head -1 /tmp/requirements.yaml | cut -d' ' -f2)" > ~/.bashrc
