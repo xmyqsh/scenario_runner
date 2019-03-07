@@ -1,5 +1,5 @@
 FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04
-FROM python:3.5
+FROM python:3.7
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
          build-essential \
@@ -31,8 +31,8 @@ RUN git clone https://github.com/felipecode/coiltraine.git && \
 ENV PATH /opt/conda/envs/$(head -1 requirements.yaml | cut -d' ' -f2)/bin:$PATH
 
 # Set the directory as the new work dir
-WORKDIR /usr/coiltraine
-RUN pwd
+#WORKDIR /usr/coiltraine
+#RUN pwd
 
 #ADD requirements.yaml /tmp/requirements.yaml
 #RUN /opt/conda/bin/conda env create -f /tmp/requirements.yaml
