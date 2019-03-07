@@ -17,7 +17,7 @@ RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-la
      chmod +x ~/miniconda.sh && \
      ~/miniconda.sh -b -p /opt/conda && \
      rm ~/miniconda.sh && \
-     /opt/conda/bin/conda install -y python=3.5 numpy pyyaml scipy ipython mkl mkl-include cython typing && \
+     /opt/conda/bin/conda install -y python=3.7 numpy pyyaml scipy ipython mkl mkl-include cython typing && \
      /opt/conda/bin/conda install -y -c pytorch magma-cuda100 && \
      /opt/conda/bin/conda clean -ya
 
