@@ -52,5 +52,5 @@ RUN export PYTHONPATH=carla-0.9.4-py3.5-linux-x86_64.egg:/carla/PythonAPI:$PYTHO
 
 WORKDIR coiltraine
 
-CMD conda activate coiltraine && python3 view_model.py  -f baselines -e resnet34imnet -cp 180000 -cv 0.9
+CMD /opt/conda/conda activate coiltraine && python3 view_model.py  -f baselines -e resnet34imnet -cp 180000 -cv 0.9
 
