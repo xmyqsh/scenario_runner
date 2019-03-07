@@ -1,4 +1,5 @@
 FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04
+FROM python:3.5
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
          build-essential \
@@ -16,7 +17,7 @@ RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-la
      chmod +x ~/miniconda.sh && \
      ~/miniconda.sh -b -p /opt/conda && \
      rm ~/miniconda.sh && \
-     /opt/conda/bin/conda install -y python=$PYTHON_VERSION numpy pyyaml scipy ipython mkl mkl-include cython typing && \
+     /opt/conda/bin/conda install -y python=3.5 numpy pyyaml scipy ipython mkl mkl-include cython typing && \
      /opt/conda/bin/conda install -y -c pytorch magma-cuda100 && \
      /opt/conda/bin/conda clean -ya
 
@@ -39,9 +40,6 @@ RUN pwd
 #RUN echo "source activate $(head -1 /tmp/requirements.yaml | cut -d' ' -f2)" > ~/.bashrc
 #ENV PATH /opt/conda/envs/$(head -1 /tmp/requirements.yaml | cut -d' ' -f2)/bin:$PATH
 
-
-
-RUN cd ..
 
 RUN git clone https://github.com/carla-simulator/carla.git
 
