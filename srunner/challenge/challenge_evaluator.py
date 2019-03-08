@@ -359,7 +359,7 @@ class ChallengeEvaluator(object):
         Run all scenarios according to provided commandline args
         """
         # Prepare CARLA server
-        self._carla_server.reset(args.host, args.port)
+        #self._carla_server.reset(args.host, args.port)
         self._carla_server.wait_until_ready()
 
         # Setup and run the scenarios for repetition times
@@ -444,7 +444,7 @@ class ChallengeEvaluator(object):
         self.final_summary(args)
 
         # stop CARLA server
-        self._carla_server.stop()
+        #self._carla_server.stop()
 
 
 if __name__ == '__main__':
