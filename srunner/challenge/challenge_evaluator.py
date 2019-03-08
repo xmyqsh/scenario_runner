@@ -104,6 +104,12 @@ class ChallengeEvaluator(object):
         """
         Remove and destroy all actors
         """
+        for i, _ in enumerate(self._sensors_list):
+            if self._sensors_list[i] is not None:
+                self._sensors_list[i].destroy()
+                self._sensors_list[i] = None
+        self._sensors_list = []
+
         CarlaActorPool.cleanup()
         CarlaDataProvider.cleanup()
 
@@ -111,11 +117,7 @@ class ChallengeEvaluator(object):
             self.ego_vehicle.destroy()
             self.ego_vehicle = None
 
-        for i, _ in enumerate(self._sensors_list):
-            if self._sensors_list[i] is not None:
-                self._sensors_list[i].destroy()
-                self._sensors_list[i] = None
-        self._sensors_list = []
+
 
 
     def setup_vehicle(self, model, spawn_point, hero=False, autopilot=False, random_location=False):
