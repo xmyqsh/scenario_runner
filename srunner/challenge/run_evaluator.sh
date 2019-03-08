@@ -1,7 +1,6 @@
 #!/bin/bash
 
-python ${ROOT_SCENARIO_RUNNER}/srunner/challenge/challenge_evaluator.py  \
---file \
+python srunner/challenge/challenge_evaluator.py --file  \
 --scenario=group:ChallengeBasic \
---agent=${ROOT_SCENARIO_RUNNER}/srunner/challenge/autoagents/HumanAgent.py \
---route-visible
+--agent=/root/coiltraine/drive/CoILBaseline.py \
+--config /root/coiltraine/drive/sample_agent.json
