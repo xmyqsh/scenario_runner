@@ -44,10 +44,11 @@ class SignalizedJunctionLeftTurn(BasicScenario):
 
         super(SignalizedJunctionLeftTurn, self).__init__("SignalizedJunctionLeftTurn",
                                                          ego_vehicle,
-                                                         config,
+                                                         other_actors,
+                                                         town,
                                                          world,
-                                                         debug_mode,
-                                                         criteria_enable=criteria_enable)
+                                                         debug_mode)
+
 
         self._traffic_light = CarlaDataProvider.get_next_traffic_light(self.ego_vehicle, False)
         if self._traffic_light is None:
