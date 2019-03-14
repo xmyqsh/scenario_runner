@@ -50,7 +50,7 @@ class TestScenarioBuilder(unittest.TestCase):
             list_of_scenarios_definitions = potential_scenarios_definitions
 
             # prepare route's trajectory
-            gps_route, world_coordinates_route = parser.parse_trajectory(route_description.trajectory)
+            gps_route, world_coordinates_route = parser.parse_trajectory(route_description['trajectory'])
 
             # pre-instantiate all scenarios for this route
             list_scenarios = [Idle()]
