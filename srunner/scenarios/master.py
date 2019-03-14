@@ -18,13 +18,13 @@ from srunner.scenarios.basic_scenario import *
 CHALLENGE_BASIC_SCENARIOS = ["ChallengeBasic"]
 
 
-class Idle(BasicScenario):
+class Master(BasicScenario):
 
     """
     Implementation of a dummy scenario
     """
 
-    category = "ChallengeBasic"
+    category = "Master"
     radius = 10.0           # meters
     timeout = 300           # Timeout of scenario in seconds
 
@@ -41,7 +41,7 @@ class Idle(BasicScenario):
         if hasattr(self.config, 'route'):
             self.route = self.config.route.data
 
-        super(Idle, self).__init__("Idle", ego_vehicle, other_actors, town, world, debug_mode, True)
+        super(Master, self).__init__("Idle", ego_vehicle, other_actors, town, world, debug_mode, True)
 
     def _create_behavior(self):
         """
