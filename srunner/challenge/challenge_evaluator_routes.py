@@ -141,22 +141,20 @@ class ChallengeEvaluator(object):
         if self.world is not None:
             del self.world
 
-
     def scenario_sampling(self, potential_scenarios_definitions):
         return potential_scenarios_definitions
 
     # convert to a better json
     def get_actors_instances(self, list_of_antagonist_actors):
-
+        """
+        Get the full list of actor instances.
+        """
 
         def get_actors_from_list(list_of_actor_def):
             """
                 Receives a list of actor definitions and creates an actual list of ActorConfigurationObjects
-            :param list_of_actor_def:
-            :return:
+
             """
-
-
             sublist_of_actors = []
             for actor_def in list_of_actor_def:
                 sublist_of_actors.append(convert_json_to_actor(parser.create_location_waypoint(actor_def)))
@@ -164,7 +162,6 @@ class ChallengeEvaluator(object):
             return sublist_of_actors
 
         list_of_actors = []
-
         # Parse vehicles to the left
         if 'Front' in list_of_antagonist_actors:
             list_of_actors += get_actors_from_list(list_of_antagonist_actors['Front'])
@@ -173,37 +170,32 @@ class ChallengeEvaluator(object):
             list_of_actors += get_actors_from_list(list_of_antagonist_actors['Left'])
 
         if 'Right' in list_of_antagonist_actors:
-
             list_of_actors += get_actors_from_list(list_of_antagonist_actors['Right'])
 
         return list_of_actors
-
 
     def build_scenario_instances(self, scenario_definition_vec, town):
         scenario_instance_vec = []
 
         for definition in scenario_definition_vec:
             # Get the class possibilities for this scenario number
-
-            posibility_vec = number_class_translation[definition['name']]
+            possibility_vec = number_class_translation[definition['name']]
             # for now I dont know how to disambiguate this part.
-            ScenarioClass = posibility_vec[0]
-
-            # Create the other actors that are going to apear
+            ScenarioClass = possibility_vec[0]
+            # Create the other actors that are going to appear
             list_of_actor_conf_instances = self.get_actors_instances(definition['Antagonist_Vehicles'])
-            # Create an actorconfiguration for the egovehicle trigger position
-            egoactor_trigger_positon = convert_json_to_actor(definition['trigger_position'])
-
+            # Create an actor configuration for the ego-vehicle trigger position
+            egoactor_trigger_position = convert_json_to_actor(definition['trigger_position'])
 
             scenario_configuration = ScenarioConfiguration()
             scenario_configuration.other_actors = list_of_actor_conf_instances
             scenario_configuration.town = town
-            scenario_configuration.ego_vehicle = egoactor_trigger_positon
+            scenario_configuration.ego_vehicle = egoactor_trigger_position
 
             scenario_instance = ScenarioClass(self.world, self.ego_vehicle, scenario_configuration)
-
             scenario_instance_vec.append(scenario_instance)
 
+        return scenario_definition_vec
 
     def run(self, args):
         """
@@ -212,7 +204,6 @@ class ChallengeEvaluator(object):
         # retrieve worlds annotations
         world_annotations = parser.parse_annotations_file(args.annotations_file)
         # retrieve routes
-        # Which type of file is expected ????
         list_route_descriptions = parser.parse_routes_file(args.routes_file)
 
         # For each of the routes to be evaluated.
@@ -238,7 +229,6 @@ class ChallengeEvaluator(object):
             settings.synchronous_mode = True
             self.world.apply_settings(settings)
             client.tick()
-
             # create agent
             self.agent_instance = getattr(self.module_agent, self.module_agent.__name__)(args.config)
             self.agent_instance.set_global_plan(gps_route)
