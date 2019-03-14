@@ -41,7 +41,6 @@ def parse_routes_file(route_filename):
         route_id = route.attrib['id']
         waypoint_list = []  # the list of waypoints that can be found on this route
         for waypoint in route.iter('waypoint'):
-
              waypoint_list.append(waypoint)  # Waypoints is basically a list of XML nodes
 
         list_route_descriptions.append( {
@@ -65,20 +64,17 @@ def create_location_waypoint(location):
 
     }
 
+
 def remove_redundancy(list_of_vehicles):
     """
        We have a redundant vec of dics. Eliminate it for now.
     """
-
     vehicle_dict = {}
 
     for mono_dict in list_of_vehicles:
         vehicle_dict.update(mono_dict)
 
     return vehicle_dict
-
-
-
 
 
 def scan_route_for_scenarios(route_description, world_annotations):
@@ -143,12 +139,11 @@ def scan_route_for_scenarios(route_description, world_annotations):
                     else:
                         other_vehicles = None
 
-
-                    scenario_description ={'name': scenario_type,
+                    scenario_description = {
+                                           'name': scenario_type,
                                            'Antagonist_Vehicles': other_vehicles,
                                            'trigger_position': waypoint
                                            }
-
                     possible_scenarios.append(scenario_description)
 
     return possible_scenarios
@@ -157,6 +152,5 @@ def scan_route_for_scenarios(route_description, world_annotations):
 def parse_trajectory(waypoints_trajectory):
 
     # Convert this to
-
     return waypoints_trajectory, waypoints_trajectory
 
