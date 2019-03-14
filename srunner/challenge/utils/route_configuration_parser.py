@@ -46,7 +46,7 @@ def parse_routes_file(route_filename):
         list_route_descriptions.append( {
                                     'id': route_id,
                                     'town_name': route_town,
-                                    'waypoints':waypoint_list
+                                    'trajectory': waypoint_list
                                      })
 
     return list_route_descriptions
@@ -130,7 +130,7 @@ def scan_route_for_scenarios(route_description, world_annotations):
             for location in scenario["Available_Localizations"]:
                 waypoint = create_location_waypoint(location)   # Function until fran fixes the format
 
-                if match_world_location_to_route(waypoint, route_description['waypoints']):
+                if match_world_location_to_route(waypoint, route_description['trajectory']):
                     # We match a location for this scenario, create a scenario object so this scenario
                     # can be instantiated later
 
