@@ -36,6 +36,23 @@ class RouteConfiguration(object):
             self.data.append((carla.Location(x, y, z), connection))
 
 
+# TODO this is the same as the target they could be the same structure ? or some inherited thing
+
+class TriggerConfigurariton(object):
+
+    """
+    This class provides the basic  configuration for a some trigger location
+    """
+
+    transform = None
+
+    def __init__(self, node):
+        pos_x = float(set_attrib(node, 'x', 0))
+        pos_y = float(set_attrib(node, 'y', 0))
+        pos_z = float(set_attrib(node, 'z', 0))
+
+        self.transform = carla.Transform(carla.Location(x=pos_x, y=pos_y, z=pos_z))
+
 class TargetConfiguration(object):
 
     """

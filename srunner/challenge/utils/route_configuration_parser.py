@@ -78,6 +78,7 @@ def remove_redundancy(list_of_vehicles):
     return vehicle_dict
 
 
+
 def scan_route_for_scenarios(route_description, world_annotations):
 
     """
