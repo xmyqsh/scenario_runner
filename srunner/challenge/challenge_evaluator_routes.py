@@ -93,10 +93,10 @@ class ChallengeEvaluator(object):
         self.output_scenario = []
 
         # first we instantiate the Agent
-        module_name = os.path.basename(args.agent).split('.')[0]
-        module_spec = importlib.util.spec_from_file_location(module_name, args.agent)
-        self.module_agent = importlib.util.module_from_spec(module_spec)
-        module_spec.loader.exec_module(self.module_agent)
+        #module_name = os.path.basename(args.agent).split('.')[0]
+        #module_spec = importlib.util.spec_from_file_location(module_name, args.agent)
+        #self.module_agent = importlib.util.module_from_spec(module_spec)
+        #module_spec.loader.exec_module(self.module_agent)
 
         self._sensors_list = []
         self._hop_resolution = 2.0
