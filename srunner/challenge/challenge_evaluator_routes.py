@@ -69,6 +69,27 @@ class ChallengeEvaluator(object):
         else:
             self._carla_server = ServerManagerBinary({'CARLA_SERVER': "{}/CarlaUE4.sh".format(args.carla_root)})
 
+    def cleanup(self, ego=False):
+        """
+        Remove and destroy all actors
+        """
+
+        # We need enumerate here, otherwise the actors are not properly removed
+        for i, _ in enumerate(self.actors):
+            if self.actors[i] is not None:
+                self.actors[i].destroy()
+                self.actors[i] = None
+        self.actors = []
+
+        for i, _ in enumerate(self._sensors_list):
+            if self._sensors_list[i] is not None:
+                self._sensors_list[i].destroy()
+                self._sensors_list[i] = None
+        self._sensors_list = []
+
+        if ego and self.ego_vehicle is not None:
+            self.ego_vehicle.destroy()
+            self.ego_vehicle = None
 
     def __del__(self):
         """

@@ -30,7 +30,7 @@ class VehicleTurningRight(BasicScenario):
     This class holds everything required for a simple object crash
     with prior vehicle action involving a vehicle and a cyclist.
     The ego vehicle is passing through a road and encounters
-    a cyclist after taking a right turn.
+    a cyclist after taking a right turn. Scenerio 4
     """
 
     def __init__(self, world, ego_vehicle, config, randomize=False, debug_mode=False, criteria_enable=True):
@@ -140,7 +140,7 @@ class VehicleTurningLeft(BasicScenario):
     This class holds everything required for a simple object crash
     with prior vehicle action involving a vehicle and a cyclist.
     The ego vehicle is passing through a road and encounters
-    a cyclist after taking a left turn.
+    a cyclist after taking a left turn. Scenario 4
     """
 
     def __init__(self, world, ego_vehicle, config, randomize=False, debug_mode=False, criteria_enable=True):
