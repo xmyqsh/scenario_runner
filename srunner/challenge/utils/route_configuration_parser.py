@@ -79,6 +79,8 @@ def remove_redundancy(list_of_vehicles):
 
 
 
+
+
 def scan_route_for_scenarios(route_description, world_annotations):
 
     """
@@ -144,7 +146,7 @@ def scan_route_for_scenarios(route_description, world_annotations):
 
                     scenario_description ={'name': scenario_type,
                                            'Antagonist_Vehicles': other_vehicles,
-                                           'waypoint': waypoint
+                                           'trigger_position': waypoint
                                            }
 
                     possible_scenarios.append(scenario_description)

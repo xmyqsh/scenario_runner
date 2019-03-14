@@ -38,7 +38,7 @@ from srunner.scenarios.no_signal_junction_crossing import NoSignalJunctionCrossi
 
 # The configuration parser
 
-from srunner.scenarios.config_parser import ActorConfiguration
+from srunner.scenarios.config_parser import ActorConfiguration, ScenarioConfiguration
 
 number_class_translation = {
 
@@ -61,6 +61,15 @@ number_class_translation = {
 # Import now all the possible scenarios
 
 from srunner.scenarios.challenge_basic import ChallengeBasic
+
+
+def convert_json_to_actor(actor_dict):
+    node = ET.Element('waypoint')
+    node.set('x', actor_dict['x'])
+    node.set('y', actor_dict['y'])
+    node.set('z', actor_dict['z'])
+
+    return ActorConfiguration(node)
 
 
 class ChallengeEvaluator(object):
@@ -146,13 +155,7 @@ class ChallengeEvaluator(object):
             :param list_of_actor_def:
             :return:
             """
-            def convert_json_to_actor(actor_dict):
-                node = ET.Element('waypoint')
-                node.set('x', actor_dict['x'])
-                node.set('y', actor_dict['y'])
-                node.set('z', actor_dict['z'])
 
-                return ActorConfiguration(node)
 
             sublist_of_actors = []
             for actor_def in list_of_actor_def:
@@ -186,10 +189,18 @@ class ChallengeEvaluator(object):
             # for now I dont know how to disambiguate this part.
             ScenarioClass = posibility_vec[0]
 
-            # Create the actors...
+            # Create the other actors that are going to apear
             list_of_actor_conf_instances = self.get_actors_instances(definition['Antagonist_Vehicles'])
+            # Create an actorconfiguration for the egovehicle trigger position
+            egoactor_trigger_positon = convert_json_to_actor(definition['trigger_position'])
 
-            scenario_instance = ScenarioClass(self.world, self.ego_vehicle, list_of_actor_conf_instances, town)
+
+            scenario_configuration = ScenarioConfiguration()
+            scenario_configuration.other_actors = list_of_actor_conf_instances
+            scenario_configuration.town = town
+            scenario_configuration.ego_vehicle = egoactor_trigger_positon
+
+            scenario_instance = ScenarioClass(self.world, self.ego_vehicle, scenario_configuration)
 
             scenario_instance_vec.append(scenario_instance)
 
