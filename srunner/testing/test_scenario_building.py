@@ -18,6 +18,12 @@ inside a batch
 
 """
 
+class Arguments():
+
+    def __init__(self):
+        self.agent = None
+        self.use_docker = False
+        self.carla_root = '../Carla94b/'
 
 class TestScenarioBuilder(unittest.TestCase):
 
@@ -27,7 +33,7 @@ class TestScenarioBuilder(unittest.TestCase):
 
     def test_build_scenarios(self):
 
-        challenge = ChallengeEvaluator()
+        challenge = ChallengeEvaluator(Arguments())
 
         filename = os.path.join(self.root_route_file_position, 'Town03_scenarios_AntagonistVehicleWorldSpace.json')
         world_annotations = parser.parse_annotations_file(filename)
