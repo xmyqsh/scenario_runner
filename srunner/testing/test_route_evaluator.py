@@ -44,8 +44,9 @@ class TestRouteGenerator(unittest.TestCase):
         print ('For The route ', route['id'], " We found these scenarios")
         print ("##################")
         pprint(posible_scenarios)
-        # A routes Just stays on one part of scenario 1 .
         self.assertEqual(len(posible_scenarios), 4)
+
+
 
 
     def test_parse_trajectory(self):

@@ -68,7 +68,6 @@ def create_location_waypoint(location):
     }
 
 
-
 def scan_route_for_scenarios(route_description, world_annotations):
 
     """
