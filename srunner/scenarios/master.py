@@ -38,8 +38,12 @@ class Master(BasicScenario):
 
         if hasattr(self.config, 'target'):
             self.target = self.config.target
+        else:
+            raise ValueError("Master scenario must have a target")
         if hasattr(self.config, 'route'):
             self.route = self.config.route.data
+        else:
+            raise ValueError("Master scenario must have a route")
 
         super(Master, self).__init__("ChallengeBasic", ego_vehicle, config, world, debug_mode, True)
 

@@ -337,7 +337,6 @@ class ChallengeEvaluator(object):
             for config in scenario_configurations:
                 # create agent instance
                 self.agent_instance = getattr(self.module_agent, self.module_agent.__name__)(args.config)
-
                 # Prepare scenario
                 print("Preparing scenario: " + config.name)
                 scenario_class = ChallengeEvaluator.get_scenario_class_or_fail(config.type)
