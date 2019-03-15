@@ -16,7 +16,7 @@ from argparse import RawTextHelpFormatter
 import importlib
 import sys
 import os
-
+import pytrees
 
 import xml.etree.ElementTree as ET
 
@@ -34,6 +34,7 @@ from srunner.scenarios.object_crash_intersection import VehicleTurningRight, Veh
 from srunner.scenarios.opposite_vehicle_taking_priority import OppositeVehicleRunningRedLight
 from srunner.scenarios.signalized_junction_left_turn import SignalizedJunctionLeftTurn
 from srunner.scenarios.no_signal_junction_crossing import NoSignalJunctionCrossing
+from srunner.scenarios.master import Master
 # TODO maybe the parsing and the building are actually different.
 
 # The configuration parser
@@ -91,7 +92,7 @@ class ChallengeEvaluator(object):
 
     def __init__(self, args):
         self.output_scenario = []
-
+        self.master_scenario = None
         # first we instantiate the Agent
         #module_name = os.path.basename(args.agent).split('.')[0]
         #module_spec = importlib.util.spec_from_file_location(module_name, args.agent)
@@ -141,6 +142,9 @@ class ChallengeEvaluator(object):
         if self.world is not None:
             del self.world
 
+
+
+
     def scenario_sampling(self, potential_scenarios_definitions):
         return potential_scenarios_definitions
 
@@ -174,7 +178,23 @@ class ChallengeEvaluator(object):
 
         return list_of_actors
 
+    def build_master_scenario(self, route):
+        # We have to find the target.
+        # we also have to convert the route to the expected format
+        master_scenario_configuration = ScenarioConfiguration()
+        master_scenario_configuration.target = route[-1]
+        master_scenario_configuration.route = None
+
+        return Master(self.world, self.ego_vehicle, master_scenario_configuration)
+
+
     def build_scenario_instances(self, scenario_definition_vec, town):
+        """
+            Based on the parsed route and posible scenarios, build all the scenario classes.
+        :param scenario_definition_vec: the dictionary defining the scenarios
+        :param town:
+        :return:
+        """
         scenario_instance_vec = []
 
         for definition in scenario_definition_vec:
@@ -197,6 +217,129 @@ class ChallengeEvaluator(object):
 
         return scenario_definition_vec
 
+    def route_is_running(self):
+        """
+            The master scenario tests if the route is still running.
+        """
+        if self.master_scenario is None:
+            raise ValueError('You should not run a rout without a master scenario')
+
+        return self.master_scenario.scenario_tree.status == py_trees.common.Status.RUNNING
+
+
+    def summary_route_performance(self):
+        """
+          This function is intended to be called from outside and provide
+          statistics about the scenario (human-readable, for the CARLA challenge.)
+          """
+        PENALTY_COLLISION_STATIC = 10
+        PENALTY_COLLISION_VEHICLE = 10
+        PENALTY_COLLISION_PEDESTRIAN = 30
+        PENALTY_TRAFFIC_LIGHT = 10
+        PENALTY_WRONG_WAY = 5
+
+        target_reached = False
+        failure = False
+        result = "SUCCESS"
+        final_score = 0.0
+        score_penalty = 0.0
+        score_route = 0.0
+        return_message = ""
+
+        if isinstance(self.master_scenario.scenario.test_criteria, py_trees.composites.Parallel):
+            if self.master_scenario.scenario.test_criteria.status == py_trees.common.Status.FAILURE:
+                failure = True
+                result = "FAILURE"
+            if self.master_scenario.scenario.timeout_node.timeout and not failure:
+                result = "TIMEOUT"
+
+            list_traffic_events = []
+            for node in self.master_scenario.scenario.test_criteria.children:
+                if node.list_traffic_events:
+                    list_traffic_events.extend(node.list_traffic_events)
+
+            list_collisions = []
+            list_red_lights = []
+            list_wrong_way = []
+            list_route_dev = []
+            # analyze all traffic events
+            for event in list_traffic_events:
+                if event.get_type() == TrafficEventType.COLLISION_STATIC:
+                    score_penalty += PENALTY_COLLISION_STATIC
+                    msg = event.get_message()
+                    if msg:
+                        list_collisions.append(event.get_message())
+
+                elif event.get_type() == TrafficEventType.COLLISION_VEHICLE:
+                    score_penalty += PENALTY_COLLISION_VEHICLE
+                    msg = event.get_message()
+                    if msg:
+                        list_collisions.append(event.get_message())
+
+                elif event.get_type() == TrafficEventType.COLLISION_PEDESTRIAN:
+                    score_penalty += PENALTY_COLLISION_PEDESTRIAN
+                    msg = event.get_message()
+                    if msg:
+                        list_collisions.append(event.get_message())
+
+                elif event.get_type() == TrafficEventType.TRAFFIC_LIGHT_INFRACTION:
+                    score_penalty += PENALTY_TRAFFIC_LIGHT
+                    msg = event.get_message()
+                    if msg:
+                        list_red_lights.append(event.get_message())
+
+                elif event.get_type() == TrafficEventType.WRONG_WAY_INFRACTION:
+                    score_penalty += PENALTY_WRONG_WAY
+                    msg = event.get_message()
+                    if msg:
+                        list_wrong_way.append(event.get_message())
+
+                elif event.get_type() == TrafficEventType.ROUTE_DEVIATION:
+                    msg = event.get_message()
+                    if msg:
+                        list_route_dev.append(event.get_message())
+
+                elif event.get_type() == TrafficEventType.ROUTE_COMPLETED:
+                    score_route = 100.0
+                    target_reached = True
+                elif event.get_type() == TrafficEventType.ROUTE_COMPLETION:
+                    if not target_reached:
+                        score_route = event.get_dict()['route_completed']
+
+            final_score = max(score_route - score_penalty, 0)
+
+            return_message += "\n=================================="
+            return_message += "\n==[{}] [Score = {:.2f} : (route_score={}, infractions=-{})]".format(result,
+                                                                                                     final_score,
+                                                                                                     score_route,
+                                                                                                     score_penalty)
+            if list_collisions:
+                return_message += "\n===== Collisions:"
+                for item in list_collisions:
+                    return_message += "\n========== {}".format(item)
+
+            if list_red_lights:
+                return_message += "\n===== Red lights:"
+                for item in list_red_lights:
+                    return_message += "\n========== {}".format(item)
+
+            if list_wrong_way:
+                return_message += "\n===== Wrong way:"
+                for item in list_wrong_way:
+                    return_message += "\n========== {}".format(item)
+
+            if list_route_dev:
+                return_message += "\n===== Route deviation:"
+                for item in list_route_dev:
+                    return_message += "\n========== {}".format(item)
+
+            return_message += "\n=================================="
+
+        return result, final_score, return_message
+
+
+
+
     def run(self, args):
         """
         Run all routes according to provided commandline args
@@ -215,8 +358,9 @@ class ChallengeEvaluator(object):
             # prepare route's trajectory
             gps_route, world_coordinates_route = parser.parse_trajectory(route_description.trajectory)
 
-            # pre-instantiate all scenarios for this route
-            list_scenarios = [Idle()]
+            # build the master scenario based on the route and the target.
+            self.master_scenario = self.build_master_scenario(world_coordinates_route)
+            list_scenarios = [self.master_scenario]
             # build the instance based on the parsed definitions.
             list_scenarios += self.build_scenario_instances(list_of_scenarios_definitions)
 
@@ -233,7 +377,7 @@ class ChallengeEvaluator(object):
             self.agent_instance = getattr(self.module_agent, self.module_agent.__name__)(args.config)
             self.agent_instance.set_global_plan(gps_route)
             # main loop
-            while True:
+            while self.route_is_running():
                 # update all scenarios
                 for scenario in list_scenarios:
                     scenario.scenario.scenario_tree.tick_once()
@@ -246,25 +390,23 @@ class ChallengeEvaluator(object):
                 client.tick()
 
 
-            self.cleanup(ego=True)
-        self.agent_instance.destroy()
+            self.agent_instance.destroy()
 
-        self.final_summary(args)
+            # statistics recording
+            result, final_score, return_message = self.summary_route_performance()
 
         # stop CARLA server
         self._carla_server.stop()
 
-        # statistics recording
-            # TODO:
 
             # cleanup
-            # TODO:
 
+        self.cleanup(ego=True)
         # statistics report
         # TODO:
 
-        # final cleanup
-        # TODO:
+        # final measurements from the challenge
+        self.final_challenge_statistics()
 
 
 if __name__ == '__main__':

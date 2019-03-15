@@ -52,7 +52,9 @@ class TestScenarioBuilder(unittest.TestCase):
             # prepare route's trajectory
             gps_route, world_coordinates_route = parser.parse_trajectory(route_description['trajectory'])
 
-            # pre-instantiate all scenarios for this route
-            list_scenarios = [Idle()]
+            # build the master scenario based on the route and the target.
+            master_scenario = challenge.build_master_scenario(world_coordinates_route)
+            list_scenarios = [master_scenario]
             # build the instance based on the parsed definitions.
             list_scenarios += challenge.build_scenario_instances(list_of_scenarios_definitions)
+
