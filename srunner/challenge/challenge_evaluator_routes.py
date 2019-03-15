@@ -16,7 +16,6 @@ from argparse import RawTextHelpFormatter
 import importlib
 import sys
 import os
-import pytrees
 
 import xml.etree.ElementTree as ET
 
