@@ -20,12 +20,14 @@ import pytrees
 
 import xml.etree.ElementTree as ET
 
-#import carla
+import carla
 import srunner.challenge.utils.route_configuration_parser as parser
 from srunner.challenge.envs.server_manager import ServerManagerBinary, ServerManagerDocker
 #from srunner.scenarios.challenge_basic import *
 #from srunner.scenarios.config_parser import *
 #from srunner.scenariomanager.scenario_manager import ScenarioManager
+
+from srunner.scenariomanager.carla_data_provider import CarlaActorPool
 
 from srunner.scenarios.control_loss import ControlLoss
 from srunner.scenarios.follow_leading_vehicle import FollowLeadingVehicle
@@ -39,7 +41,9 @@ from srunner.scenarios.master import Master
 
 # The configuration parser
 
-from srunner.scenarios.config_parser import ActorConfiguration, ScenarioConfiguration
+from srunner.scenarios.config_parser import ActorConfiguration, ScenarioConfiguration, RouteConfiguration
+from srunner.scenariomanager.traffic_events import TrafficEvent, TrafficEventType
+
 
 number_class_translation = {
 
@@ -181,6 +185,8 @@ class ChallengeEvaluator(object):
     def build_master_scenario(self, route):
         # We have to find the target.
         # we also have to convert the route to the expected format
+
+
         master_scenario_configuration = ScenarioConfiguration()
         master_scenario_configuration.target = route[-1]
         master_scenario_configuration.route = None
@@ -231,13 +237,12 @@ class ChallengeEvaluator(object):
         """
           This function is intended to be called from outside and provide
           statistics about the scenario (human-readable, for the CARLA challenge.)
-          """
+        """
         PENALTY_COLLISION_STATIC = 10
         PENALTY_COLLISION_VEHICLE = 10
         PENALTY_COLLISION_PEDESTRIAN = 30
         PENALTY_TRAFFIC_LIGHT = 10
         PENALTY_WRONG_WAY = 5
-
         target_reached = False
         failure = False
         result = "SUCCESS"
@@ -337,32 +342,37 @@ class ChallengeEvaluator(object):
 
         return result, final_score, return_message
 
-
-
+    def final_challenge_statistics(self):
+        # Grab the statistics from all the routes.
+        pass
 
     def run(self, args):
         """
         Run all routes according to provided commandline args
         """
+        """
+            The world needs to be running
+        """
+        self._carla_server.reset(args.host, args.port)
+        self._carla_server.wait_until_ready()
+
+
         # retrieve worlds annotations
         world_annotations = parser.parse_annotations_file(args.annotations_file)
         # retrieve routes
-        list_route_descriptions = parser.parse_routes_file(args.routes_file)
+        route_descriptions_list = parser.parse_routes_file(args.routes_file)
 
-        # For each of the routes to be evaluated.
-        for route_description in list_route_descriptions:
-            # find and filter potential scenarios
-            potential_scenarios_definitions = parser.scan_route_for_scenarios(route_description, world_annotations)
-            list_of_scenarios_definitions = self.scenario_sampling(potential_scenarios_definitions)
+        # find and filter potential scenarios for each of the evaluated routes
+        potential_scenarios_list = [parser.scan_route_for_scenarios(route_description, world_annotations)
+                                    for route_description in route_descriptions_list]
+
+        # For each of the routes and corresponding possible scenarios to be evaluated.
+        for route_description, potential_scenarios in zip(route_descriptions_list, potential_scenarios_list):
+
+            list_of_scenarios_definitions = self.scenario_sampling(potential_scenarios)
 
             # prepare route's trajectory
             gps_route, world_coordinates_route = parser.parse_trajectory(route_description.trajectory)
-
-            # build the master scenario based on the route and the target.
-            self.master_scenario = self.build_master_scenario(world_coordinates_route)
-            list_scenarios = [self.master_scenario]
-            # build the instance based on the parsed definitions.
-            list_scenarios += self.build_scenario_instances(list_of_scenarios_definitions)
 
             # setup world and client assuming that the CARLA server is up and running
             client = carla.Client(args.host, int(args.port))
@@ -372,6 +382,16 @@ class ChallengeEvaluator(object):
             settings = self.world.get_settings()
             settings.synchronous_mode = True
             self.world.apply_settings(settings)
+            # Set the actor pool so the scenarios can prepare themselves when needed
+            CarlaActorPool.set_world(self.world)
+
+            # build the master scenario based on the route and the target.
+            self.master_scenario = self.build_master_scenario(world_coordinates_route)
+            list_scenarios = [self.master_scenario]
+            # build the instance based on the parsed definitions.
+            list_scenarios += self.build_scenario_instances(list_of_scenarios_definitions)
+
+
             client.tick()
             # create agent
             self.agent_instance = getattr(self.module_agent, self.module_agent.__name__)(args.config)

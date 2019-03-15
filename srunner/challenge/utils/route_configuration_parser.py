@@ -141,6 +141,11 @@ def scan_route_for_scenarios(route_description, world_annotations):
     return possible_scenarios
 
 
+def parse_trajectory(waypoints_trajectory):
+
+
+    return waypoints_trajectory, waypoints_trajectory
+
 ################################
     #ROUTE MAKING
 #################################
