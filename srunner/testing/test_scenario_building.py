@@ -10,7 +10,6 @@ from pprint import pprint
 
 import srunner.challenge.utils.route_configuration_parser as parser
 from srunner.challenge.challenge_evaluator_routes import ChallengeEvaluator
-from srunner.scenarios.idle import Idle
 
 """
 The idea of this test is to check if sampling is able to sample random sequencial images

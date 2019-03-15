@@ -41,7 +41,7 @@ class Master(BasicScenario):
         else:
             raise ValueError("Master scenario must have a target")
         if hasattr(self.config, 'route'):
-            self.route = self.config.route.data
+            self.route = self.config.route
         else:
             raise ValueError("Master scenario must have a route")
 
