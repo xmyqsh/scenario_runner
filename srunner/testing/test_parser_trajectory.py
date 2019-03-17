@@ -17,7 +17,7 @@ inside a batch
 """
 
 import srunner.challenge.utils.route_configuration_parser as parser
-from srunner.challenge.challenge_evaluator_routes import ChallengeEvaluator, parse_trajectory
+from srunner.challenge.challenge_evaluator_routes import ChallengeEvaluator
 
 from srunner.scenariomanager.carla_data_provider import CarlaActorPool
 
