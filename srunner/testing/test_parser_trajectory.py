@@ -21,6 +21,8 @@ from srunner.challenge.challenge_evaluator_routes import ChallengeEvaluator, par
 
 from srunner.scenariomanager.carla_data_provider import CarlaActorPool
 
+from srunner.challenge.utils.trajectory_interpolation import interpolate_trajectory
+
 import carla
 
 class Arguments():
@@ -48,7 +50,6 @@ class TestParseTrajector(unittest.TestCase):
         client = carla.Client(args.host, int(args.port))
         client.set_timeout(25.0)
         # retrieve routes
-        # Which type of file is expected ????
 
         filename = os.path.join(self.root_route_file_position, 'routes_town01.xml')
         list_route_descriptions = parser.parse_routes_file(filename)
@@ -64,6 +65,6 @@ class TestParseTrajector(unittest.TestCase):
             # Set the actor pool so the scenarios can prepare themselves when needed
             # find and filter potential scenarios
             # prepare route's trajectory
-            gps_route, world_coordinates_route = parse_trajectory(world, route_description['trajectory'])
+            gps_route, world_coordinates_route = interpolate_trajectory(world, route_description['trajectory'])
 
 
