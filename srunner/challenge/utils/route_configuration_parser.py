@@ -8,7 +8,6 @@ import xml.etree.ElementTree as ET
 """
 
 
-
 def parse_annotations_file(annotation_filename):
     # Return the annotations of which positions where the scenarios are going to happen.\
 
@@ -140,89 +139,3 @@ def scan_route_for_scenarios(route_description, world_annotations):
 
     return possible_scenarios
 
-
-def parse_trajectory(waypoints_trajectory):
-
-
-    return waypoints_trajectory, waypoints_trajectory
-
-################################
-    #ROUTE MAKING
-#################################
-#
-# def turn_decision(self, index, route, threshold=math.radians(5)):
-#     """
-#     This method returns the turn decision (RoadOption) for pair of edges
-#     around current index of route list
-#     """
-#
-#     decision = None
-#     previous_node = route[index - 1]
-#     current_node = route[index]
-#     next_node = route[index + 1]
-#     next_edge = self._graph.edges[current_node, next_node]
-#     if index > 0:
-#         current_edge = self._graph.edges[previous_node, current_node]
-#         calculate_turn = current_edge['type'] == RoadOption.LANEFOLLOW and \
-#                          not current_edge['intersection'] and \
-#                          next_edge['type'] == RoadOption.LANEFOLLOW and \
-#                          next_edge['intersection']
-#         if calculate_turn:
-#             cv, nv = current_edge['exit_vector'], next_edge['net_vector']
-#             cross_list = []
-#             for neighbor in self._graph.successors(current_node):
-#                 select_edge = self._graph.edges[current_node, neighbor]
-#                 if select_edge['type'] == RoadOption.LANEFOLLOW:
-#                     if neighbor != route[index + 1]:
-#                         sv = select_edge['net_vector']
-#                         cross_list.append(np.cross(cv, sv)[2])
-#             next_cross = np.cross(cv, nv)[2]
-#             deviation = math.acos(np.dot(cv, nv) / \
-#                                   (np.linalg.norm(cv) * np.linalg.norm(nv)))
-#             if not cross_list:
-#                 cross_list.append(0)
-#             if deviation < threshold:
-#                 decision = RoadOption.STRAIGHT
-#             elif cross_list and next_cross < min(cross_list):
-#                 decision = RoadOption.LEFT
-#             elif cross_list and next_cross > max(cross_list):
-#                 decision = RoadOption.RIGHT
-#         else:
-#             decision = next_edge['type']
-#     else:
-#         decision = next_edge['type']
-#
-#     return decision
-#
-#
-# def abstract_route_plan(route):
-#     """
-#     The following function generates the route plan based on
-#     origin      : carla.Location object of the route's start position
-#     destination : carla.Location object of the route's end position
-#     return      : list of turn by turn navigation decisions as
-#     agents.navigation.local_planner.RoadOption elements
-#     Possible values are STRAIGHT, LEFT, RIGHT, LANEFOLLOW, VOID
-#     CHANGELANELEFT, CHANGELANERIGHT
-#     """
-#
-#     plan = []
-#
-#     for i in range(len(route) - 1):
-#         road_option = turn_decision(i, route)
-#         plan.append(road_option)
-#
-#     return plan
-#
-#
-# def _find_closest_in_list(current_waypoint, waypoint_list):
-#     min_distance = float('inf')
-#     closest_index = 0
-#     for i, waypoint in enumerate(waypoint_list):
-#         distance = waypoint.transform.location.distance(
-#             current_waypoint.transform.location)
-#         if distance < min_distance:
-#             min_distance = distance
-#             closest_index = i
-#
-#     return closest_index

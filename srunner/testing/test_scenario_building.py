@@ -11,6 +11,9 @@ from pprint import pprint
 import srunner.challenge.utils.route_configuration_parser as parser
 from srunner.challenge.challenge_evaluator_routes import ChallengeEvaluator
 
+from srunner.scenariomanager.carla_data_provider import CarlaActorPool
+
+import carla
 """
 The idea of this test is to check if sampling is able to sample random sequencial images
 inside a batch
@@ -23,6 +26,8 @@ class Arguments():
         self.agent = None
         self.use_docker = False
         self.carla_root = '../Carla94b/'
+        self.host = '127.0.0.1'
+        self.port = 2000
 
 class TestScenarioBuilder(unittest.TestCase):
 
@@ -30,9 +35,14 @@ class TestScenarioBuilder(unittest.TestCase):
         unittest.TestCase.__init__(self, name)
         self.root_route_file_position = 'srunner/testing/test_files'
 
+
+
     def test_build_scenarios(self):
 
-        challenge = ChallengeEvaluator(Arguments())
+        args = Arguments()
+        client = carla.Client(args.host, int(args.port))
+        client.set_timeout(self.client_timeout)
+        challenge = ChallengeEvaluator(args)
 
         filename = os.path.join(self.root_route_file_position, 'Town03_scenarios_AntagonistVehicleWorldSpace.json')
         world_annotations = parser.parse_annotations_file(filename)
@@ -44,6 +54,14 @@ class TestScenarioBuilder(unittest.TestCase):
 
         # For each of the routes to be evaluated.
         for route_description in list_route_descriptions:
+
+
+            self.world = client.load_world(route_description['town'])
+            settings = self.world.get_settings()
+            settings.synchronous_mode = True
+            self.world.apply_settings(settings)
+            # Set the actor pool so the scenarios can prepare themselves when needed
+            CarlaActorPool.set_world(self.world)
             # find and filter potential scenarios
             potential_scenarios_definitions = parser.scan_route_for_scenarios(route_description, world_annotations)
             list_of_scenarios_definitions = potential_scenarios_definitions
