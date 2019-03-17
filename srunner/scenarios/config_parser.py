@@ -23,7 +23,14 @@ class RouteConfiguration(object):
     This class provides the basic  configuration for a route
     """
 
-    def __init__(self, node):
+    def __init__(self, route=None):
+        if route is not None:
+            self.data = route
+        else:
+            self.data = None
+
+
+    def parse_xml(self, node):
         self.data = []
 
         for waypoint in node.iter("waypoint"):
@@ -162,7 +169,8 @@ def parse_scenario_configuration(file_name, scenario_name):
             new_config.target = TargetConfiguration(target)
 
         for route in scenario.iter("route"):
-            new_config.route = RouteConfiguration(route)
+            route_conf =RouteConfiguration()
+            new_config.route = route_conf.parse_xml(route)
 
         for other_actor in scenario.iter("other_actor"):
             new_config.other_actors.append(ActorConfiguration(other_actor))
