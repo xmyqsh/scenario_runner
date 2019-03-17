@@ -50,7 +50,7 @@ class TestParseTrajector(unittest.TestCase):
         # retrieve routes
         # Which type of file is expected ????
 
-        filename = os.path.join(self.root_route_file_position, 'routes_town03_test.xml')
+        filename = os.path.join(self.root_route_file_position, 'routes_town01.xml')
         list_route_descriptions = parser.parse_routes_file(filename)
 
         # For each of the routes to be evaluated.
