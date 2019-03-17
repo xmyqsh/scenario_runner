@@ -57,7 +57,6 @@ class TestParseTrajector(unittest.TestCase):
         # For each of the routes to be evaluated.
         for route_description in list_route_descriptions:
 
-
             world = client.load_world(route_description['town_name'])
             settings = world.get_settings()
             settings.synchronous_mode = True
@@ -66,5 +65,7 @@ class TestParseTrajector(unittest.TestCase):
             # find and filter potential scenarios
             # prepare route's trajectory
             gps_route, world_coordinates_route = interpolate_trajectory(world, route_description['trajectory'])
+
+            print (gps_route, world_coordinates_route)
 
 
