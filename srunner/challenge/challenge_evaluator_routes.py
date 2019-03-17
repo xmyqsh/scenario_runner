@@ -44,6 +44,46 @@ from srunner.scenarios.config_parser import ActorConfiguration, ScenarioConfigur
 from srunner.scenariomanager.traffic_events import TrafficEvent, TrafficEventType
 
 
+
+from agents.navigation.global_route_planner import GlobalRoutePlanner
+from agents.navigation.global_route_planner_dao import GlobalRoutePlannerDAO
+
+
+#############  add the parse trajectory here directly.
+##### TODO: remove it a bit after
+
+
+
+def parse_trajectory(world, waypoints_trajectory):
+    # INstantiate praveens full module
+    # Setup the GRP
+    hop_resolution = 2.0
+    dao = GlobalRoutePlannerDAO(world.get_map(), hop_resolution)
+    grp = GlobalRoutePlanner(dao)
+    grp.setup()
+
+    # Obtain route plan
+    route = []
+    for i in range(len(waypoints_trajectory) -1):   # Goes until the one before the last.
+
+        waypoint = waypoints_trajectory[i]
+        waypoint_next = waypoints_trajectory[i]
+
+        route = grp.trace_route( carla.Location(x=float(waypoint.attrib['x']),
+                                                y=float(waypoint.attrib['y']),
+                                                z=float(waypoint.attrib['z'])),
+                                 carla.Location(x=float(waypoint_next.attrib['x']),
+                                                y=float(waypoint_next.attrib['y']),
+                                                z=float(waypoint_next.attrib['z']))
+                                 )
+
+        print (route)
+
+    return waypoints_trajectory, waypoints_trajectory
+
+
+
+
 number_class_translation = {
 
 
@@ -111,6 +151,8 @@ class ChallengeEvaluator(object):
 
         else:
             self._carla_server = ServerManagerBinary({'CARLA_SERVER': "{}/CarlaUE4.sh".format(args.carla_root)})
+
+
 
     def cleanup(self, ego=False):
         """
@@ -370,8 +412,6 @@ class ChallengeEvaluator(object):
 
             list_of_scenarios_definitions = self.scenario_sampling(potential_scenarios)
 
-            # prepare route's trajectory
-            gps_route, world_coordinates_route = parser.parse_trajectory(route_description.trajectory)
 
             # setup world and client assuming that the CARLA server is up and running
             client = carla.Client(args.host, int(args.port))
@@ -383,6 +423,9 @@ class ChallengeEvaluator(object):
             self.world.apply_settings(settings)
             # Set the actor pool so the scenarios can prepare themselves when needed
             CarlaActorPool.set_world(self.world)
+
+            # prepare route's trajectory
+            gps_route, world_coordinates_route = parse_trajectory(route_description['trajectory'])
 
             # build the master scenario based on the route and the target.
             self.master_scenario = self.build_master_scenario(world_coordinates_route)
