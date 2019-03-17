@@ -30,6 +30,13 @@ def _location_to_gps(lat_ref, lon_ref, location):
 
 
 def location_route_to_gps(route, lat_ref, lon_ref):
+    """
+        Locate each waypoint of the route into gps, (lat long ) representations.
+    :param route:
+    :param lat_ref:
+    :param lon_ref:
+    :return:
+    """
     gps_route = []
 
     for waypoint, connection in route:
