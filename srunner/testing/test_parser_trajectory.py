@@ -29,6 +29,8 @@ class Arguments():
         self.agent = None
         self.use_docker = False
         self.carla_root = '../Carla94b/'
+        self.host = '127.0.0.1'
+        self.port = 2000
 
 
 class TestParseTrajector(unittest.TestCase):
