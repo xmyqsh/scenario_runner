@@ -61,7 +61,7 @@ def parse_trajectory(world, waypoints_trajectory):
     dao = GlobalRoutePlannerDAO(world.get_map(), hop_resolution)
     grp = GlobalRoutePlanner(dao)
     grp.setup()
-
+    print ("Setup global route planner ")
     # Obtain route plan
     route = []
     for i in range(len(waypoints_trajectory) -1):   # Goes until the one before the last.
@@ -417,7 +417,7 @@ class ChallengeEvaluator(object):
             client = carla.Client(args.host, int(args.port))
             client.set_timeout(self.client_timeout)
 
-            self.world = client.load_world(route_description.town)
+            self.world = client.load_world(route_description['town_name'])
             settings = self.world.get_settings()
             settings.synchronous_mode = True
             self.world.apply_settings(settings)
