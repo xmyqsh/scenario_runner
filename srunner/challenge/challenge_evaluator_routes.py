@@ -58,6 +58,7 @@ def parse_trajectory(world, waypoints_trajectory):
     # INstantiate praveens full module
     # Setup the GRP
     hop_resolution = 2.0
+    print("going to start")
     dao = GlobalRoutePlannerDAO(world.get_map(), hop_resolution)
     grp = GlobalRoutePlanner(dao)
     grp.setup()
