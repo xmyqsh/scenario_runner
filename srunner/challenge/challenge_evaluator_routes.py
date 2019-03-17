@@ -191,7 +191,6 @@ class ChallengeEvaluator(object):
         # We have to find the target.
         # we also have to convert the route to the expected format
 
-
         master_scenario_configuration = ScenarioConfiguration()
         master_scenario_configuration.target = route[-1]
         master_scenario_configuration.route = route
