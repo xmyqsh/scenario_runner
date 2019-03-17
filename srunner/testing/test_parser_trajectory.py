@@ -57,7 +57,7 @@ class TestParseTrajector(unittest.TestCase):
         for route_description in list_route_descriptions:
 
 
-            world = client.load_world(route_description['town'])
+            world = client.load_world(route_description['town_name'])
             settings = world.get_settings()
             settings.synchronous_mode = True
             world.apply_settings(settings)
