@@ -55,7 +55,7 @@ class TestScenarioBuilder(unittest.TestCase):
         for route_description in list_route_descriptions:
 
 
-            world = client.load_world(route_description['town_name'])
+            challenge.world = client.load_world(route_description['town_name'])
             #settings = world.get_settings()
             #settings.synchronous_mode = True
             #world.apply_settings(settings)
@@ -66,7 +66,7 @@ class TestScenarioBuilder(unittest.TestCase):
             list_of_scenarios_definitions = potential_scenarios_definitions
 
             # prepare route's trajectory
-            gps_route, world_coordinates_route = interpolate_trajectory(world, route_description['trajectory'])
+            gps_route, world_coordinates_route = interpolate_trajectory(challenge.world, route_description['trajectory'])
 
             # build the master scenario based on the route and the target.
             master_scenario = challenge.build_master_scenario(world_coordinates_route)
