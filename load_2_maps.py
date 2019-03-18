@@ -10,7 +10,6 @@ settings = world.get_settings()
 settings.synchronous_mode = True
 world.apply_settings(settings)
 
-
 world = client.load_world('Town02')
 settings = world.get_settings()
 settings.synchronous_mode = True
