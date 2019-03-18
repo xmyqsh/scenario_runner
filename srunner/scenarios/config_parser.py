@@ -29,7 +29,6 @@ class RouteConfiguration(object):
         else:
             self.data = None
 
-
     def parse_xml(self, node):
         self.data = []
 
