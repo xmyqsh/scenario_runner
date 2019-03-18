@@ -118,8 +118,6 @@ class ChallengeEvaluator(object):
         else:
             self._carla_server = ServerManagerBinary({'CARLA_SERVER': "{}/CarlaUE4.sh".format(args.carla_root)})
 
-
-
     def cleanup(self, ego=False):
         """
         Remove and destroy all actors
@@ -214,7 +212,7 @@ class ChallengeEvaluator(object):
         master_scenario_configuration.route = route
         master_scenario_configuration.town = town_name
         # TODO THIS NAME IS BIT WEIRD SINCE THE EGO VEHICLE  IS ALREADY THERE, IT IS MORE ABOUT THE TRANSFORM
-        master_scenario_configuration.ego_vehicle = ActorConfigurationData( 'vehicle.lincoln.mkz2017', self.ego_vehicle.get_transform())
+        master_scenario_configuration.ego_vehicle = ActorConfigurationData('vehicle.lincoln.mkz2017', self.ego_vehicle.get_transform())
         return Master(self.world, self.ego_vehicle, master_scenario_configuration)
 
 
@@ -431,6 +429,12 @@ class ChallengeEvaluator(object):
             self.agent_instance = getattr(self.module_agent, self.module_agent.__name__)(args.config)
             self.agent_instance.set_global_plan(gps_route)
             # main loop
+
+            for scenario in list_scenarios:
+                scenario.scenario.scenario_tree.tick_once()
+
+            print (" Tick the scenarios once ...")
+
             while self.master_is_running():
                 # update all scenarios
                 for scenario in list_scenarios:
