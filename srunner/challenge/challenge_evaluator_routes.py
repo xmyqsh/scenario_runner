@@ -422,8 +422,8 @@ class ChallengeEvaluator(object):
             list_scenarios = [self.master_scenario]
             # build the instance based on the parsed definitions.
             list_scenarios += self.build_scenario_instances(list_of_scenarios_definitions, route_description['town_name'])
+            print (" SCENARIOS BUILT ")
 
-            client.tick()
             # create agent
             self.agent_instance = getattr(self.module_agent, self.module_agent.__name__)(args.config)
             self.agent_instance.set_global_plan(gps_route)
@@ -438,8 +438,7 @@ class ChallengeEvaluator(object):
                 self.ego_vehicle.apply_control(ego_action)
 
                 # time continues
-                client.tick()
-
+                #TODO world should tick on synch mode.
 
             for scenario in list_scenarios:
                 del scenario
