@@ -82,3 +82,6 @@ class TestScenarioBuilder(unittest.TestCase):
 
             print (" Finished")
 
+
+            challenge.cleanup(ego=True)
+            challenge.agent_instance.destroy()
