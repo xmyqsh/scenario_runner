@@ -378,11 +378,10 @@ class ChallengeEvaluator(object):
         self._carla_server.reset(args.host, args.port)
         self._carla_server.wait_until_ready()
 
-
         # retrieve worlds annotations
         world_annotations = parser.parse_annotations_file(args.annotations_file)
         # retrieve routes
-        route_descriptions_list = parser.parse_routes_file(args.routes_file)
+        route_descriptions_list = parser.parse_routes_file(args.routes)
 
         # find and filter potential scenarios for each of the evaluated routes
         potential_scenarios_list = [parser.scan_route_for_scenarios(route_description, world_annotations)
@@ -465,6 +464,12 @@ if __name__ == '__main__':
     PARSER.add_argument('--route-visible', action="store_true", help='Run with a visible route')
     PARSER.add_argument('--debug', action="store_true", help='Run with debug output')
     PARSER.add_argument('--file', action="store_true", help='Write results into a txt file')
+    PARSER.add_argument(
+        '--routes', help='Name of the route to be executed. Point to the route_xml_file to be executed.')
+
+    PARSER.add_argument(
+        '--scenarios', help='Name of the scenario annotation file to be mixed with the route.')
+
 
     ARGUMENTS = PARSER.parse_args()
 
@@ -477,6 +482,16 @@ if __name__ == '__main__':
 
     if not ROOT_SCENARIO_RUNNER:
         print("Error. ROOT_SCENARIO_RUNNER not found. Please run setup_environment.sh first.")
+        sys.exit(0)
+
+    if ARGUMENTS.routes is None:
+        print("Please specify a path to a route file  '--route path-to-route'\n\n")
+        PARSER.print_help(sys.stdout)
+        sys.exit(0)
+
+    if ARGUMENTS.scenarios is None:
+        print("Please specify a path to a route file  '--route path-to-route'\n\n")
+        PARSER.print_help(sys.stdout)
         sys.exit(0)
 
     ARGUMENTS.carla_root = CARLA_ROOT
