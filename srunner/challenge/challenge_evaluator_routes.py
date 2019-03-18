@@ -151,6 +151,19 @@ class ChallengeEvaluator(object):
             del self.world
 
 
+    def prepare_ego_car(self, start_position):
+        """
+        Spawn or update all scenario actors according to
+        their parameters provided in config
+        """
+
+        # If ego_vehicle already exists, just update location
+        # Otherwise spawn ego vehicle
+        if self.ego_vehicle is None:
+            # TODO: the model is now hardcoded but that can change in a future.
+            self.ego_vehicle = CarlaActorPool.setup_actor('vehicle.lincoln.mkz2017', start_position, True)
+        else:
+            self.ego_vehicle.set_transform('vehicle.lincoln.mkz2017')
 
 
 
@@ -391,7 +404,8 @@ class ChallengeEvaluator(object):
 
             # prepare route's trajectory
             gps_route, world_coordinates_route = interpolate_trajectory(world, route_description['trajectory'])
-
+            # prepare the ego car to run the route.
+            self.prepare_ego_car(world_coordinates_route[0])  # It starts on the first waypoint of the route
             # build the master scenario based on the route and the target.
             self.master_scenario = self.build_master_scenario(world_coordinates_route)
             list_scenarios = [self.master_scenario]
