@@ -60,7 +60,7 @@ class TestScenarioBuilder(unittest.TestCase):
             #settings.synchronous_mode = True
             #world.apply_settings(settings)
             # Set the actor pool so the scenarios can prepare themselves when needed
-            CarlaActorPool.set_world(world)
+            CarlaActorPool.set_world(challenge.world)
             # find and filter potential scenarios
             potential_scenarios_definitions = parser.scan_route_for_scenarios(route_description, world_annotations)
             list_of_scenarios_definitions = potential_scenarios_definitions
