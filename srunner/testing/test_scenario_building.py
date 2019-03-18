@@ -84,4 +84,3 @@ class TestScenarioBuilder(unittest.TestCase):
 
 
             challenge.cleanup(ego=True)
-            
