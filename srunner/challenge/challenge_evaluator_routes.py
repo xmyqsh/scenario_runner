@@ -41,7 +41,7 @@ from srunner.scenarios.master import Master
 
 # The configuration parser
 
-from srunner.scenarios.config_parser import ActorConfiguration, ScenarioConfiguration, RouteConfiguration
+from srunner.scenarios.config_parser import ActorConfiguration, ScenarioConfiguration, RouteConfiguration, ActorConfigurationData
 from srunner.scenariomanager.traffic_events import TrafficEvent, TrafficEventType
 
 
@@ -166,9 +166,9 @@ class ChallengeEvaluator(object):
             self.ego_vehicle.set_transform(start_transform)
 
 
-
     def scenario_sampling(self, potential_scenarios_definitions):
         return potential_scenarios_definitions
+
 
     # convert to a better json
     def get_actors_instances(self, list_of_antagonist_actors):
@@ -208,12 +208,12 @@ class ChallengeEvaluator(object):
         master_scenario_configuration.target = route[-1][0]
         master_scenario_configuration.route = route
         master_scenario_configuration.town = town_name
-        master_scenario_configuration.ego_vehicle = self.ego_vehicle  # TODO: maybe this is not necessary
-
+        # TODO THIS NAME IS BIT WEIRD SINCE THE EGO VEHICLE  IS ALREADY THERE, IT IS MORE ABOUT THE TRANSFORM
+        master_scenario_configuration.ego_vehicle = ActorConfigurationData( 'vehicle.lincoln.mkz2017', self.ego_vehicle.get_transform())
         return Master(self.world, self.ego_vehicle, master_scenario_configuration)
 
 
-    def build_scenario_instances(self, scenario_definition_vec, town):
+    def build_scenario_instances(self, scenario_definition_vec, town_name):
         """
             Based on the parsed route and possible scenarios, build all the scenario classes.
         :param scenario_definition_vec: the dictionary defining the scenarios
@@ -236,7 +236,7 @@ class ChallengeEvaluator(object):
 
             scenario_configuration = ScenarioConfiguration()
             scenario_configuration.other_actors = list_of_actor_conf_instances
-            scenario_configuration.town = town
+            scenario_configuration.town = town_name
             scenario_configuration.ego_vehicle = egoactor_trigger_position
 
             scenario_instance = ScenarioClass(self.world, self.ego_vehicle, scenario_configuration)

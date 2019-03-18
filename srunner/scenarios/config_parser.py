@@ -59,6 +59,7 @@ class TriggerConfigurariton(object):
 
         self.transform = carla.Transform(carla.Location(x=pos_x, y=pos_y, z=pos_z))
 
+
 class TargetConfiguration(object):
 
     """
