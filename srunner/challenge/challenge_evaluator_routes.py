@@ -44,6 +44,7 @@ from srunner.scenarios.master import Master
 from srunner.scenarios.config_parser import ActorConfiguration, ScenarioConfiguration, RouteConfiguration, ActorConfigurationData
 from srunner.scenariomanager.traffic_events import TrafficEvent, TrafficEventType
 
+from srunner.challenge.utils.trajectory_interpolation import interpolate_trajectory
 
 
 
@@ -405,7 +406,8 @@ class ChallengeEvaluator(object):
             CarlaActorPool.set_world(self.world)
 
             # prepare route's trajectory
-            gps_route, world_coordinates_route = interpolate_trajectory(world, route_description['trajectory'])
+            gps_route, world_coordinates_route = interpolate_trajectory(self.world,
+                                                                        route_description['trajectory'])
             # prepare the ego car to run the route.
             self.prepare_ego_car(world_coordinates_route[0])  # It starts on the first waypoint of the route
             # build the master scenario based on the route and the target.
@@ -435,6 +437,11 @@ class ChallengeEvaluator(object):
 
             self.agent_instance.destroy()
 
+            for scenario in list_scenarios:
+                del scenario
+
+            self.cleanup(ego=True)
+            self.agent_instance.destroy()
             # statistics recording
             result, final_score, return_message = self.summary_route_performance()
 
