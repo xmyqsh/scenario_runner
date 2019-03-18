@@ -13,12 +13,11 @@ from srunner.challenge.challenge_evaluator_routes import ChallengeEvaluator
 
 from srunner.scenariomanager.carla_data_provider import CarlaActorPool
 
+from srunner.challenge.utils.trajectory_interpolation import interpolate_trajectory
 import carla
-"""
-The idea of this test is to check if sampling is able to sample random sequencial images
-inside a batch
 
-"""
+
+
 
 class Arguments():
 
@@ -41,7 +40,7 @@ class TestScenarioBuilder(unittest.TestCase):
 
         args = Arguments()
         client = carla.Client(args.host, int(args.port))
-        client.set_timeout(self.client_timeout)
+        client.set_timeout(25.0)
         challenge = ChallengeEvaluator(args)
 
         filename = os.path.join(self.root_route_file_position, 'Town03_scenarios_AntagonistVehicleWorldSpace.json')
@@ -56,18 +55,18 @@ class TestScenarioBuilder(unittest.TestCase):
         for route_description in list_route_descriptions:
 
 
-            self.world = client.load_world(route_description['town'])
-            settings = self.world.get_settings()
+            world = client.load_world(route_description['town'])
+            settings = world.get_settings()
             settings.synchronous_mode = True
-            self.world.apply_settings(settings)
+            world.apply_settings(settings)
             # Set the actor pool so the scenarios can prepare themselves when needed
-            CarlaActorPool.set_world(self.world)
+            CarlaActorPool.set_world(world)
             # find and filter potential scenarios
             potential_scenarios_definitions = parser.scan_route_for_scenarios(route_description, world_annotations)
             list_of_scenarios_definitions = potential_scenarios_definitions
 
             # prepare route's trajectory
-            gps_route, world_coordinates_route = parser.parse_trajectory(route_description['trajectory'])
+            gps_route, world_coordinates_route = interpolate_trajectory(world, route_description['trajectory'])
 
             # build the master scenario based on the route and the target.
             master_scenario = challenge.build_master_scenario(world_coordinates_route)

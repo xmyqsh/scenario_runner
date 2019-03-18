@@ -200,12 +200,13 @@ class ChallengeEvaluator(object):
 
     def build_scenario_instances(self, scenario_definition_vec, town):
         """
-            Based on the parsed route and posible scenarios, build all the scenario classes.
+            Based on the parsed route and possible scenarios, build all the scenario classes.
         :param scenario_definition_vec: the dictionary defining the scenarios
         :param town:
         :return:
         """
         scenario_instance_vec = []
+        print (" Going to go for the scenarios")
 
         for definition in scenario_definition_vec:
             # Get the class possibilities for this scenario number

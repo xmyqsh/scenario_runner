@@ -49,7 +49,7 @@ class TestRouteGenerator(unittest.TestCase):
 
 
 
-    def test_parse_trajectory(self):
+    def test_scenario_(self):
 
         # It should be consistent after parsing
         pass
