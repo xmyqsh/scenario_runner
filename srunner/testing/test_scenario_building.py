@@ -84,4 +84,4 @@ class TestScenarioBuilder(unittest.TestCase):
 
 
             challenge.cleanup(ego=True)
-            challenge.agent_instance.destroy()
+            
