@@ -253,9 +253,9 @@ class ChallengeEvaluator(object):
             The master scenario tests if the route is still running.
         """
         if self.master_scenario is None:
-            raise ValueError('You should not run a rout without a master scenario')
+            raise ValueError('You should not run a route without a master scenario')
 
-        return self.master_scenario.scenario_tree.status == py_trees.common.Status.RUNNING
+        return self.master_scenario.scenario.scenario_tree.status == py_trees.common.Status.RUNNING
 
 
     def summary_route_performance(self):
