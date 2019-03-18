@@ -151,7 +151,7 @@ class ChallengeEvaluator(object):
             del self.world
 
 
-    def prepare_ego_car(self, start_position):
+    def prepare_ego_car(self, start_transform):
         """
         Spawn or update all scenario actors according to
         their parameters provided in config
@@ -161,9 +161,9 @@ class ChallengeEvaluator(object):
         # Otherwise spawn ego vehicle
         if self.ego_vehicle is None:
             # TODO: the model is now hardcoded but that can change in a future.
-            self.ego_vehicle = CarlaActorPool.setup_actor('vehicle.lincoln.mkz2017', start_position, True)
+            self.ego_vehicle = CarlaActorPool.setup_actor('vehicle.lincoln.mkz2017', start_transform, True)
         else:
-            self.ego_vehicle.set_transform('vehicle.lincoln.mkz2017')
+            self.ego_vehicle.set_transform(start_transform)
 
 
 
