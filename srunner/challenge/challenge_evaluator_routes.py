@@ -437,7 +437,7 @@ class ChallengeEvaluator(object):
                 # ego vehicle acts
                 ego_action = self.agent_instance()
                 self.ego_vehicle.apply_control(ego_action)
-
+                print ("Running the scenario...tick")
                 # time continues
                 #TODO world should tick on synch mode.
 
