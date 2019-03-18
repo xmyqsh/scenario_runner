@@ -449,12 +449,6 @@ class ChallengeEvaluator(object):
         self._carla_server.stop()
 
 
-            # cleanup
-
-        self.cleanup(ego=True)
-        # statistics report
-        # TODO:
-
         # final measurements from the challenge
         self.final_challenge_statistics()
 
