@@ -40,7 +40,6 @@ def location_route_to_gps(route, lat_ref, lon_ref):
     gps_route = []
 
     for waypoint, connection in route:
-        print ("waypoint connection ", waypoint, connection)
         gps_coord = _location_to_gps(lat_ref, lon_ref, waypoint.transform.location)
         gps_route.append((gps_coord, connection))
 
