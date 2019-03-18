@@ -152,6 +152,8 @@ class ChallengeEvaluator(object):
         if self.world is not None:
             del self.world
 
+        self._carla_server.stop()
+
 
     def prepare_ego_car(self, start_transform):
         """
@@ -380,7 +382,7 @@ class ChallengeEvaluator(object):
         self._carla_server.wait_until_ready()
 
         # retrieve worlds annotations
-        world_annotations = parser.parse_annotations_file(args.annotations_file)
+        world_annotations = parser.parse_annotations_file(args.scenarios)
         # retrieve routes
         route_descriptions_list = parser.parse_routes_file(args.routes)
 
