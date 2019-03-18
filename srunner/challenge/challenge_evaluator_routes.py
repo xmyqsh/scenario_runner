@@ -208,6 +208,8 @@ class ChallengeEvaluator(object):
         master_scenario_configuration.target = route[-1][0]
         master_scenario_configuration.route = route
         master_scenario_configuration.town = town_name
+        master_scenario_configuration.ego_vehicle = self.ego_vehicle  # TODO: maybe this is not necessary
+
         return Master(self.world, self.ego_vehicle, master_scenario_configuration)
 
 
