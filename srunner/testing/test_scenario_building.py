@@ -68,6 +68,8 @@ class TestScenarioBuilder(unittest.TestCase):
             # prepare route's trajectory
             gps_route, world_coordinates_route = interpolate_trajectory(challenge.world,
                                                                         route_description['trajectory'])
+            print (" first waypoint ", world_coordinates_route)
+            challenge.prepare_ego_car(world_coordinates_route[0])
 
             # build the master scenario based on the route and the target.
             master_scenario = challenge.build_master_scenario(world_coordinates_route, route_description['town_name'])
