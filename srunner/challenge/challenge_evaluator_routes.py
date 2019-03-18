@@ -393,7 +393,6 @@ class ChallengeEvaluator(object):
 
             list_of_scenarios_definitions = self.scenario_sampling(potential_scenarios)
 
-
             # setup world and client assuming that the CARLA server is up and running
             client = carla.Client(args.host, int(args.port))
             client.set_timeout(self.client_timeout)
@@ -434,8 +433,6 @@ class ChallengeEvaluator(object):
                 # time continues
                 client.tick()
 
-
-            self.agent_instance.destroy()
 
             for scenario in list_scenarios:
                 del scenario
