@@ -249,12 +249,14 @@ class ChallengeEvaluator(object):
 
         return scenario_definition_vec
 
-    def route_is_running(self):
+    def master_is_running(self):
         """
             The master scenario tests if the route is still running.
         """
         if self.master_scenario is None:
             raise ValueError('You should not run a route without a master scenario')
+
+        print (" Current Status ", self.master_scenario.scenario.scenario_tree.status)
 
         return self.master_scenario.scenario.scenario_tree.status == py_trees.common.Status.RUNNING
 
@@ -429,7 +431,7 @@ class ChallengeEvaluator(object):
             self.agent_instance = getattr(self.module_agent, self.module_agent.__name__)(args.config)
             self.agent_instance.set_global_plan(gps_route)
             # main loop
-            while self.route_is_running():
+            while self.master_is_running():
                 # update all scenarios
                 for scenario in list_scenarios:
                     scenario.scenario.scenario_tree.tick_once()
