@@ -55,10 +55,10 @@ class TestScenarioBuilder(unittest.TestCase):
         for route_description in list_route_descriptions:
 
 
-            world = client.load_world(route_description['town'])
-            settings = world.get_settings()
-            settings.synchronous_mode = True
-            world.apply_settings(settings)
+            world = client.load_world(route_description['town_name'])
+            #settings = world.get_settings()
+            #settings.synchronous_mode = True
+            #world.apply_settings(settings)
             # Set the actor pool so the scenarios can prepare themselves when needed
             CarlaActorPool.set_world(world)
             # find and filter potential scenarios
