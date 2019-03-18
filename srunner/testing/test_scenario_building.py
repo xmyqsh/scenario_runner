@@ -70,6 +70,8 @@ class TestScenarioBuilder(unittest.TestCase):
                                                                         route_description['trajectory'])
             print (" first waypoint ", world_coordinates_route[0])
             challenge.prepare_ego_car(world_coordinates_route[0][0].transform)
+            print ("ego prepared")
+            print (challenge.ego_vehicle)
 
             # build the master scenario based on the route and the target.
             master_scenario = challenge.build_master_scenario(world_coordinates_route, route_description['town_name'])
