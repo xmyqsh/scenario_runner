@@ -47,6 +47,30 @@ class TestRouteGenerator(unittest.TestCase):
         self.assertEqual(len(posible_scenarios), 4)
 
 
+    def test_scan_route_for_town01(self):
+        # Read the files going to be used for this test
+        filename = os.path.join(self.root_route_file_position, 'Town01_scenarios.json')
+        annotations = parser.parse_annotations_file(filename)
+        filename = os.path.join(self.root_route_file_position, 'routes_town06_test.xml')
+        routes_town06 = parser.parse_routes_file(filename)
+        filename = os.path.join(self.root_route_file_position, 'routes_town01.xml')
+        routes_town01 = parser.parse_routes_file(filename)
+
+        # The routes for this file is in a different town, no posible scenario is expected
+        for route in routes_town06:
+            posible_scenarios = parser.scan_route_for_scenarios(route, annotations)
+            self.assertEqual(len(posible_scenarios), 0)
+
+        # For the positions into the first route route at least four scenarios can be placed
+        route = routes_town01[0]
+        posible_scenarios = parser.scan_route_for_scenarios(route, annotations)
+        print("##################")
+        print ('For The route ', route['id'], " We found these scenarios")
+        print ("##################")
+        pprint(posible_scenarios)
+        #self.assertEqual(len(posible_scenarios), 4)
+
+
 
 
     def test_scenario_(self):

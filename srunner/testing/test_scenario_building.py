@@ -43,12 +43,12 @@ class TestScenarioBuilder(unittest.TestCase):
         client.set_timeout(25.0)
         challenge = ChallengeEvaluator(args)
 
-        filename = os.path.join(self.root_route_file_position, 'Town03_scenarios_AntagonistVehicleWorldSpace.json')
+        filename = os.path.join(self.root_route_file_position, 'Town01_scenarios.json')
         world_annotations = parser.parse_annotations_file(filename)
         # retrieve routes
         # Which type of file is expected ????
 
-        filename = os.path.join(self.root_route_file_position, 'routes_town03_test.xml')
+        filename = os.path.join(self.root_route_file_position, 'routes_town01.xml')
         list_route_descriptions = parser.parse_routes_file(filename)
 
         # For each of the routes to be evaluated.
