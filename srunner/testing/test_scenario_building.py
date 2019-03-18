@@ -66,11 +66,13 @@ class TestScenarioBuilder(unittest.TestCase):
             list_of_scenarios_definitions = potential_scenarios_definitions
 
             # prepare route's trajectory
-            gps_route, world_coordinates_route = interpolate_trajectory(challenge.world, route_description['trajectory'])
+            gps_route, world_coordinates_route = interpolate_trajectory(challenge.world,
+                                                                        route_description['trajectory'])
 
             # build the master scenario based on the route and the target.
-            master_scenario = challenge.build_master_scenario(world_coordinates_route)
+            master_scenario = challenge.build_master_scenario(world_coordinates_route, route_description['town_name'])
             list_scenarios = [master_scenario]
+            print (" Built the master scenario ")
             # build the instance based on the parsed definitions.
             list_scenarios += challenge.build_scenario_instances(list_of_scenarios_definitions)
 
