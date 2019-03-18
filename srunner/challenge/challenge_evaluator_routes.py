@@ -380,15 +380,19 @@ class ChallengeEvaluator(object):
         """
         self._carla_server.reset(args.host, args.port)
         self._carla_server.wait_until_ready()
-
+        print ("Started CARLA")
         # retrieve worlds annotations
         world_annotations = parser.parse_annotations_file(args.scenarios)
+        print (" READ WORLD ANNOTATIONS ")
         # retrieve routes
         route_descriptions_list = parser.parse_routes_file(args.routes)
+        print (" READ THE ROUTE DESCRIPTION")
 
         # find and filter potential scenarios for each of the evaluated routes
         potential_scenarios_list = [parser.scan_route_for_scenarios(route_description, world_annotations)
                                     for route_description in route_descriptions_list]
+
+        print ("COMPUTED SCENARIOS LIST")
 
         # For each of the routes and corresponding possible scenarios to be evaluated.
         for route_description, potential_scenarios in zip(route_descriptions_list, potential_scenarios_list):
@@ -400,15 +404,16 @@ class ChallengeEvaluator(object):
             client.set_timeout(self.client_timeout)
 
             self.world = client.load_world(route_description['town_name'])
-            settings = self.world.get_settings()
-            settings.synchronous_mode = True
-            self.world.apply_settings(settings)
+            #settings = self.world.get_settings()
+            #settings.synchronous_mode = True
+            #self.world.apply_settings(settings)
             # Set the actor pool so the scenarios can prepare themselves when needed
             CarlaActorPool.set_world(self.world)
 
             # prepare route's trajectory
             gps_route, world_coordinates_route = interpolate_trajectory(self.world,
                                                                         route_description['trajectory'])
+            print ("INTERPOLATE TRAJECTORY")
             # prepare the ego car to run the route.
             self.prepare_ego_car(world_coordinates_route[0])  # It starts on the first waypoint of the route
             # build the master scenario based on the route and the target.
@@ -488,12 +493,12 @@ if __name__ == '__main__':
         sys.exit(0)
 
     if ARGUMENTS.routes is None:
-        print("Please specify a path to a route file  '--route path-to-route'\n\n")
+        print("Please specify a path to a route file  '--routes path-to-route'\n\n")
         PARSER.print_help(sys.stdout)
         sys.exit(0)
 
     if ARGUMENTS.scenarios is None:
-        print("Please specify a path to a route file  '--route path-to-route'\n\n")
+        print("Please specify a path to a scenario specification file  '--scenarios path-to-file'\n\n")
         PARSER.print_help(sys.stdout)
         sys.exit(0)
 
