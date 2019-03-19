@@ -462,6 +462,10 @@ class ChallengeEvaluator(object):
             # prepare route's trajectory
             gps_route, world_coordinates_route = interpolate_trajectory(self.world,
                                                                         route_description['trajectory'])
+            # create agent
+            self.agent_instance = getattr(self.module_agent, self.module_agent.__name__)(args.config)
+            self.agent_instance.set_global_plan(gps_route)
+
             # prepare the ego car to run the route.
             self.prepare_ego_car(world_coordinates_route[0][0].transform)  # It starts on the first waypoint of the route
             # build the master scenario based on the route and the target.
@@ -469,9 +473,7 @@ class ChallengeEvaluator(object):
             list_scenarios = [self.master_scenario]
             # build the instance based on the parsed definitions.
             list_scenarios += self.build_scenario_instances(list_of_scenarios_definitions, route_description['town_name'])
-            # create agent
-            self.agent_instance = getattr(self.module_agent, self.module_agent.__name__)(args.config)
-            self.agent_instance.set_global_plan(gps_route)
+
             # main loop
 
             for scenario in list_scenarios:
