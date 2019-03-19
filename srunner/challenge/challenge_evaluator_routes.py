@@ -520,8 +520,7 @@ class ChallengeEvaluator(object):
                 del scenario
             self.cleanup(ego=True)
             self.agent_instance.destroy()
-            # statistics recording
-            result, final_score, return_message = self.summary_route_performance()
+            break
 
         # final measurements from the challenge
         self.report_challenge_statistics(args.filename, args.show_to_participant, args.split)
