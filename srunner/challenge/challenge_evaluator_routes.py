@@ -24,6 +24,7 @@ import xml.etree.ElementTree as ET
 import carla
 import srunner.challenge.utils.route_configuration_parser as parser
 from srunner.challenge.envs.server_manager import ServerManagerBinary, ServerManagerDocker
+from srunner.challenge.envs.sensor_interface import CallBack, CANBusSensor, HDMapReader
 #from srunner.scenarios.challenge_basic import *
 #from srunner.scenarios.config_parser import *
 #from srunner.scenariomanager.scenario_manager import ScenarioManager
@@ -97,6 +98,7 @@ class ChallengeEvaluator(object):
     # CARLA world and scenario handlers
     world = None
     manager = None
+    agent_instance = None
 
     def __init__(self, args):
         self.output_scenario = []
@@ -170,8 +172,61 @@ class ChallengeEvaluator(object):
 
 
     def scenario_sampling(self, potential_scenarios_definitions):
+        # TODO add some sample techinique here
         return potential_scenarios_definitions
 
+
+    def setup_sensors(self, sensors, vehicle):
+        """
+        Create the sensors defined by the user and attach them to the ego-vehicle
+        :param sensors: list of sensors
+        :param vehicle: ego vehicle
+        :return:
+        """
+        bp_library = self.world.get_blueprint_library()
+        for sensor_spec in sensors:
+            # These are the pseudosensors (not spawned)
+            if sensor_spec['type'].startswith('sensor.can_bus'):
+                # The speedometer pseudo sensor is created directly here
+                sensor = CANBusSensor(vehicle, sensor_spec['reading_frequency'])
+            elif sensor_spec['type'].startswith('sensor.hd_map'):
+                # The HDMap pseudo sensor is created directly here
+                sensor = HDMapReader(vehicle, sensor_spec['reading_frequency'])
+            # These are the sensors spawned on the carla world
+            else:
+                bp = bp_library.find(sensor_spec['type'])
+                if sensor_spec['type'].startswith('sensor.camera'):
+                    bp.set_attribute('image_size_x', str(sensor_spec['width']))
+                    bp.set_attribute('image_size_y', str(sensor_spec['height']))
+                    bp.set_attribute('fov', str(sensor_spec['fov']))
+                    sensor_location = carla.Location(x=sensor_spec['x'], y=sensor_spec['y'],
+                                                     z=sensor_spec['z'])
+                    sensor_rotation = carla.Rotation(pitch=sensor_spec['pitch'],
+                                                     roll=sensor_spec['roll'],
+                                                     yaw=sensor_spec['yaw'])
+                elif sensor_spec['type'].startswith('sensor.lidar'):
+                    bp.set_attribute('range', '5000')
+                    sensor_location = carla.Location(x=sensor_spec['x'], y=sensor_spec['y'],
+                                                     z=sensor_spec['z'])
+                    sensor_rotation = carla.Rotation(pitch=sensor_spec['pitch'],
+                                                     roll=sensor_spec['roll'],
+                                                     yaw=sensor_spec['yaw'])
+                elif sensor_spec['type'].startswith('sensor.other.gnss'):
+                    sensor_location = carla.Location(x=sensor_spec['x'], y=sensor_spec['y'],
+                                                     z=sensor_spec['z'])
+                    sensor_rotation = carla.Rotation()
+
+                # create sensor
+                sensor_transform = carla.Transform(sensor_location, sensor_rotation)
+                sensor = self.world.spawn_actor(bp, sensor_transform,
+                                                vehicle)
+            # setup callback
+            sensor.listen(CallBack(sensor_spec['id'], sensor, self.agent_instance.sensor_interface))
+            self._sensors_list.append(sensor)
+
+        # check that all sensors have initialized their data structure
+        while not self.agent_instance.all_sensors_ready():
+            time.sleep(0.1)
 
     # convert to a better json
     def get_actors_instances(self, list_of_antagonist_actors):
@@ -206,9 +261,8 @@ class ChallengeEvaluator(object):
     def build_master_scenario(self, route, town_name):
         # We have to find the target.
         # we also have to convert the route to the expected format
-
         master_scenario_configuration = ScenarioConfiguration()
-        master_scenario_configuration.target = route[-1][0]
+        master_scenario_configuration.target = route[-1][0]  # Take the last point and add as target.
         master_scenario_configuration.route = route
         master_scenario_configuration.town = town_name
         # TODO THIS NAME IS BIT WEIRD SINCE THE EGO VEHICLE  IS ALREADY THERE, IT IS MORE ABOUT THE TRANSFORM
@@ -220,20 +274,18 @@ class ChallengeEvaluator(object):
         """
             Based on the parsed route and possible scenarios, build all the scenario classes.
         :param scenario_definition_vec: the dictionary defining the scenarios
-        :param town:
+        :param town: the town where scenarios are going to be
         :return:
         """
         scenario_instance_vec = []
-        print (" Going to go for the scenarios")
 
         for definition in scenario_definition_vec:
             # Get the class possibilities for this scenario number
             possibility_vec = number_class_translation[definition['name']]
-            # for now I dont know how to disambiguate this part.
+            #  TODO for now I dont know how to disambiguate this part.
             ScenarioClass = possibility_vec[0]
             # Create the other actors that are going to appear
             list_of_actor_conf_instances = self.get_actors_instances(definition['Antagonist_Vehicles'])
-            print ("actor appearing")
             # Create an actor configuration for the ego-vehicle trigger position
             egoactor_trigger_position = convert_json_to_actor(definition['trigger_position'])
 
@@ -247,17 +299,14 @@ class ChallengeEvaluator(object):
 
         return scenario_definition_vec
 
-    def master_is_running(self):
+    def route_is_running(self):
         """
             The master scenario tests if the route is still running.
         """
         if self.master_scenario is None:
             raise ValueError('You should not run a route without a master scenario')
 
-        print (" Current Status ", self.master_scenario.scenario.scenario_tree.status)
-
         return self.master_scenario.scenario.scenario_tree.status == py_trees.common.Status.RUNNING
-
 
     def summary_route_performance(self):
         """
@@ -381,19 +430,14 @@ class ChallengeEvaluator(object):
         """
         self._carla_server.reset(args.host, args.port)
         self._carla_server.wait_until_ready()
-        print ("Started CARLA")
+
         # retrieve worlds annotations
         world_annotations = parser.parse_annotations_file(args.scenarios)
-        print (" READ WORLD ANNOTATIONS ")
         # retrieve routes
         route_descriptions_list = parser.parse_routes_file(args.routes)
-        print (" READ THE ROUTE DESCRIPTION")
-
         # find and filter potential scenarios for each of the evaluated routes
         potential_scenarios_list = [parser.scan_route_for_scenarios(route_description, world_annotations)
                                     for route_description in route_descriptions_list]
-
-        print ("COMPUTED SCENARIOS LIST")
 
         # For each of the routes and corresponding possible scenarios to be evaluated.
         for route_description, potential_scenarios in zip(route_descriptions_list, potential_scenarios_list):
@@ -405,6 +449,7 @@ class ChallengeEvaluator(object):
             client.set_timeout(self.client_timeout)
 
             self.world = client.load_world(route_description['town_name'])
+            # TODO Test the load world
             #settings = self.world.get_settings()
             #settings.synchronous_mode = True
             #self.world.apply_settings(settings)
@@ -414,7 +459,6 @@ class ChallengeEvaluator(object):
             # prepare route's trajectory
             gps_route, world_coordinates_route = interpolate_trajectory(self.world,
                                                                         route_description['trajectory'])
-            print ("INTERPOLATE TRAJECTORY")
             # prepare the ego car to run the route.
 
             self.prepare_ego_car(world_coordinates_route[0][0].transform)  # It starts on the first waypoint of the route
@@ -423,8 +467,6 @@ class ChallengeEvaluator(object):
             list_scenarios = [self.master_scenario]
             # build the instance based on the parsed definitions.
             list_scenarios += self.build_scenario_instances(list_of_scenarios_definitions, route_description['town_name'])
-            print (" SCENARIOS BUILT ")
-
             # create agent
             self.agent_instance = getattr(self.module_agent, self.module_agent.__name__)(args.config)
             self.agent_instance.set_global_plan(gps_route)
@@ -433,17 +475,13 @@ class ChallengeEvaluator(object):
             for scenario in list_scenarios:
                 scenario.scenario.scenario_tree.tick_once()
 
-            print (" Tick the scenarios once ...")
-
-            while self.master_is_running():
+            while self.route_is_running():
                 # update all scenarios
                 for scenario in list_scenarios:
                     scenario.scenario.scenario_tree.tick_once()
-
                 # ego vehicle acts
                 ego_action = self.agent_instance()
                 self.ego_vehicle.apply_control(ego_action)
-                print ("Running the scenario...tick")
                 # time continues
                 #TODO world should tick on synch mode.
 
@@ -457,7 +495,6 @@ class ChallengeEvaluator(object):
 
         # stop CARLA server
         self._carla_server.stop()
-
 
         # final measurements from the challenge
         self.final_challenge_statistics()
