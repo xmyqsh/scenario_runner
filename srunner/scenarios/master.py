@@ -28,7 +28,7 @@ class Master(BasicScenario):
     radius = 10.0           # meters
     timeout = 300           # Timeout of scenario in seconds
 
-    def __init__(self, world, ego_vehicle, config, randomize=False, debug_mode=False):
+    def __init__(self, world, ego_vehicle, config, randomize=False, debug_mode=False, criteria_enable=True):
         """
         Setup all relevant parameters and create scenario
         """
@@ -45,7 +45,9 @@ class Master(BasicScenario):
         else:
             raise ValueError("Master scenario must have a route")
 
-        super(Master, self).__init__("ChallengeBasic", ego_vehicle, config, world, debug_mode, True)
+        super(Master, self).__init__("ChallengeBasic", ego_vehicle=ego_vehicle, config=config,
+                                     world=world, debug_mode=debug_mode,
+                                     terminate_on_failure=True, criteria_enable=criteria_enable)
 
     def _create_behavior(self):
         """
