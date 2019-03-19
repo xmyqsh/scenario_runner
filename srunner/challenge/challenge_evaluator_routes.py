@@ -16,7 +16,7 @@ from argparse import RawTextHelpFormatter
 import importlib
 import sys
 import os
-import math
+import json
 import time
 import py_trees
 
@@ -24,11 +24,8 @@ import xml.etree.ElementTree as ET
 
 import carla
 import srunner.challenge.utils.route_configuration_parser as parser
-from srunner.challenge.envs.server_manager import ServerManagerBinary, ServerManagerDocker
 from srunner.challenge.envs.sensor_interface import CallBack, CANBusSensor, HDMapReader
-#from srunner.scenarios.challenge_basic import *
-#from srunner.scenarios.config_parser import *
-#from srunner.scenariomanager.scenario_manager import ScenarioManager
+
 
 from srunner.scenariomanager.carla_data_provider import CarlaActorPool
 
@@ -89,19 +86,20 @@ class ChallengeEvaluator(object):
     Provisional code to evaluate AutonomousAgent performance
     """
 
-    ego_vehicle = None
-    actors = []
-
-    # Tunable parameters
-    client_timeout = 15.0   # in seconds
-    wait_for_world = 10.0  # in seconds
-
-    # CARLA world and scenario handlers
-    world = None
-    manager = None
-    agent_instance = None
-
     def __init__(self, args):
+        self.ego_vehicle = None
+        self.actors = []
+        self.statistics_routes = []
+
+        # Tunable parameters
+        self.client_timeout = 15.0  # in seconds
+        self.wait_for_world = 10.0  # in seconds
+
+        # CARLA world and scenario handlers
+        self.world = None
+        self.manager = None
+        self.agent_instance = None
+
         self.output_scenario = []
         self.master_scenario = None
         # first we instantiate the Agent
@@ -114,12 +112,6 @@ class ChallengeEvaluator(object):
         self._sensors_list = []
         self._hop_resolution = 2.0
 
-        # instantiate a CARLA server manager
-        if args.use_docker:
-            self._carla_server = ServerManagerDocker({'DOCKER_VERSION': args.docker_version})
-
-        else:
-            self._carla_server = ServerManagerBinary({'CARLA_SERVER': "{}/CarlaUE4.sh".format(args.carla_root)})
 
     def cleanup(self, ego=False):
         """
@@ -153,9 +145,6 @@ class ChallengeEvaluator(object):
             del self.manager
         if self.world is not None:
             del self.world
-
-        self._carla_server.stop()
-
 
     def prepare_ego_car(self, start_transform):
         """
@@ -311,89 +300,93 @@ class ChallengeEvaluator(object):
 
         return self.master_scenario.scenario.scenario_tree.status == py_trees.common.Status.RUNNING
 
-    def summary_route_performance(self):
+    def record_route_statistics(self, route_id):
         """
           This function is intended to be called from outside and provide
           statistics about the scenario (human-readable, for the CARLA challenge.)
         """
+
         PENALTY_COLLISION_STATIC = 10
         PENALTY_COLLISION_VEHICLE = 10
         PENALTY_COLLISION_PEDESTRIAN = 30
         PENALTY_TRAFFIC_LIGHT = 10
         PENALTY_WRONG_WAY = 5
+
         target_reached = False
         failure = False
         result = "SUCCESS"
-        final_score = 0.0
+        score_composed = 0.0
         score_penalty = 0.0
         score_route = 0.0
         return_message = ""
 
-        if isinstance(self.master_scenario.scenario.test_criteria, py_trees.composites.Parallel):
-            if self.master_scenario.scenario.test_criteria.status == py_trees.common.Status.FAILURE:
-                failure = True
-                result = "FAILURE"
-            if self.master_scenario.scenario.timeout_node.timeout and not failure:
-                result = "TIMEOUT"
+        if self.master_scenario.scenario.test_criteria.status == py_trees.common.Status.FAILURE:
+            failure = True
+            result = "FAILURE"
+        if self.master_scenario.scenario.timeout_node.timeout and not failure:
+            result = "TIMEOUT"
 
-            list_traffic_events = []
-            for node in self.master_scenario.scenario.test_criteria.children:
-                if node.list_traffic_events:
-                    list_traffic_events.extend(node.list_traffic_events)
+        list_traffic_events = []
+        for node in self.master_scenario.scenario.test_criteria.children:
+            if node.list_traffic_events:
+                list_traffic_events.extend(node.list_traffic_events)
 
-            list_collisions = []
-            list_red_lights = []
-            list_wrong_way = []
-            list_route_dev = []
-            # analyze all traffic events
-            for event in list_traffic_events:
-                if event.get_type() == TrafficEventType.COLLISION_STATIC:
-                    score_penalty += PENALTY_COLLISION_STATIC
-                    msg = event.get_message()
-                    if msg:
-                        list_collisions.append(event.get_message())
+        list_collisions = []
+        list_red_lights = []
+        list_wrong_way = []
+        list_route_dev = []
+        # analyze all traffic events
+        for event in list_traffic_events:
+            if event.get_type() == TrafficEventType.COLLISION_STATIC:
+                score_penalty += PENALTY_COLLISION_STATIC
+                msg = event.get_message()
+                if msg:
+                    list_collisions.append(event.get_message())
 
-                elif event.get_type() == TrafficEventType.COLLISION_VEHICLE:
-                    score_penalty += PENALTY_COLLISION_VEHICLE
-                    msg = event.get_message()
-                    if msg:
-                        list_collisions.append(event.get_message())
+            elif event.get_type() == TrafficEventType.COLLISION_VEHICLE:
+                score_penalty += PENALTY_COLLISION_VEHICLE
+                msg = event.get_message()
+                if msg:
+                    list_collisions.append(event.get_message())
 
-                elif event.get_type() == TrafficEventType.COLLISION_PEDESTRIAN:
-                    score_penalty += PENALTY_COLLISION_PEDESTRIAN
-                    msg = event.get_message()
-                    if msg:
-                        list_collisions.append(event.get_message())
+            elif event.get_type() == TrafficEventType.COLLISION_PEDESTRIAN:
+                score_penalty += PENALTY_COLLISION_PEDESTRIAN
+                msg = event.get_message()
+                if msg:
+                    list_collisions.append(event.get_message())
 
-                elif event.get_type() == TrafficEventType.TRAFFIC_LIGHT_INFRACTION:
-                    score_penalty += PENALTY_TRAFFIC_LIGHT
-                    msg = event.get_message()
-                    if msg:
-                        list_red_lights.append(event.get_message())
+            elif event.get_type() == TrafficEventType.TRAFFIC_LIGHT_INFRACTION:
+                score_penalty += PENALTY_TRAFFIC_LIGHT
+                msg = event.get_message()
+                if msg:
+                    list_red_lights.append(event.get_message())
 
-                elif event.get_type() == TrafficEventType.WRONG_WAY_INFRACTION:
-                    score_penalty += PENALTY_WRONG_WAY
-                    msg = event.get_message()
-                    if msg:
-                        list_wrong_way.append(event.get_message())
+            elif event.get_type() == TrafficEventType.WRONG_WAY_INFRACTION:
+                score_penalty += PENALTY_WRONG_WAY
+                msg = event.get_message()
+                if msg:
+                    list_wrong_way.append(event.get_message())
 
-                elif event.get_type() == TrafficEventType.ROUTE_DEVIATION:
-                    msg = event.get_message()
-                    if msg:
-                        list_route_dev.append(event.get_message())
+            elif event.get_type() == TrafficEventType.ROUTE_DEVIATION:
+                msg = event.get_message()
+                if msg:
+                    list_route_dev.append(event.get_message())
 
-                elif event.get_type() == TrafficEventType.ROUTE_COMPLETED:
-                    score_route = 100.0
-                    target_reached = True
-                elif event.get_type() == TrafficEventType.ROUTE_COMPLETION:
-                    if not target_reached:
+            elif event.get_type() == TrafficEventType.ROUTE_COMPLETED:
+                score_route = 100.0
+                target_reached = True
+            elif event.get_type() == TrafficEventType.ROUTE_COMPLETION:
+                if not target_reached:
+                    if event.get_dict() and 'route_completed' in event.get_dict():
                         score_route = event.get_dict()['route_completed']
+                    else:
+                        score_route = 0.0
 
-            final_score = max(score_route - score_penalty, 0)
+            score_composed = max(score_route - score_penalty, 0)
 
             return_message += "\n=================================="
             return_message += "\n==[{}] [Score = {:.2f} : (route_score={}, infractions=-{})]".format(result,
-                                                                                                     final_score,
+                                                                                                     score_composed,
                                                                                                      score_route,
                                                                                                      score_penalty)
             if list_collisions:
@@ -418,21 +411,51 @@ class ChallengeEvaluator(object):
 
             return_message += "\n=================================="
 
-        return result, final_score, return_message
+        current_statistics = { 'id': route_id,
+                               'score_composed': score_composed,
+                               'score_route': score_route,
+                               'score_penalty': score_penalty,
+                               'result': result,
+                               'help_text': return_message
+                             }
 
-    def final_challenge_statistics(self):
-        # Grab the statistics from all the routes.
-        pass
+        self.statistics_routes.append(current_statistics)
+
+    def report_challenge_statistics(self, filename, show_to_participant, split):
+        n_routes = len(self.statistics_routes)
+        score_composed = 0.0
+        score_route = 0.0
+        score_penalty = 0.0
+        help_message = ""
+
+        for stats in self.statistics_routes:
+            score_composed  += stats['score_composed'] / float(n_routes)
+            score_route     += stats['score_route'] / float(n_routes)
+            score_penalty   += stats['score_penalty'] / float(n_routes)
+            help_message += "{}\n\n".format(stats['help_text'])
+
+        # create json structure
+        json_data = {'results': [
+            {
+                'split': split,
+                'show_to_participant': show_to_participant,
+                'accuracies': {
+                                'avg. route points': score_route,
+                                'infraction points': score_penalty,
+                                'total avg.': score_composed
+                              }
+             }],
+                     'metadata': {'help_messages': help_message}
+        }
+
+        with open(filename, "w+") as fd:
+            fd.write(json.dumps(json_data, indent=4))
+
 
     def run(self, args):
         """
         Run all routes according to provided commandline args
         """
-        """
-            The world needs to be running
-        """
-        self._carla_server.reset(args.host, args.port)
-        self._carla_server.wait_until_ready()
 
         # retrieve worlds annotations
         world_annotations = parser.parse_annotations_file(args.scenarios)
@@ -487,8 +510,12 @@ class ChallengeEvaluator(object):
                 ego_action = self.agent_instance()
                 self.ego_vehicle.apply_control(ego_action)
                 # time continues
-                # TODO world should tick on synch mode.
+                # TODO world should tick on sync mode.
 
+            # statistics recording
+            self.record_route_statistics(route_description['id'])
+
+            # clean up
             for scenario in list_scenarios:
                 del scenario
             self.cleanup(ego=True)
@@ -496,11 +523,8 @@ class ChallengeEvaluator(object):
             # statistics recording
             result, final_score, return_message = self.summary_route_performance()
 
-        # stop CARLA server
-        self._carla_server.stop()
-
         # final measurements from the challenge
-        self.final_challenge_statistics()
+        self.report_challenge_statistics(args.filename, args.show_to_participant, args.split)
 
 
 if __name__ == '__main__':
@@ -511,18 +535,17 @@ if __name__ == '__main__':
     PARSER.add_argument('--host', default='localhost',
                         help='IP of the host server (default: localhost)')
     PARSER.add_argument('--port', default='2000', help='TCP port to listen to (default: 2000)')
-    PARSER.add_argument("--use-docker", type=bool, help="Use docker to run CARLA?", default=False)
-    PARSER.add_argument('--docker-version', type=str, help='Docker version to use for CARLA server', default="0.9.3")
     PARSER.add_argument("-a", "--agent", type=str, help="Path to Agent's py file to evaluate")
     PARSER.add_argument("--config", type=str, help="Path to Agent's configuration file", default="")
     PARSER.add_argument('--route-visible', action="store_true", help='Run with a visible route')
     PARSER.add_argument('--debug', action="store_true", help='Run with debug output')
-    PARSER.add_argument('--file', action="store_true", help='Write results into a txt file')
-    PARSER.add_argument(
-        '--routes', help='Name of the route to be executed. Point to the route_xml_file to be executed.')
-
-    PARSER.add_argument(
-        '--scenarios', help='Name of the scenario annotation file to be mixed with the route.')
+    PARSER.add_argument('--filename', type=str, help='Filename to store challenge results', default='results.json')
+    PARSER.add_argument('--split', type=str, help='Challenge split', default='dev_track_1')
+    PARSER.add_argument('--show-to-participant', type=bool, help='Show results to participant?', default=True)
+    PARSER.add_argument('--routes',
+                        help='Name of the route to be executed. Point to the route_xml_file to be executed.')
+    PARSER.add_argument('--scenarios',
+                        help='Name of the scenario annotation file to be mixed with the route.')
 
 
     ARGUMENTS = PARSER.parse_args()
