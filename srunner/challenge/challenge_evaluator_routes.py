@@ -17,6 +17,7 @@ import importlib
 import sys
 import os
 import math
+import time
 import py_trees
 
 import xml.etree.ElementTree as ET
@@ -55,7 +56,7 @@ number_class_translation = {
 
     "Scenario 1": [ControlLoss],
     "Scenario 2": [FollowLeadingVehicle],   # ToDO there is more than one class depending on the scenario configuraiton
-    "Scenario 3": [StationaryObjectCrossing, DynamicObjectCrossing],
+    "Scenario 3": [DynamicObjectCrossing],
     "Scenario 4": [VehicleTurningRight, VehicleTurningLeft],
     "Scenario 5": [],
     "Scenario 6": [],
@@ -170,6 +171,8 @@ class ChallengeEvaluator(object):
         else:
             self.ego_vehicle.set_transform(start_transform)
 
+        # setup sensors
+        self.setup_sensors(self.agent_instance.sensors(), self.ego_vehicle)
 
     def scenario_sampling(self, potential_scenarios_definitions):
         # TODO add some sample techinique here
@@ -449,7 +452,7 @@ class ChallengeEvaluator(object):
             client.set_timeout(self.client_timeout)
 
             self.world = client.load_world(route_description['town_name'])
-            # TODO Test the load world
+            # TODO Sync mode not prepared
             #settings = self.world.get_settings()
             #settings.synchronous_mode = True
             #self.world.apply_settings(settings)
@@ -460,7 +463,6 @@ class ChallengeEvaluator(object):
             gps_route, world_coordinates_route = interpolate_trajectory(self.world,
                                                                         route_description['trajectory'])
             # prepare the ego car to run the route.
-
             self.prepare_ego_car(world_coordinates_route[0][0].transform)  # It starts on the first waypoint of the route
             # build the master scenario based on the route and the target.
             self.master_scenario = self.build_master_scenario(world_coordinates_route, route_description['town_name'])
@@ -483,11 +485,10 @@ class ChallengeEvaluator(object):
                 ego_action = self.agent_instance()
                 self.ego_vehicle.apply_control(ego_action)
                 # time continues
-                #TODO world should tick on synch mode.
+                # TODO world should tick on synch mode.
 
             for scenario in list_scenarios:
                 del scenario
-
             self.cleanup(ego=True)
             self.agent_instance.destroy()
             # statistics recording
