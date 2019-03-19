@@ -24,6 +24,7 @@ import xml.etree.ElementTree as ET
 
 import carla
 import srunner.challenge.utils.route_configuration_parser as parser
+from srunner.challenge.envs.scene_layout_sensors import SceneLayoutReader, ObjectFinder
 from srunner.challenge.envs.sensor_interface import CallBack, CANBusSensor, HDMapReader
 
 
@@ -87,6 +88,10 @@ class ChallengeEvaluator(object):
     """
 
     def __init__(self, args):
+        phase_codename = args.split
+        self.phase = phase_codename.split("_")[0]
+        self.track = int(phase_codename.split("_")[-1])
+
         self.ego_vehicle = None
         self.actors = []
         self.statistics_routes = []
@@ -167,7 +172,6 @@ class ChallengeEvaluator(object):
         # TODO add some sample techinique here
         return potential_scenarios_definitions
 
-
     def setup_sensors(self, sensors, vehicle):
         """
         Create the sensors defined by the user and attach them to the ego-vehicle
@@ -178,7 +182,13 @@ class ChallengeEvaluator(object):
         bp_library = self.world.get_blueprint_library()
         for sensor_spec in sensors:
             # These are the pseudosensors (not spawned)
-            if sensor_spec['type'].startswith('sensor.can_bus'):
+            if sensor_spec['type'].startswith('sensor.scene_layout'):
+                # Static sensor that gives you the entire information from the world (Just runs once)
+                sensor = SceneLayoutReader(self.world)
+            elif sensor_spec['type'].startswith('sensor.object_finder'):
+                # This sensor returns the position of the dynamic objects in the scene.
+                sensor = ObjectFinder(self.world, sensor_spec['reading_frequency'])
+            elif sensor_spec['type'].startswith('sensor.can_bus'):
                 # The speedometer pseudo sensor is created directly here
                 sensor = CANBusSensor(vehicle, sensor_spec['reading_frequency'])
             elif sensor_spec['type'].startswith('sensor.hd_map'):
@@ -197,7 +207,12 @@ class ChallengeEvaluator(object):
                                                      roll=sensor_spec['roll'],
                                                      yaw=sensor_spec['yaw'])
                 elif sensor_spec['type'].startswith('sensor.lidar'):
-                    bp.set_attribute('range', '5000')
+                    bp.set_attribute('range', '200')
+                    bp.set_attribute('rotation_frequency', '10')
+                    bp.set_attribute('channels', '32')
+                    bp.set_attribute('upper_fov', '15')
+                    bp.set_attribute('lower_fov', '-30')
+                    bp.set_attribute('points_per_second', '500000')
                     sensor_location = carla.Location(x=sensor_spec['x'], y=sensor_spec['y'],
                                                      z=sensor_spec['z'])
                     sensor_rotation = carla.Rotation(pitch=sensor_spec['pitch'],
@@ -218,6 +233,7 @@ class ChallengeEvaluator(object):
 
         # check that all sensors have initialized their data structure
         while not self.agent_instance.all_sensors_ready():
+            print(" waiting for one data reading from sensors...")
             time.sleep(0.1)
 
     # convert to a better json
@@ -421,7 +437,7 @@ class ChallengeEvaluator(object):
 
         self.statistics_routes.append(current_statistics)
 
-    def report_challenge_statistics(self, filename, show_to_participant, split):
+    def report_challenge_statistics(self, filename, show_to_participant):
         n_routes = len(self.statistics_routes)
         score_composed = 0.0
         score_route = 0.0
@@ -434,10 +450,16 @@ class ChallengeEvaluator(object):
             score_penalty   += stats['score_penalty'] / float(n_routes)
             help_message += "{}\n\n".format(stats['help_text'])
 
+        if self.phase == 'validation' or self.phase == 'test':
+            help_message = "No metadata available for this phase"
+
         # create json structure
-        json_data = {'results': [
+        json_data = {
+            'submission_status': 'FINISHED',
+            'stderr': help_message,
+            'results': [
             {
-                'split': split,
+                'split': self.phase,
                 'show_to_participant': show_to_participant,
                 'accuracies': {
                                 'avg. route points': score_route,
@@ -445,7 +467,6 @@ class ChallengeEvaluator(object):
                                 'total avg.': score_composed
                               }
              }],
-                     'metadata': {'help_messages': help_message}
         }
 
         with open(filename, "w+") as fd:
@@ -523,7 +544,7 @@ class ChallengeEvaluator(object):
             break
 
         # final measurements from the challenge
-        self.report_challenge_statistics(args.filename, args.show_to_participant, args.split)
+        self.report_challenge_statistics(args.filename, args.show_to_participant)
 
 
 if __name__ == '__main__':
