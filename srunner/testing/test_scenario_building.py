@@ -56,14 +56,10 @@ class TestScenarioBuilder(unittest.TestCase):
 
 
             challenge.world = client.load_world(route_description['town_name'])
-            #settings = world.get_settings()
-            #settings.synchronous_mode = True
-            #world.apply_settings(settings)
             # Set the actor pool so the scenarios can prepare themselves when needed
             CarlaActorPool.set_world(challenge.world)
             # find and filter potential scenarios
             potential_scenarios_definitions = parser.scan_route_for_scenarios(route_description, world_annotations)
-            list_of_scenarios_definitions = potential_scenarios_definitions
 
             # prepare route's trajectory
             gps_route, world_coordinates_route = interpolate_trajectory(challenge.world,
@@ -78,9 +74,8 @@ class TestScenarioBuilder(unittest.TestCase):
             list_scenarios = [master_scenario]
             print (" Built the master scenario ")
             # build the instance based on the parsed definitions.
-            list_scenarios += challenge.build_scenario_instances(list_of_scenarios_definitions, route_description['town_name'])
+            list_scenarios += challenge.build_scenario_instances(potential_scenarios_definitions, route_description['town_name'])
 
-            print (" Finished")
-
+            print (" Scenarios present ", list_scenarios)
 
             challenge.cleanup(ego=True)
