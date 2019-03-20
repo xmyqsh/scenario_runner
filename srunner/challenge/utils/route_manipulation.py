@@ -1,3 +1,16 @@
+#!/usr/bin/env python
+# Copyright (c) 2018-2019 Intel Labs.
+# authors: German Ros (german.ros@intel.com), Felipe Codevilla (felipe.alcm@gmail.com)
+#
+# This work is licensed under the terms of the MIT license.
+# For a copy, see <https://opensource.org/licenses/MIT>.
+
+"""
+Module to manipulate the routes, by making then more or less dense (Up to a certain parameter).
+It also contains functions to convert the CARLA world location do GPS coordinates.
+"""
+
+
 import math
 import carla
 
@@ -70,20 +83,21 @@ def _get_latlon_ref(world):
     return lat_ref, lon_ref
 
 
-def interpolate_trajectory(world, waypoints_trajectory):
+def interpolate_trajectory(world, waypoints_trajectory, hop_resolution = 2.0):
     """
         Given some raw keypoints interpolate a full dense trajectory to be used by the user.
     :param world: an reference to the CARLA world so we can use the planner
     :param waypoints_trajectory: the current coarse trajectory
+    :param hop_resolution: is the resolution, how dense is the provided trajectory going to be made
     :return: the full interpolated route both in GPS coordinates and also in its original form.
     """
-    hop_resolution = 2.0
+
     dao = GlobalRoutePlannerDAO(world.get_map(), hop_resolution)
     grp = GlobalRoutePlanner(dao)
     grp.setup()
     # Obtain route plan
     route = []
-    for i in range(len(waypoints_trajectory) -1):   # Goes until the one before the last.
+    for i in range(len(waypoints_trajectory) - 1):   # Goes until the one before the last.
 
         waypoint = waypoints_trajectory[i]
         waypoint_next = waypoints_trajectory[i]

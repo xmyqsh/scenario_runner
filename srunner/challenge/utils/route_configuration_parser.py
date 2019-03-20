@@ -4,7 +4,7 @@ import json
 import numpy as np
 import xml.etree.ElementTree as ET
 """
-    Module use to parse all the route configuration parameters
+    Module use to parse all the route and scenario configuration parameters .
 """
 
 
@@ -22,7 +22,6 @@ def parse_annotations_file(annotation_filename):
 def parse_routes_file(route_filename):
     """
         Returns a list of route elements that is where the challenge is going to happen.
-
     Args
         route_filename: the path to a set of routes.
     Returns
@@ -38,7 +37,7 @@ def parse_routes_file(route_filename):
         for waypoint in route.iter('waypoint'):
              waypoint_list.append(waypoint)  # Waypoints is basically a list of XML nodes
 
-        list_route_descriptions.append( {
+        list_route_descriptions.append({
                                     'id': route_id,
                                     'town_name': route_town,
                                     'trajectory': waypoint_list
@@ -120,7 +119,6 @@ def scan_route_for_scenarios(route_description, world_annotations):
             scenario_type = scenario["scenario_type"]
             for location in scenario["Available_Localizations"]:
                 waypoint = create_location_waypoint(location)   # Function until fran fixes the format
-
                 if match_world_location_to_route(waypoint, route_description['trajectory']):
                     # We match a location for this scenario, create a scenario object so this scenario
                     # can be instantiated later

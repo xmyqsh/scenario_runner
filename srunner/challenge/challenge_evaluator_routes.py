@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # Copyright (c) 2018-2019 Intel Labs.
-# authors: German Ros (german.ros@intel.com)
+# authors: German Ros (german.ros@intel.com), Felipe Codevilla (felipe.alcm@gmail.com)
 #
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
@@ -46,12 +46,11 @@ from srunner.scenarios.config_parser import ActorConfiguration, ScenarioConfigur
                                             RouteConfiguration, ActorConfigurationData
 from srunner.scenariomanager.traffic_events import TrafficEvent, TrafficEventType
 
-from srunner.challenge.utils.trajectory_interpolation import interpolate_trajectory
+from srunner.challenge.utils.route_manipulation import interpolate_trajectory
 
 
 
 number_class_translation = {
-
 
     "Scenario 1": [ControlLoss],
     "Scenario 2": [FollowLeadingVehicle],   # ToDO there is more than one class depending on the scenario configuraiton
@@ -63,7 +62,6 @@ number_class_translation = {
     "Scenario 8": [SignalizedJunctionLeftTurn],
     "Scenario 9": [],
     "Scenario 10": [NoSignalJunctionCrossing]
-
 
 }
 
@@ -118,7 +116,6 @@ class ChallengeEvaluator(object):
         self._sensors_list = []
         self._hop_resolution = 2.0
 
-
     def cleanup(self, ego=False):
         """
         Remove and destroy all actors
@@ -155,7 +152,7 @@ class ChallengeEvaluator(object):
     def prepare_ego_car(self, start_transform):
         """
         Spawn or update all scenario actors according to
-        their parameters provided in config
+        a certain start position.
         """
 
         # If ego_vehicle already exists, just update location
@@ -322,7 +319,6 @@ class ChallengeEvaluator(object):
           This function is intended to be called from outside and provide
           statistics about the scenario (human-readable, for the CARLA challenge.)
         """
-
         PENALTY_COLLISION_STATIC = 10
         PENALTY_COLLISION_VEHICLE = 10
         PENALTY_COLLISION_PEDESTRIAN = 30
@@ -473,7 +469,6 @@ class ChallengeEvaluator(object):
         with open(filename, "w+") as fd:
             fd.write(json.dumps(json_data, indent=4))
 
-
     def run(self, args):
         """
         Run all routes according to provided commandline args
@@ -512,15 +507,15 @@ class ChallengeEvaluator(object):
             self.agent_instance.set_global_plan(gps_route)
 
             # prepare the ego car to run the route.
-            self.prepare_ego_car(world_coordinates_route[0][0].transform)  # It starts on the first waypoint of the route
+            self.prepare_ego_car(world_coordinates_route[0][0].transform)  # It starts on the first wp of the route
             # build the master scenario based on the route and the target.
             self.master_scenario = self.build_master_scenario(world_coordinates_route, route_description['town_name'])
             list_scenarios = [self.master_scenario]
             # build the instance based on the parsed definitions.
-            list_scenarios += self.build_scenario_instances(list_of_scenarios_definitions, route_description['town_name'])
+            list_scenarios += self.build_scenario_instances(list_of_scenarios_definitions,
+                                                            route_description['town_name'])
 
             # main loop
-
             for scenario in list_scenarios:
                 scenario.scenario.scenario_tree.tick_once()
 
