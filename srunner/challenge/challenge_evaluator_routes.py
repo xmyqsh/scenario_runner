@@ -42,7 +42,8 @@ from srunner.scenarios.master import Master
 
 # The configuration parser
 
-from srunner.scenarios.config_parser import ActorConfiguration, ScenarioConfiguration, RouteConfiguration, ActorConfigurationData
+from srunner.scenarios.config_parser import ActorConfiguration, ScenarioConfiguration, \
+                                            RouteConfiguration, ActorConfigurationData
 from srunner.scenariomanager.traffic_events import TrafficEvent, TrafficEventType
 
 from srunner.challenge.utils.trajectory_interpolation import interpolate_trajectory
