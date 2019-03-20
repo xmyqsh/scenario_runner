@@ -568,11 +568,11 @@ if __name__ == '__main__':
     PARSER.add_argument('--port', default='2000', help='TCP port to listen to (default: 2000)')
     PARSER.add_argument("-a", "--agent", type=str, help="Path to Agent's py file to evaluate")
     PARSER.add_argument("--config", type=str, help="Path to Agent's configuration file", default="")
-    PARSER.add_argument('--route-visible', action="store_true", help='Run with a visible route')
     PARSER.add_argument('--debug', action="store_true", help='Run with debug output')
     PARSER.add_argument('--filename', type=str, help='Filename to store challenge results', default='results.json')
     PARSER.add_argument('--split', type=str, help='Challenge split', default='dev_track_1')
-    PARSER.add_argument('--route-visible', action="store_true", help='Run with a visible route')
+    PARSER.add_argument('--route-visible', dest='route_visible',
+                        action="store_true", help='Run with a visible route')
     PARSER.add_argument('--show-to-participant', type=bool, help='Show results to participant?', default=True)
     PARSER.add_argument('--routes',
                         help='Name of the route to be executed. Point to the route_xml_file to be executed.')
