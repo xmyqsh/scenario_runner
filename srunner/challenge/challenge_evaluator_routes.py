@@ -175,7 +175,7 @@ class ChallengeEvaluator(object):
         :return:
         """
         for w in waypoints:
-            wp = w + carla.Location(z=vertical_shift)
+            wp = w[0] + carla.Location(z=vertical_shift)
             self.world.debug.draw_point(wp, size=0.1, color=carla.Color(0, 255, 0), life_time=persistency)
 
     def scenario_sampling(self, potential_scenarios_definitions):
