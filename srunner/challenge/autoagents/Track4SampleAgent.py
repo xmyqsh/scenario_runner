@@ -163,9 +163,6 @@ class HumanTextInterface(object):
             #print (input_data['object_finder'])
             #print (input_data['GPS'])
 
-            # Just keep refreshing the screen
-            # Then we print how this relates with all the other positions
-
         pygame.quit()
 
 

@@ -509,7 +509,8 @@ class ChallengeEvaluator(object):
             self.world.apply_settings(settings)
             # Set the actor pool so the scenarios can prepare themselves when needed
             CarlaActorPool.set_world(self.world)
-
+            # tick world so we can start.
+            self.world.tick()
             # prepare route's trajectory
             gps_route, world_coordinates_route = interpolate_trajectory(self.world,
                                                                         route_description['trajectory'])
@@ -526,8 +527,6 @@ class ChallengeEvaluator(object):
             list_scenarios += self.build_scenario_instances(list_of_scenarios_definitions,
                                                             route_description['town_name'])
 
-            # tick world so we can start.
-            self.world.tick()
             # Tick once to start the scenarios.
             for scenario in list_scenarios:
                 scenario.scenario.scenario_tree.tick_once()
