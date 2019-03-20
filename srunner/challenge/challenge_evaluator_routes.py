@@ -166,6 +166,18 @@ class ChallengeEvaluator(object):
         # setup sensors
         self.setup_sensors(self.agent_instance.sensors(), self.ego_vehicle)
 
+    def draw_waypoints(self, waypoints, vertical_shift, persistency=-1):
+        """
+        Draw a list of waypoints at a certain height given in vertical_shift.
+
+        :param waypoints: list or iterable container with the waypoints to draw
+        :param vertical_shift: height in meters
+        :return:
+        """
+        for w in waypoints:
+            wp = w + carla.Location(z=vertical_shift)
+            self.world.debug.draw_point(wp, size=0.1, color=carla.Color(0, 255, 0), life_time=persistency)
+
     def scenario_sampling(self, potential_scenarios_definitions):
         # TODO add some sample techinique here
         return potential_scenarios_definitions
@@ -492,10 +504,9 @@ class ChallengeEvaluator(object):
             client.set_timeout(self.client_timeout)
 
             self.world = client.load_world(route_description['town_name'])
-            # TODO Sync mode not prepared
-            #settings = self.world.get_settings()
-            #settings.synchronous_mode = True
-            #self.world.apply_settings(settings)
+            settings = self.world.get_settings()
+            settings.synchronous_mode = True
+            self.world.apply_settings(settings)
             # Set the actor pool so the scenarios can prepare themselves when needed
             CarlaActorPool.set_world(self.world)
 
@@ -526,8 +537,12 @@ class ChallengeEvaluator(object):
                 # ego vehicle acts
                 ego_action = self.agent_instance()
                 self.ego_vehicle.apply_control(ego_action)
+
+                if args.route_visible:
+                    self.draw_waypoints(world_coordinates_route, vertical_shift=1.0, persistency=scenario.timeout)
+
                 # time continues
-                # TODO world should tick on sync mode.
+                self.world.tick()
 
             # statistics recording
             self.record_route_statistics(route_description['id'])
@@ -557,6 +572,7 @@ if __name__ == '__main__':
     PARSER.add_argument('--debug', action="store_true", help='Run with debug output')
     PARSER.add_argument('--filename', type=str, help='Filename to store challenge results', default='results.json')
     PARSER.add_argument('--split', type=str, help='Challenge split', default='dev_track_1')
+    PARSER.add_argument('--route-visible', action="store_true", help='Run with a visible route')
     PARSER.add_argument('--show-to-participant', type=bool, help='Show results to participant?', default=True)
     PARSER.add_argument('--routes',
                         help='Name of the route to be executed. Point to the route_xml_file to be executed.')

@@ -384,7 +384,7 @@ class ChallengeEvaluator(object):
                 # debug
                 if args.route_visible:
                     locations_route, _ = zip(*config.route.data)
-                    self.draw_waypoints(locations_route, vertical_shift=1.0, persistency=scenario.timeout)
+                    self.draw_waypoints(locations_route, vertical_shift=1.0, persistency=10)
 
                 self.manager.run_scenario(self.agent_instance)
 
