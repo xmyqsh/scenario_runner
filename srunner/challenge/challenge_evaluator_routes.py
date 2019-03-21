@@ -524,6 +524,7 @@ class ChallengeEvaluator(object):
             self.agent_instance.set_global_plan(gps_route)
 
             # prepare the ego car to run the route.
+            print (" Start Transfform ", world_coordinates_route[0][0].transform)
             self.prepare_ego_car(world_coordinates_route[0][0].transform)  # It starts on the first wp of the route
             # build the master scenario based on the route and the target.
             self.master_scenario = self.build_master_scenario(world_coordinates_route, route_description['town_name'])
