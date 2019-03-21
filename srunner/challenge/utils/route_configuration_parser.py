@@ -46,19 +46,6 @@ def parse_routes_file(route_filename):
     return list_route_descriptions
 
 
-def create_location_waypoint(location):
-    # Function to correct frans weird names.
-    return {
-
-        'x': location['Cords']['x'],
-        'y': location['Cords']['y'],
-        'z': location['Cords']['z'],
-        'yaw': location['Yaw'],
-        'pitch': location['Picth']
-
-    }
-
-
 def remove_redundancy(list_of_vehicles):
     """
        We have a redundant vec of dics. Eliminate it for now.
@@ -89,13 +76,13 @@ def scan_route_for_scenarios(route_description, world_annotations):
             world_location:
             route_description:
         """
-        def match_waypoints(w1, wnode):
-            dx = float(w1['x']) - float(wnode.attrib['x'])
-            dy = float(w1['y']) - float(wnode.attrib['y'])
-            dz = float(w1['z']) - float(wnode.attrib['z'])
+        def match_waypoints(w1, wtransform):
+            dx = float(w1['x']) - wtransform.location.x
+            dy = float(w1['y']) - wtransform.location.y
+            dz = float(w1['z']) - wtransform.location.z
             dist_position = math.sqrt(dx * dx + dy * dy + dz * dz)
-            dyaw = float(w1['yaw']) - float(wnode.attrib['yaw'])
-            dpitch = float(w1['pitch']) - float(wnode.attrib['pitch'])
+            dyaw = float(w1['yaw']) - wtransform.rotation.yaw
+            dpitch = float(w1['pitch']) - wtransform.rotation.pitch
 
             dist_angle = math.sqrt(dyaw * dyaw + dpitch * dpitch)
             print (" dists ", dist_angle, dist_position)
@@ -103,7 +90,7 @@ def scan_route_for_scenarios(route_description, world_annotations):
 
         # TODO this function can be optimized to run on Log(N) time
         for route_waypoint in route_description:
-            if match_waypoints(world_location, route_waypoint):
+            if match_waypoints(world_location, route_waypoint[0].transform):
                 return True
 
         return False
