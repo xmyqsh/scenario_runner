@@ -545,6 +545,7 @@ class ChallengeEvaluator(object):
                 # ego vehicle acts
                 ego_action = self.agent_instance()
                 self.ego_vehicle.apply_control(ego_action)
+                print (self.ego_vehicle.get_transform().location)
 
                 if args.route_visible:
                     self.draw_waypoints(world_coordinates_route, vertical_shift=1.0, persistency=scenario.timeout)
