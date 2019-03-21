@@ -90,12 +90,12 @@ def scan_route_for_scenarios(route_description, world_annotations):
             route_description:
         """
         def match_waypoints(w1, wnode):
-            dx = w1['x'] - float(wnode.attrib['x'])
-            dy = w1['y'] - float(wnode.attrib['y'])
-            dz = w1['z'] - float(wnode.attrib['z'])
+            dx = float(w1['x']) - float(wnode.attrib['x'])
+            dy = float(w1['y']) - float(wnode.attrib['y'])
+            dz = float(w1['z']) - float(wnode.attrib['z'])
             dist_position = math.sqrt(dx * dx + dy * dy + dz * dz)
-            dyaw = w1['yaw'] - float(wnode.attrib['yaw'])
-            dpitch = w1['pitch'] - float(wnode.attrib['pitch'])
+            dyaw = float(w1['yaw']) - float(wnode.attrib['yaw'])
+            dpitch = float(w1['pitch']) - float(wnode.attrib['pitch'])
 
             dist_angle = math.sqrt(dyaw * dyaw + dpitch * dpitch)
 
