@@ -111,7 +111,6 @@ def interpolate_trajectory(world, waypoints_trajectory, hop_resolution = 2.0):
                                                 z=float(waypoint_next.attrib['z']))
                                  )
 
-
     lat_ref, lon_ref = _get_latlon_ref(world)
 
     return location_route_to_gps(route, lat_ref, lon_ref), route

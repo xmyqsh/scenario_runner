@@ -59,15 +59,15 @@ class TestScenarioBuilder(unittest.TestCase):
             # Set the actor pool so the scenarios can prepare themselves when needed
             CarlaActorPool.set_world(challenge.world)
             # find and filter potential scenarios
+
             potential_scenarios_definitions = parser.scan_route_for_scenarios(route_description, world_annotations)
 
-            # prepare route's trajectory
             gps_route, world_coordinates_route = interpolate_trajectory(challenge.world,
                                                                         route_description['trajectory'])
-            print (" first waypoint ", world_coordinates_route[0])
+
+            # prepare route's trajectory
             challenge.prepare_ego_car(world_coordinates_route[0][0].transform)
-            print ("ego prepared")
-            print (challenge.ego_vehicle)
+
 
             # build the master scenario based on the route and the target.
             master_scenario = challenge.build_master_scenario(world_coordinates_route, route_description['town_name'])
