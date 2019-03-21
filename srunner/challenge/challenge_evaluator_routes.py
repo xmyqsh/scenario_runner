@@ -121,8 +121,6 @@ class ChallengeEvaluator(object):
         """
         Remove and destroy all actors
         """
-
-
         # We need enumerate here, otherwise the actors are not properly removed
         for i, _ in enumerate(self.actors):
             if self.actors[i] is not None:
