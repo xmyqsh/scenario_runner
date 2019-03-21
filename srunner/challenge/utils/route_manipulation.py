@@ -53,8 +53,9 @@ def location_route_to_gps(route, lat_ref, lon_ref):
     gps_route = []
 
     for waypoint, connection in route:
-        print(waypoint.transform.location, " Con ", connection)
-        gps_route.append((_location_to_gps(lat_ref, lon_ref, waypoint.transform.location), connection))
+        gps_point = _location_to_gps(lat_ref, lon_ref, waypoint.transform.location)
+        print(waypoint.transform.location, " Con ", connection, " GPS " , gps_point)
+        gps_route.append((gps_point, connection))
 
     return gps_route
 
