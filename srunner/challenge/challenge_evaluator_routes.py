@@ -46,7 +46,7 @@ from srunner.scenarios.config_parser import ActorConfiguration, ScenarioConfigur
                                             RouteConfiguration, ActorConfigurationData
 from srunner.scenariomanager.traffic_events import TrafficEvent, TrafficEventType
 
-from srunner.challenge.utils.route_manipulation import interpolate_trajectory
+from srunner.challenge.utils.route_manipulation import interpolate_trajectory,
 
 
 
@@ -525,6 +525,7 @@ class ChallengeEvaluator(object):
 
             # prepare the ego car to run the route.
             print (" Start Transfform ", world_coordinates_route[0][0].transform)
+            print (" Converted to GPS ", )
             self.prepare_ego_car(world_coordinates_route[0][0].transform)  # It starts on the first wp of the route
             # build the master scenario based on the route and the target.
             self.master_scenario = self.build_master_scenario(world_coordinates_route, route_description['town_name'])
