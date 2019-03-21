@@ -343,7 +343,6 @@ class ChallengeEvaluator(object):
 
                 client = carla.Client(args.host, int(args.port))
                 client.set_timeout(self.client_timeout)
-
                 # Once we have a client we can retrieve the world that is currently
                 # running.
                 self.world = client.load_world(config.town)

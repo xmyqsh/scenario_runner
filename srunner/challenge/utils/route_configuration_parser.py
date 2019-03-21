@@ -16,7 +16,7 @@ def parse_annotations_file(annotation_filename):
 
     # Todo, add checks for file structure errors, such as weird names and things
 
-    return annotation_dict
+    return annotation_dict['current_maps'][0]  # We consider
 
 
 def parse_routes_file(route_filename):
@@ -117,20 +117,20 @@ def scan_route_for_scenarios(route_description, world_annotations):
 
         for scenario in scenarios:  # For each existent scenario
             scenario_type = scenario["scenario_type"]
-            for location in scenario["Available_Localizations"]:
-                waypoint = create_location_waypoint(location)   # Function until fran fixes the format
+            for event in scenario["available_event_configurations"]:
+                waypoint = event['transform']
                 if match_world_location_to_route(waypoint, route_description['trajectory']):
                     # We match a location for this scenario, create a scenario object so this scenario
                     # can be instantiated later
 
-                    if 'Antagonist_Vehicles' in location:
-                        other_vehicles = remove_redundancy(location['Antagonist_Vehicles'])
+                    if 'other_actors' in event:
+                        other_vehicles = event['other_actors']
                     else:
                         other_vehicles = None
 
                     scenario_description = {
                                            'name': scenario_type,
-                                           'Antagonist_Vehicles': other_vehicles,
+                                           'other_actors': other_vehicles,
                                            'trigger_position': waypoint
                                            }
                     possible_scenarios.append(scenario_description)
