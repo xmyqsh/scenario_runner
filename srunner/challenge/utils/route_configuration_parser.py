@@ -98,7 +98,7 @@ def scan_route_for_scenarios(route_description, world_annotations):
             dpitch = float(w1['pitch']) - float(wnode.attrib['pitch'])
 
             dist_angle = math.sqrt(dyaw * dyaw + dpitch * dpitch)
-
+            print (" dists ", dist_angle, dist_position)
             return dist_angle < 1 and dist_position < 1  # TODO  check this threshold, I have no idea
 
         # TODO this function can be optimized to run on Log(N) time
@@ -116,11 +116,10 @@ def scan_route_for_scenarios(route_description, world_annotations):
             continue
 
         for scenario in scenarios:  # For each existent scenario
-            print ("    scenario ", scenario)
             scenario_type = scenario["scenario_type"]
             for event in scenario["available_event_configurations"]:
+                print (event)
                 waypoint = event['transform']
-                print (waypoint)
                 if match_world_location_to_route(waypoint, route_description['trajectory']):
                     # We match a location for this scenario, create a scenario object so this scenario
                     # can be instantiated later
