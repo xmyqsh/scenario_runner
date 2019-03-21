@@ -78,8 +78,8 @@ def _get_latlon_ref(world):
                     lat_ref = float(str_list[0].split('=')[1])
                     lon_ref = float(str_list[1].split('=')[1])
                 else:
-                    lat_ref = 42.0
-                    lon_ref = 2.0
+                    lat_ref = 0.0
+                    lon_ref = 0.0
 
     return lat_ref, lon_ref
 
