@@ -67,19 +67,20 @@ def _get_latlon_ref(world):
     xodr = world.get_map().to_opendrive()
     tree = ET.ElementTree(ET.fromstring(xodr))
 
-    lat_ref = 0
-    lon_ref = 0
+    # default reference
+    lat_ref = 42.0
+    lon_ref = 2.0
+
     for opendrive in tree.iter("OpenDRIVE"):
         for header in opendrive.iter("header"):
             for georef in header.iter("geoReference"):
-                if georef:
+                if georef.text:
                     str_list = georef.text.split(' ')
-                    lat_ref = float(str_list[0].split('=')[1])
-                    lon_ref = float(str_list[1].split('=')[1])
-                else:
-                    lat_ref = 0.0
-                    lon_ref = 0.0
-
+                    for item in str_list:
+                        if '+lat_0' in item:
+                            lat_ref = float(item.split('=')[1])
+                        if '+lon_0' in item:
+                            lon_ref = float(item.split('=')[1])
     return lat_ref, lon_ref
 
 
