@@ -13,7 +13,7 @@ from srunner.challenge.challenge_evaluator_routes import ChallengeEvaluator
 
 from srunner.scenariomanager.carla_data_provider import CarlaActorPool
 
-from srunner.challenge.utils.trajectory_interpolation import interpolate_trajectory
+from srunner.challenge.utils.route_manipulation import interpolate_trajectory
 import carla
 
 
