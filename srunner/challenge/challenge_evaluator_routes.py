@@ -533,6 +533,8 @@ class ChallengeEvaluator(object):
             list_scenarios += self.build_scenario_instances(list_of_scenarios_definitions,
                                                             route_description['town_name'])
 
+            print (" This route can have the following scenarios ")
+            print (list_scenarios)
             # Tick once to start the scenarios.
             for scenario in list_scenarios:
                 scenario.scenario.scenario_tree.tick_once()
