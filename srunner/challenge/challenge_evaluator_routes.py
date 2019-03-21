@@ -46,7 +46,7 @@ from srunner.scenarios.config_parser import ActorConfiguration, ScenarioConfigur
                                             RouteConfiguration, ActorConfigurationData
 from srunner.scenariomanager.traffic_events import TrafficEvent, TrafficEventType
 
-from srunner.challenge.utils.route_manipulation import interpolate_trajectory,
+from srunner.challenge.utils.route_manipulation import interpolate_trajectory
 
 
 
