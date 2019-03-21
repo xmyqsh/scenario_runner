@@ -111,14 +111,16 @@ def scan_route_for_scenarios(route_description, world_annotations):
     possible_scenarios = []
 
     for town_name, scenarios in world_annotations.items():
-
+        print (town_name)
         if town_name != route_description['town_name']:
             continue
 
         for scenario in scenarios:  # For each existent scenario
+            print ("    scenario ", scenario)
             scenario_type = scenario["scenario_type"]
             for event in scenario["available_event_configurations"]:
                 waypoint = event['transform']
+                print (waypoint)
                 if match_world_location_to_route(waypoint, route_description['trajectory']):
                     # We match a location for this scenario, create a scenario object so this scenario
                     # can be instantiated later
