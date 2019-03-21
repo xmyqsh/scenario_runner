@@ -65,7 +65,7 @@ class TestScenarioBuilder(unittest.TestCase):
         print (" FULL ROUTE ")
         for wp in route_description['trajectory']:
 
-            print (wp.transform.location)
+            print (wp[0].transform.location)
 
         potential_scenarios_definitions = parser.scan_route_for_scenarios(route_description, world_annotations)
 
