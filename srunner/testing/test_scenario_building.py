@@ -62,8 +62,10 @@ class TestScenarioBuilder(unittest.TestCase):
         # Returns the iterpolation in a different format
         gps_route, route_description['trajectory'] = interpolate_trajectory(challenge.world,
                                                                             route_description['trajectory'])
+        print (" FULL ROUTE ")
+        for wp in route_description['trajectory']:
 
-        print ("FULL ROUTE ", route_description)
+            print (wp.transform.location)
 
         potential_scenarios_definitions = parser.scan_route_for_scenarios(route_description, world_annotations)
 
