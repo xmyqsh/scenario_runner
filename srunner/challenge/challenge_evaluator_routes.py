@@ -121,6 +121,10 @@ class ChallengeEvaluator(object):
         Remove and destroy all actors
         """
 
+        settings = self.world.get_settings()
+        settings.synchronous_mode = False
+        self.world.apply_settings(settings)
+
         # We need enumerate here, otherwise the actors are not properly removed
         for i, _ in enumerate(self.actors):
             if self.actors[i] is not None:
