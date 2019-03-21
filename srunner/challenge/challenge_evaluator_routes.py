@@ -112,6 +112,7 @@ class ChallengeEvaluator(object):
             module_spec = importlib.util.spec_from_file_location(module_name, args.agent)
             self.module_agent = importlib.util.module_from_spec(module_spec)
             module_spec.loader.exec_module(self.module_agent)
+            
 
         self._sensors_list = []
         self._hop_resolution = 2.0
@@ -168,7 +169,8 @@ class ChallengeEvaluator(object):
             self.ego_vehicle.set_transform(start_transform)
 
         # setup sensors
-        self.setup_sensors(self.agent_instance.sensors(), self.ego_vehicle)
+        if self.agent_instance is not None:
+            self.setup_sensors(self.agent_instance.sensors(), self.ego_vehicle)
 
     def draw_waypoints(self, waypoints, vertical_shift, persistency=-1):
         """
@@ -270,14 +272,14 @@ class ChallengeEvaluator(object):
 
         list_of_actors = []
         # Parse vehicles to the left
-        if 'Front' in list_of_antagonist_actors:
-            list_of_actors += get_actors_from_list(list_of_antagonist_actors['Front'])
+        if 'front' in list_of_antagonist_actors:
+            list_of_actors += get_actors_from_list(list_of_antagonist_actors['front'])
 
-        if 'Left' in list_of_antagonist_actors:
-            list_of_actors += get_actors_from_list(list_of_antagonist_actors['Left'])
+        if 'left' in list_of_antagonist_actors:
+            list_of_actors += get_actors_from_list(list_of_antagonist_actors['left'])
 
-        if 'Right' in list_of_antagonist_actors:
-            list_of_actors += get_actors_from_list(list_of_antagonist_actors['Right'])
+        if 'right' in list_of_antagonist_actors:
+            list_of_actors += get_actors_from_list(list_of_antagonist_actors['right'])
 
         return list_of_actors
 
