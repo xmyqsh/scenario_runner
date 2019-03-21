@@ -76,6 +76,7 @@ class TestScenarioBuilder(unittest.TestCase):
         list_scenarios = [master_scenario]
         print (" Built the master scenario ")
         # build the instance based on the parsed definitions.
+        print (potential_scenarios_definitions)
         list_scenarios += challenge.build_scenario_instances(potential_scenarios_definitions, route_description['town_name'])
 
         print (" Scenarios present ", list_scenarios)
