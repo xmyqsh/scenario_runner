@@ -121,9 +121,6 @@ class ChallengeEvaluator(object):
         Remove and destroy all actors
         """
 
-        settings = self.world.get_settings()
-        settings.synchronous_mode = False
-        self.world.apply_settings(settings)
 
         # We need enumerate here, otherwise the actors are not properly removed
         for i, _ in enumerate(self.actors):
@@ -151,6 +148,9 @@ class ChallengeEvaluator(object):
         if self.manager is not None:
             del self.manager
         if self.world is not None:
+            settings = self.world.get_settings()
+            settings.synchronous_mode = False
+            self.world.apply_settings(settings)
             del self.world
 
     def prepare_ego_car(self, start_transform):
@@ -509,9 +509,9 @@ class ChallengeEvaluator(object):
             client.set_timeout(self.client_timeout)
 
             self.world = client.load_world(route_description['town_name'])
-            settings = self.world.get_settings()
-            settings.synchronous_mode = True
-            self.world.apply_settings(settings)
+            #settings = self.world.get_settings()
+            #settings.synchronous_mode = True
+            #self.world.apply_settings(settings)
             # Set the actor pool so the scenarios can prepare themselves when needed
             CarlaActorPool.set_world(self.world)
             # tick world so we can start.

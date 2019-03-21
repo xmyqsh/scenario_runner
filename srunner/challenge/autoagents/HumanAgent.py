@@ -83,6 +83,7 @@ class HumanInterface():
             if self._surface is not None:
                 self._display.blit(self._surface, (0, 0))
             pygame.display.flip()
+            print (" Refresh sensor ")
 
         pygame.quit()
 
