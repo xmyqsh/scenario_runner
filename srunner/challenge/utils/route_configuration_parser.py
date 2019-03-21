@@ -121,6 +121,7 @@ def scan_route_for_scenarios(route_description, world_annotations):
                                            'other_actors': other_vehicles,
                                            'trigger_position': waypoint
                                            }
+                    print ("MATCH")
                     possible_scenarios.append(scenario_description)
 
     return possible_scenarios
