@@ -18,14 +18,16 @@ ego_transform = carla.Transform(location = carla.Location(x=338.703, y=227.451, 
 ego_trigger_transform = carla.Transform(location = carla.Location(x=88.23, y=297.43, z=1.0),
                 rotation = carla.Rotation(roll=0.0, pitch=0.0, yaw=90.0))
 
+
+
 ego_vehicle = CarlaActorPool.setup_actor('vehicle.lincoln.mkz2017', ego_transform, True)
+world.wait_for_tick()
 
 
 scenario_configuration = ScenarioConfiguration()
 scenario_configuration.other_actors = None
 scenario_configuration.town = 'Town01'
 scenario_configuration.ego_vehicle = ActorConfigurationData('vehicle.lincoln.mkz2017', ego_trigger_transform)
-
 
 
 scenario_instance = VehicleTurningRight(world, ego_vehicle, scenario_configuration)
