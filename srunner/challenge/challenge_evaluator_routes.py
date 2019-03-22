@@ -314,6 +314,11 @@ class ChallengeEvaluator(object):
             else:
                 list_of_actor_conf_instances = []
             # Create an actor configuration for the ego-vehicle trigger position
+            
+            print (definition['name'], " built with ",
+                   definition['other_actors'], " ego ",
+                   definition['trigger_position'] )
+
             egoactor_trigger_position = convert_json_to_actor(definition['trigger_position'])
 
             scenario_configuration = ScenarioConfiguration()
@@ -321,7 +326,6 @@ class ChallengeEvaluator(object):
             scenario_configuration.town = town_name
             scenario_configuration.ego_vehicle = egoactor_trigger_position
 
-            print ("Scneario conf ", scenario_configuration)
 
             scenario_instance = ScenarioClass(self.world, self.ego_vehicle, scenario_configuration)
             scenario_instance_vec.append(scenario_instance)
