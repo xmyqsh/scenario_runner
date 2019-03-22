@@ -82,12 +82,8 @@ def scan_route_for_scenarios(route_description, world_annotations):
             dz = float(w1['z']) - wtransform.location.z
             dist_position = math.sqrt(dx * dx + dy * dy + dz * dz)
 
-            if  w1['pitch'] > 0:
-                dyaw = float(w1['yaw'])%360 - wtransform.rotation.pitch%360
-                dpitch = float(w1['pitch'])%360 - wtransform.rotation.yaw%360
-            else:
-                dyaw = float(w1['yaw'])%360 - wtransform.rotation.yaw%360
-                dpitch = float(w1['pitch'])%360 - wtransform.rotation.pitch%360
+            dyaw = float(w1['yaw'])%360 - wtransform.rotation.yaw%360
+            dpitch = float(w1['pitch'])%360 - wtransform.rotation.pitch%360
 
             dist_angle = math.sqrt(dyaw * dyaw + dpitch * dpitch)
             print (" dists ", dist_angle, dist_position)
