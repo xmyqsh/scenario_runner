@@ -508,8 +508,17 @@ class ChallengeEvaluator(object):
         with open(filename, "w+") as fd:
             fd.write(json.dumps(json_data, indent=4))
 
-    def load_world(self, townname):
+    def load_world(self, client, town_name):
+        if self.world is not None:
+            settings = self.world.get_settings()
+            settings.synchronous_mode = False
+           self. world.apply_settings(settings)
+        self.world = client.load_world(town_name)
+        settings = self.world.get_settings()
+        settings.synchronous_mode = True
+        self.world.apply_settings(settings)
 
+        self.world.wait_for_tick()
 
     def valid_sensors_configuration(self, agent, track):
         if Track(track) != agent.track:
@@ -561,10 +570,10 @@ class ChallengeEvaluator(object):
             client = carla.Client(args.host, int(args.port))
             client.set_timeout(self.client_timeout)
 
-            self.world = client.load_world(route_description['town_name'])
-            #settings = self.world.get_settings()
-            #settings.synchronous_mode = True
-            #self.world.apply_settings(settings)
+            # load the self.world variable to be used during the route
+            self.load_world(client, route_description['town_name'])
+
+
             # Set the actor pool so the scenarios can prepare themselves when needed
             CarlaActorPool.set_world(self.world)
             # tick world so we can start.
