@@ -53,16 +53,16 @@ from srunner.challenge.utils.route_manipulation import interpolate_trajectory
 
 number_class_translation = {
 
-    "Scenario 1": [ControlLoss],
-    "Scenario 2": [FollowLeadingVehicle],   # ToDO there is more than one class depending on the scenario configuraiton
-    "Scenario 3": [DynamicObjectCrossing],
-    "Scenario 4": [VehicleTurningRight, VehicleTurningLeft],
-    "Scenario 5": [],
-    "Scenario 6": [],
-    "Scenario 7": [OppositeVehicleRunningRedLight],
-    "Scenario 8": [SignalizedJunctionLeftTurn],
-    "Scenario 9": [],
-    "Scenario 10": [NoSignalJunctionCrossing]
+    "Scenario1": [ControlLoss],
+    "Scenario2": [FollowLeadingVehicle],   # ToDO there is more than one class depending on the scenario configuraiton
+    "Scenario3": [DynamicObjectCrossing],
+    "Scenario4": [VehicleTurningRight, VehicleTurningLeft],
+    "Scenario5": [],
+    "Scenario6": [],
+    "Scenario7": [OppositeVehicleRunningRedLight],
+    "Scenario8": [SignalizedJunctionLeftTurn],
+    "Scenario9": [],
+    "Scenario10": [NoSignalJunctionCrossing]
 
 }
 
