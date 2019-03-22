@@ -314,7 +314,7 @@ class ChallengeEvaluator(object):
             else:
                 list_of_actor_conf_instances = []
             # Create an actor configuration for the ego-vehicle trigger position
-            
+
             print (definition['name'], " built with ",
                    definition['other_actors'], " ego ",
                    definition['trigger_position'] )
