@@ -26,6 +26,7 @@ import carla
 import srunner.challenge.utils.route_configuration_parser as parser
 from srunner.challenge.envs.scene_layout_sensors import SceneLayoutReader, ObjectFinder
 from srunner.challenge.envs.sensor_interface import CallBack, CANBusSensor, HDMapReader
+from srunner.challenge.autoagents.autonomous_agent import Track
 
 
 from srunner.scenariomanager.carla_data_provider import CarlaActorPool
@@ -486,6 +487,56 @@ class ChallengeEvaluator(object):
         with open(filename, "w+") as fd:
             fd.write(json.dumps(json_data, indent=4))
 
+    def report_fatal_error(self, filename, show_to_participant, error_message):
+
+        # create json structure
+        json_data = {
+            'submission_status': 'FAILED',
+            'stderr': error_message,
+            'results': [
+            {
+                'split': self.phase,
+                'show_to_participant': show_to_participant,
+                'accuracies': {
+                                'avg. route points': 0,
+                                'infraction points': 0,
+                                'total avg.': 0
+                              }
+             }],
+        }
+
+        with open(filename, "w+") as fd:
+            fd.write(json.dumps(json_data, indent=4))
+
+
+    def valid_sensors_configuration(self, agent, track):
+        if Track(track) != agent.track:
+            return False, "You are submitting to the wrong track [{}]!".format(Track(track))
+
+        sensors = agent.sensors()
+
+        for sensor in sensors:
+            if agent.track == Track.ALL_SENSORS:
+                if sensor['type'].startswith('sensor.scene_layout') or sensor['type'].startswith(
+                        'sensor.object_finder') or sensor['type'].startswith('sensor.hd_map'):
+                    return False, "Illegal sensor used for Track [{}]!".format(agent.track)
+
+            elif agent.track == Track.CAMERAS:
+                if not (sensor['type'].startswith('sensor.camera.rgb') or sensor['type'].startswith(
+                        'sensor.other.gnss')):
+                    return False, "Illegal sensor used for Track [{}]!".format(agent.track)
+
+            elif agent.track == Track.ALL_SENSORS_HDMAP_WAYPOINTS:
+                if sensor['type'].startswith('sensor.scene_layout') or sensor['type'].startswith('sensor.object_finder'):
+                    return False, "Illegal sensor used for Track [{}]!".format(agent.track)
+            else:
+                if not (sensor['type'].startswith('sensor.scene_layout')  or sensor['type'].startswith(
+                        'sensor.object_finder') or sensor['type'].startswith(
+                        'sensor.other.gnss')):
+                    return False, "Illegal sensor used for Track [{}]!".format(agent.track)
+
+        return True, ""
+
     def run(self, args):
         """
         Run all routes according to provided commandline args
@@ -521,6 +572,12 @@ class ChallengeEvaluator(object):
                                                                         route_description['trajectory'])
             # create agent
             self.agent_instance = getattr(self.module_agent, self.module_agent.__name__)(args.config)
+            correct_sensors, error_message = self.valid_sensors_configuration(self.agent_instance, self.track)
+            if not correct_sensors:
+                # the sensor configuration is illegal
+                self.report_fatal_error(args.filename, args.show_to_participant, error_message)
+                return
+
             self.agent_instance.set_global_plan(gps_route)
 
             # prepare the ego car to run the route.
