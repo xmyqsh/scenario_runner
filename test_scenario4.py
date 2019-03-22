@@ -29,8 +29,8 @@ time.sleep(0.2)
 # Build a master first
 
 master_scenario_configuration = ScenarioConfiguration()
-master_scenario_configuration.target = ego_trigger_transform  # Take the last point and add as target.
-master_scenario_configuration.route = [ego_trigger_transform]
+master_scenario_configuration.target = carla.Waypoint(transform=ego_trigger_transform)  # Take the last point and add as target.
+master_scenario_configuration.route = [carla.Waypoint(transform=ego_trigger_transform) ]
 master_scenario_configuration.town = 'Town01'
 master_scenario_configuration.ego_vehicle = ActorConfigurationData('vehicle.lincoln.mkz2017', ego_transform)
 
