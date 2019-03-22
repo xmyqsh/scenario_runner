@@ -1,6 +1,7 @@
 
 import carla
 from srunner.scenarios.object_crash_intersection import VehicleTurningRight
+from srunner.scenarios.master import Master
 from srunner.scenariomanager.carla_data_provider import CarlaActorPool, CarlaDataProvider
 from srunner.scenarios.config_parser import ScenarioConfiguration, ActorConfigurationData
 import time
@@ -25,6 +26,15 @@ world.wait_for_tick()
 
 time.sleep(0.2)
 
+# Build a master first
+
+master_scenario_configuration = ScenarioConfiguration()
+master_scenario_configuration.target = ''  # Take the last point and add as target.
+master_scenario_configuration.route = ''
+master_scenario_configuration.town = 'Town01'
+master_scenario_configuration.ego_vehicle = ActorConfigurationData('vehicle.lincoln.mkz2017', ego_transform)
+
+Master(world, ego_vehicle, master_scenario_configuration)
 
 scenario_configuration = ScenarioConfiguration()
 scenario_configuration.other_actors = None
