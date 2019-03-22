@@ -56,7 +56,9 @@ class TestScenarioBuilder(unittest.TestCase):
         # For each of the routes to be evaluated.
         for route_description in list_route_descriptions:
             #route_description = list_route_descriptions[0]
+
             challenge.world = client.load_world(route_description['town_name'])
+
             # Set the actor pool so the scenarios can prepare themselves when needed
             CarlaActorPool.set_world(challenge.world)
 
@@ -81,6 +83,7 @@ class TestScenarioBuilder(unittest.TestCase):
             # build the master scenario based on the route and the target.
             master_scenario = challenge.build_master_scenario(route_description['trajectory'], route_description['town_name'])
             list_scenarios = [master_scenario]
+            print (" TOWN  ", route_description['town_name'])
             print (" Built the master scenario ")
             # build the instance based on the parsed definitions.
             print (potential_scenarios_definitions)
