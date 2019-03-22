@@ -14,9 +14,9 @@ CarlaActorPool.set_world(world)
 CarlaDataProvider.set_world(world)
 
 ego_transform = carla.Transform(location = carla.Location(x=338.703, y=227.451, z=0.0),
-                rotation = carla.Rotation(roll=0.0,pitch=0.0,yaw=-90.0))
+                rotation = carla.Rotation(roll=0.0, pitch=0.0, yaw=-90.0))
 
-ego_trigger_transform = carla.Transform(location = carla.Location(x=88.23, y=297.43, z=1.0),
+ego_trigger_transform = carla.Transform(location=carla.Location(x=88.23, y=297.43, z=1.0),
                 rotation = carla.Rotation(roll=0.0, pitch=0.0, yaw=90.0))
 
 
@@ -29,8 +29,8 @@ time.sleep(0.2)
 # Build a master first
 
 master_scenario_configuration = ScenarioConfiguration()
-master_scenario_configuration.target = ''  # Take the last point and add as target.
-master_scenario_configuration.route = ''
+master_scenario_configuration.target = ego_trigger_transform  # Take the last point and add as target.
+master_scenario_configuration.route = [ego_trigger_transform]
 master_scenario_configuration.town = 'Town01'
 master_scenario_configuration.ego_vehicle = ActorConfigurationData('vehicle.lincoln.mkz2017', ego_transform)
 
