@@ -512,7 +512,7 @@ class ChallengeEvaluator(object):
         if self.world is not None:
             settings = self.world.get_settings()
             settings.synchronous_mode = False
-           self.world.apply_settings(settings)
+            self.world.apply_settings(settings)
         self.world = client.load_world(town_name)
         settings = self.world.get_settings()
         settings.synchronous_mode = True
