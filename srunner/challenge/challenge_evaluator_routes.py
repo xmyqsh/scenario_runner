@@ -508,6 +508,8 @@ class ChallengeEvaluator(object):
         with open(filename, "w+") as fd:
             fd.write(json.dumps(json_data, indent=4))
 
+    def load_world(self, townname):
+
 
     def valid_sensors_configuration(self, agent, track):
         if Track(track) != agent.track:
