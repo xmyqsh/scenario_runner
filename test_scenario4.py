@@ -1,7 +1,7 @@
 
 import carla
 from srunner.scenarios.object_crash_intersection import VehicleTurningRight
-from srunner.scenariomanager.carla_data_provider import CarlaActorPool
+from srunner.scenariomanager.carla_data_provider import CarlaActorPool, CarlaDataProvider
 from srunner.scenarios.config_parser import ScenarioConfiguration, ActorConfigurationData
 
 client = carla.Client('localhost', int(2000))
@@ -10,8 +10,9 @@ world = client.load_world('Town01')
 world.wait_for_tick()
 
 CarlaActorPool.set_world(world)
+CarlaDataProvider.set_world(world)
 
-ego_transform = carla.Transform(location = carla.Location(x=338.703, y=227.451, z=-0.00709011),
+ego_transform = carla.Transform(location = carla.Location(x=338.703, y=227.451, z=0.1),
                 rotation = carla.Rotation(roll=0.0,pitch=0.0,yaw=-90.0))
 
 ego_trigger_transform = carla.Transform(location = carla.Location(x=88.23, y=297.43, z=1.0),
