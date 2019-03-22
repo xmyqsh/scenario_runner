@@ -116,7 +116,7 @@ def interpolate_trajectory(world, waypoints_trajectory, hop_resolution = 2.0):
 
         for wp in interpolated_trace:
 
-            print (wp[0].transform.location, wp[0].transform.rotation)
+            print (wp[0].transform.location, wp[0].transform.location)
 
         print("    END ", carla.Location(x=float(waypoint_next.attrib['x']),
                                                 y=float(waypoint_next.attrib['y']),
