@@ -62,7 +62,7 @@ class VehicleTurningRight(BasicScenario):
         _wp = _wp.next(10)[-1]
         lane_width = _wp.lane_width
         location = _wp.transform.location
-        orientation_yaw = _wp.transform.rotation.yaw+offset["orientation"]
+        orientation_yaw = _wp.transform.rotation.yaw+offset["orientation"] % 360
         position_yaw = _wp.transform.rotation.yaw+offset["position"]
         offset_location = carla.Location(
             offset['k']*lane_width*math.cos(math.radians(position_yaw)),
