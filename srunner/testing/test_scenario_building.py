@@ -60,6 +60,8 @@ class TestScenarioBuilder(unittest.TestCase):
             CarlaActorPool.set_world(challenge.world)
             # find and filter potential scenarios
             # Returns the iterpolation in a different format
+
+            challenge.world.wait_for_tick()
             gps_route, route_description['trajectory'] = interpolate_trajectory(challenge.world,
                                                                                 route_description['trajectory'])
             #print (" FULL ROUTE ")
