@@ -89,7 +89,7 @@ def scan_route_for_scenarios(route_description, world_annotations):
 
             dist_angle = math.sqrt(dyaw * dyaw + dpitch * dpitch)
             #print ("Point ", wtransform , "dists ", dist_angle, dist_position)
-            return dist_angle < 1 and dist_position < 1  # TODO  check this threshold, I have no idea
+            return dist_angle < 10 and dist_position < 5  # TODO  check this threshold, I have no idea
 
         # TODO this function can be optimized to run on Log(N) time
         for route_waypoint in route_description:
