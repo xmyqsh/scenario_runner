@@ -6,7 +6,7 @@ from srunner.scenarios.config_parser import ScenarioConfiguration, ActorConfigur
 
 client = carla.Client('localhost', int(2000))
 client.set_timeout(25.0)
-world = client.get_world()
+world = client.load_world('Town01')
 world.wait_for_tick()
 
 CarlaActorPool.set_world(world)
