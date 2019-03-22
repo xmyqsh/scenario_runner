@@ -106,7 +106,7 @@ def scan_route_for_scenarios(route_description, world_annotations):
         for scenario in scenarios:  # For each existent scenario
             scenario_type = scenario["scenario_type"]
             for event in scenario["available_event_configurations"]:
-                print (event)
+                #print (event)
                 waypoint = event['transform']
                 if match_world_location_to_route(waypoint, route_description['trajectory']):
                     # We match a location for this scenario, create a scenario object so this scenario
