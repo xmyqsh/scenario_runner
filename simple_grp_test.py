@@ -12,7 +12,6 @@ world = client.load_world('Town01')
 dao = GlobalRoutePlannerDAO(world.get_map(), 2.0)
 grp = GlobalRoutePlanner(dao)
 grp.setup()
-# Obtain route plan
 
 start_point = carla.Location(x=338.7027893066406,
                              y=226.75003051757812,

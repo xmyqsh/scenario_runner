@@ -58,13 +58,11 @@ class VehicleTurningRight(BasicScenario):
         """
         waypoint = self._wmap.get_waypoint(self.ego_vehicle.get_location())
         _wp = generate_target_waypoint(waypoint, 1)
-
-        print (" Ego Transform ", self.ego_vehicle.get_transform() )
         offset = {"orientation": 270, "position": 90, "z": 0.2, "k": 0.7}
         _wp = _wp.next(10)[-1]
         lane_width = _wp.lane_width
         location = _wp.transform.location
-        orientation_yaw = (_wp.transform.rotation.yaw+offset["orientation"]) % 360
+        orientation_yaw = _wp.transform.rotation.yaw+offset["orientation"]
         position_yaw = _wp.transform.rotation.yaw+offset["position"]
         offset_location = carla.Location(
             offset['k']*lane_width*math.cos(math.radians(position_yaw)),
