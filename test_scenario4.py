@@ -3,7 +3,7 @@ import carla
 from srunner.scenarios.object_crash_intersection import VehicleTurningRight
 from srunner.scenariomanager.carla_data_provider import CarlaActorPool, CarlaDataProvider
 from srunner.scenarios.config_parser import ScenarioConfiguration, ActorConfigurationData
-
+import time
 client = carla.Client('localhost', int(2000))
 client.set_timeout(25.0)
 world = client.load_world('Town01')
@@ -12,7 +12,7 @@ world.wait_for_tick()
 CarlaActorPool.set_world(world)
 CarlaDataProvider.set_world(world)
 
-ego_transform = carla.Transform(location = carla.Location(x=338.703, y=227.451, z=0.1),
+ego_transform = carla.Transform(location = carla.Location(x=338.703, y=227.451, z=0.0),
                 rotation = carla.Rotation(roll=0.0,pitch=0.0,yaw=-90.0))
 
 ego_trigger_transform = carla.Transform(location = carla.Location(x=88.23, y=297.43, z=1.0),
@@ -22,6 +22,8 @@ ego_trigger_transform = carla.Transform(location = carla.Location(x=88.23, y=297
 
 ego_vehicle = CarlaActorPool.setup_actor('vehicle.lincoln.mkz2017', ego_transform, True)
 world.wait_for_tick()
+
+time.sleep(0.2)
 
 
 scenario_configuration = ScenarioConfiguration()
