@@ -309,7 +309,7 @@ class ChallengeEvaluator(object):
             #  TODO for now I dont know how to disambiguate this part.
             ScenarioClass = possibility_vec[0]
             # Create the other actors that are going to appear
-            list_of_actor_conf_instances = self.get_actors_instances(definition['Antagonist_Vehicles'])
+            list_of_actor_conf_instances = self.get_actors_instances(definition['other_actors'])
             # Create an actor configuration for the ego-vehicle trigger position
             egoactor_trigger_position = convert_json_to_actor(definition['trigger_position'])
 
