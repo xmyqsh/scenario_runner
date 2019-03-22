@@ -115,7 +115,6 @@ class ChallengeEvaluator(object):
             self.module_agent = importlib.util.module_from_spec(module_spec)
             module_spec.loader.exec_module(self.module_agent)
 
-
         self._sensors_list = []
         self._hop_resolution = 2.0
 
@@ -262,13 +261,13 @@ class ChallengeEvaluator(object):
         def get_actors_from_list(list_of_actor_def):
             """
                 Receives a list of actor definitions and creates an actual list of ActorConfigurationObjects
-
             """
             sublist_of_actors = []
             for actor_def in list_of_actor_def:
                 sublist_of_actors.append(convert_json_to_actor(actor_def))
 
             return sublist_of_actors
+
 
         list_of_actors = []
         # Parse vehicles to the left
@@ -310,7 +309,10 @@ class ChallengeEvaluator(object):
             #  TODO for now I dont know how to disambiguate this part.
             ScenarioClass = possibility_vec[0]
             # Create the other actors that are going to appear
-            list_of_actor_conf_instances = self.get_actors_instances(definition['other_actors'])
+            if definition['other_actors'] is not None:
+                list_of_actor_conf_instances = self.get_actors_instances(definition['other_actors'])
+            else:
+                list_of_actor_conf_instances = []
             # Create an actor configuration for the ego-vehicle trigger position
             egoactor_trigger_position = convert_json_to_actor(definition['trigger_position'])
 
