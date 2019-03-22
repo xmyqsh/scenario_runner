@@ -57,6 +57,7 @@ class VehicleTurningRight(BasicScenario):
         Custom initialization
         """
         waypoint = self._wmap.get_waypoint(self.ego_vehicle.get_location())
+        print (" EGo transfor ", self.ego_vehicle.get_transform())
         _wp = generate_target_waypoint(waypoint, 1)
         offset = {"orientation": 270, "position": 90, "z": 0.2, "k": 0.7}
         _wp = _wp.next(10)[-1]
