@@ -13,6 +13,7 @@ from srunner.challenge.challenge_evaluator_routes import ChallengeEvaluator
 
 from srunner.scenariomanager.carla_data_provider import CarlaActorPool
 
+from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
 from srunner.challenge.utils.route_manipulation import interpolate_trajectory
 import carla
 
@@ -58,6 +59,8 @@ class TestScenarioBuilder(unittest.TestCase):
             challenge.world = client.load_world(route_description['town_name'])
             # Set the actor pool so the scenarios can prepare themselves when needed
             CarlaActorPool.set_world(challenge.world)
+
+            CarlaDataProvider.set_world(challenge.world)
             # find and filter potential scenarios
             # Returns the iterpolation in a different format
 
