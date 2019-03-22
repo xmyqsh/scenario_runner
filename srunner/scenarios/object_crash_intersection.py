@@ -58,6 +58,8 @@ class VehicleTurningRight(BasicScenario):
         """
         waypoint = self._wmap.get_waypoint(self.ego_vehicle.get_location())
         _wp = generate_target_waypoint(waypoint, 1)
+
+        print (" Ego Transform ", self.ego_vehicle.get_transform() )
         offset = {"orientation": 270, "position": 90, "z": 0.2, "k": 0.7}
         _wp = _wp.next(10)[-1]
         lane_width = _wp.lane_width
@@ -166,7 +168,6 @@ class VehicleTurningLeft(BasicScenario):
         Custom initialization
         """
         waypoint = self._wmap.get_waypoint(self.ego_vehicle.get_location())
-        print (" Ego Transform ", self.ego_vehicle.get_transform() )
         _wp = generate_target_waypoint(waypoint, -1)
         offset = {"orientation": 270, "position": 90, "z": 0.2, "k": 0.7}
         _wp = _wp.next(10)[-1]
