@@ -77,6 +77,7 @@ def convert_json_to_actor(actor_dict):
     node.set('x', actor_dict['x'])
     node.set('y', actor_dict['y'])
     node.set('z', actor_dict['z'])
+    node.set('yaw', actor_dict['yaw'])
 
     return ActorConfiguration(node)
 
@@ -265,7 +266,7 @@ class ChallengeEvaluator(object):
             """
             sublist_of_actors = []
             for actor_def in list_of_actor_def:
-                sublist_of_actors.append(convert_json_to_actor(parser.create_location_waypoint(actor_def)))
+                sublist_of_actors.append(convert_json_to_actor(actor_def))
 
             return sublist_of_actors
 
