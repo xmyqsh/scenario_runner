@@ -326,7 +326,6 @@ class ChallengeEvaluator(object):
             scenario_configuration.town = town_name
             scenario_configuration.ego_vehicle = egoactor_trigger_position
 
-
             scenario_instance = ScenarioClass(self.world, self.ego_vehicle, scenario_configuration)
             scenario_instance_vec.append(scenario_instance)
 
