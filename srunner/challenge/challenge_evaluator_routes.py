@@ -37,6 +37,7 @@ from srunner.scenarios.object_crash_vehicle import StationaryObjectCrossing, Dyn
 from srunner.scenarios.object_crash_intersection import VehicleTurningRight, VehicleTurningLeft
 from srunner.scenarios.opposite_vehicle_taking_priority import OppositeVehicleRunningRedLight
 from srunner.scenarios.signalized_junction_left_turn import SignalizedJunctionLeftTurn
+from srunner.scenarios.signalized_junction_right_turn import SignalizedJunctionRightTurn
 from srunner.scenarios.no_signal_junction_crossing import NoSignalJunctionCrossing
 from srunner.scenarios.master import Master
 # TODO maybe the parsing and the building are actually different.
@@ -61,7 +62,7 @@ number_class_translation = {
     "Scenario6": [],
     "Scenario7": [OppositeVehicleRunningRedLight],
     "Scenario8": [SignalizedJunctionLeftTurn],
-    "Scenario9": [],
+    "Scenario9": [SignalizedJunctionRightTurn],
     "Scenario10": [NoSignalJunctionCrossing]
 
 }
