@@ -200,8 +200,8 @@ class ChallengeEvaluator(object):
         sampled_scenarios = []
 
         for id, possible_scenarios in potential_scenarios_definitions.items():
-            print ("id ", id)
-            print (possible_scenarios)
+            #print ("id ", id)
+            #print (possible_scenarios)
 
             sampled_scenarios.append(random.choice(possible_scenarios))
 

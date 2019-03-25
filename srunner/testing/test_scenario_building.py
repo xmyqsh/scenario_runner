@@ -75,6 +75,8 @@ class TestScenarioBuilder(unittest.TestCase):
             #    print (wp[0].transform.location)
 
             potential_scenarios_definitions = parser.scan_route_for_scenarios(route_description, world_annotations)
+            # Sample the scenarios
+            sampled_scenarios = challenge.scenario_sampling(potential_scenarios_definitions)
 
             # prepare route's trajectory
             challenge.prepare_ego_car(route_description['trajectory'][0][0].transform)
@@ -86,8 +88,8 @@ class TestScenarioBuilder(unittest.TestCase):
             print (" TOWN  ", route_description['town_name'])
             print (" Built the master scenario ")
             # build the instance based on the parsed definitions.
-            print (potential_scenarios_definitions)
-            list_scenarios += challenge.build_scenario_instances(potential_scenarios_definitions, route_description['town_name'])
+            print (sampled_scenarios)
+            list_scenarios += challenge.build_scenario_instances(sampled_scenarios, route_description['town_name'])
 
             print (" Scenarios present ", list_scenarios)
 
