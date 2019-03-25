@@ -74,7 +74,8 @@ class TestScenarioBuilder(unittest.TestCase):
 
             #    print (wp[0].transform.location)
 
-            potential_scenarios_definitions = parser.scan_route_for_scenarios(route_description, world_annotations)
+            potential_scenarios_definitions, existent_triggers = parser.scan_route_for_scenarios(route_description,
+                                                                                                 world_annotations)
             # Sample the scenarios
             sampled_scenarios = challenge.scenario_sampling(potential_scenarios_definitions)
 
