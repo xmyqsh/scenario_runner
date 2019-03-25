@@ -148,7 +148,7 @@ def scan_route_for_scenarios(route_description, world_annotations):
                                            'trigger_position': waypoint
                                            }
                     print ("MATCH")
-                    trigger_id = check_trigger_position(possible_scenarios, existent_triggers)
+                    trigger_id = check_trigger_position(waypoint, existent_triggers)
                     if trigger_id is None:
                         print (" new trigger")
                         # This trigger does not exist create a new reference on existent triggers
