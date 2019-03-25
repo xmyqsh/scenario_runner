@@ -1,7 +1,5 @@
 
 import carla
-from srunner.scenarios.object_crash_intersection import VehicleTurningRight
-from srunner.scenarios.master import Master
 from srunner.scenariomanager.carla_data_provider import CarlaActorPool, CarlaDataProvider
 from srunner.scenarios.config_parser import ScenarioConfiguration, ActorConfigurationData
 
@@ -38,14 +36,3 @@ scenario_configuration.ego_vehicle = ActorConfigurationData('vehicle.lincoln.mkz
 
 scenario_instance = OppositeVehicleRunningRedLight(world, ego_vehicle, scenario_configuration)
 
-
-
-
-#Scenario4  built with  {'left': [{'z': '1.0', 'x': '117.32', 'y': '258.27', 'pitch': '0.0', 'yaw': '180.000046'}],
-#                        'right': [{'z': '1.0', 'x': '121.45', 'y': '332.55', 'pitch': '0.0', 'yaw': '0.000031'}]}
-
-#    ego  {'z': '1.0', 'x': '88.23', 'y': '297.43', 'pitch': '0', 'yaw': '90'}
-
-
-
-# wp gent  Transform(Location(x=338.688, y=187.451, z=0), Rotation(pitch=360, yaw=269.979, roll=0))
