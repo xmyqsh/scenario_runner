@@ -345,7 +345,7 @@ class ChallengeEvaluator(object):
             scenario_instance = ScenarioClass(self.world, self.ego_vehicle, scenario_configuration)
             scenario_instance_vec.append(scenario_instance)
 
-        return scenario_definition_vec
+        return scenario_instance_vec
 
     def route_is_running(self):
         """
