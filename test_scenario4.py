@@ -4,6 +4,8 @@ from srunner.scenarios.object_crash_intersection import VehicleTurningRight
 from srunner.scenarios.master import Master
 from srunner.scenariomanager.carla_data_provider import CarlaActorPool, CarlaDataProvider
 from srunner.scenarios.config_parser import ScenarioConfiguration, ActorConfigurationData
+
+from srunner.scenarios.opposite_vehicle_taking_priority import OppositeVehicleRunningRedLight
 import time
 client = carla.Client('localhost', int(2000))
 client.set_timeout(25.0)
@@ -14,11 +16,10 @@ CarlaActorPool.set_world(world)
 CarlaDataProvider.set_world(world)
 
 ego_transform = carla.Transform(location = carla.Location(x=338.703, y=227.451, z=0.0),
-                rotation = carla.Rotation(roll=0.0, pitch=0.0, yaw=-90.0))
+                                rotation = carla.Rotation(roll=0.0, pitch=0.0, yaw=-90.0))
 
-ego_trigger_transform = carla.Transform(location=carla.Location(x=88.23, y=297.43, z=1.0),
-                rotation = carla.Rotation(roll=0.0, pitch=0.0, yaw=90.0))
-
+ego_trigger_transform = carla.Transform(location=carla.Location(x=156.42, y=230.16, z=1.0),
+                                        rotation = carla.Rotation(roll=0.0, pitch=0.0, yaw=90.0))
 
 
 ego_vehicle = CarlaActorPool.setup_actor('vehicle.lincoln.mkz2017', ego_transform, True)
@@ -28,21 +29,14 @@ time.sleep(0.2)
 
 # Build a master first
 
-master_scenario_configuration = ScenarioConfiguration()
-master_scenario_configuration.target = carla.Waypoint(transform=ego_trigger_transform)  # Take the last point and add as target.
-master_scenario_configuration.route = [carla.Waypoint(transform=ego_trigger_transform) ]
-master_scenario_configuration.town = 'Town01'
-master_scenario_configuration.ego_vehicle = ActorConfigurationData('vehicle.lincoln.mkz2017', ego_transform)
-
-Master(world, ego_vehicle, master_scenario_configuration)
 
 scenario_configuration = ScenarioConfiguration()
-scenario_configuration.other_actors = None
+scenario_configuration.other_actors = [ActorConfigurationData('vehicle.lincoln.mkz2017', ego_trigger_transform)]
 scenario_configuration.town = 'Town01'
-scenario_configuration.ego_vehicle = ActorConfigurationData('vehicle.lincoln.mkz2017', ego_trigger_transform)
+scenario_configuration.ego_vehicle = ActorConfigurationData('vehicle.lincoln.mkz2017', ego_transform)
 
 
-scenario_instance = VehicleTurningRight(world, ego_vehicle, scenario_configuration)
+scenario_instance = OppositeVehicleRunningRedLight(world, ego_vehicle, scenario_configuration)
 
 
 
