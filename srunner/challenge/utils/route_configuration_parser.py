@@ -149,9 +149,14 @@ def scan_route_for_scenarios(route_description, world_annotations):
                     print ("MATCH")
                     trigger_id = check_trigger_position(possible_scenarios, existent_triggers)
                     if trigger_id is None:
+                        print (" new trigger")
                         # This trigger does not exist create a new reference on existent triggers
                         existent_triggers.update({latest_trigger_id: waypoint})
+                        # Update a reference for this trigger on the possible scenarios
+                        possible_scenarios.update({latest_trigger_id: []})
                         trigger_id = latest_trigger_id
+                        # Increment the latest trigger
+                        latest_trigger_id += 1
 
                     possible_scenarios[trigger_id].append(scenario_description)
 

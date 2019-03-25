@@ -60,21 +60,18 @@ class TestRouteGenerator(unittest.TestCase):
 
         # For each of the routes to be evaluated.
         for route_description in list_route_descriptions:
-            #route_description = list_route_descriptions[0]
 
             challenge.world = client.load_world(route_description['town_name'])
-
             # Set the actor pool so the scenarios can prepare themselves when needed
             CarlaActorPool.set_world(challenge.world)
 
             CarlaDataProvider.set_world(challenge.world)
             # find and filter potential scenarios
-            # Returns the iterpolation in a different format
+            # Returns the interpolation in a different format
 
             challenge.world.wait_for_tick()
             gps_route, route_description['trajectory'] = interpolate_trajectory(challenge.world,
                                                                                 route_description['trajectory'])
-
 
             potential_scenarios_definitions, existent_triggers = parser.scan_route_for_scenarios(route_description,
                                                                                                  world_annotations)
