@@ -25,9 +25,6 @@ class Arguments():
     def __init__(self):
         self.agent = None
         self.use_docker = False
-        self.carla_root = '../Carla94b/'
-        self.host = '127.0.0.1'
-        self.port = 2000
         self.split = 'dev_track_1'
 
 class TestScenarioBuilder(unittest.TestCase):
