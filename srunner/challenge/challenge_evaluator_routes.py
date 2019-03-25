@@ -81,6 +81,13 @@ def convert_json_to_actor(actor_dict):
 
     return ActorConfiguration(node)
 
+def convert_json_to_transform(actor_dict):
+
+    return carla.Transform(location = carla.Location(x=actor_dict['x'], y=actor_dict['y'], z=actor_dict['z']),
+                            rotation = carla.Rotation(roll=0.0, pitch=0.0, yaw=-actor_dict['yaw']))
+
+
+
 
 class ChallengeEvaluator(object):
 
@@ -322,7 +329,7 @@ class ChallengeEvaluator(object):
                    definition['other_actors'], " ego ",
                    definition['trigger_position'] )
 
-            egoactor_trigger_position = convert_json_to_actor(definition['trigger_position'])
+            egoactor_trigger_position = convert_json_to_transform(definition['trigger_position'])
 
             scenario_configuration = ScenarioConfiguration()
             scenario_configuration.other_actors = list_of_actor_conf_instances
@@ -330,7 +337,6 @@ class ChallengeEvaluator(object):
             scenario_configuration.trigger_point = egoactor_trigger_position
             scenario_configuration.ego_vehicle = ActorConfigurationData('vehicle.lincoln.mkz2017',
                                                                         self.ego_vehicle.get_transform())
-
 
             scenario_instance = ScenarioClass(self.world, self.ego_vehicle, scenario_configuration)
             scenario_instance_vec.append(scenario_instance)
