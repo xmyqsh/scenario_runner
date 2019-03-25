@@ -74,6 +74,13 @@ def check_trigger_position(new_trigger, existing_triggers):
     return None
 
 
+def convert_waypoint_float(waypoint):
+
+    waypoint['x'] = float(waypoint['x'])
+    waypoint['y'] = float(waypoint['y'])
+    waypoint['z'] = float(waypoint['z'])
+    waypoint['yaw'] = float(waypoint['yaw'])
+
 
 
 
@@ -133,6 +140,7 @@ def scan_route_for_scenarios(route_description, world_annotations):
             scenario_type = scenario["scenario_type"]
             for event in scenario["available_event_configurations"]:
                 waypoint = event['transform']
+                convert_waypoint_float(waypoint)
                 if match_world_location_to_route(waypoint, route_description['trajectory']):
                     # We match a location for this scenario, create a scenario object so this scenario
                     # can be instantiated later
