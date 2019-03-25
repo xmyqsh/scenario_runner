@@ -199,9 +199,9 @@ class ChallengeEvaluator(object):
         # The idea is to randomly sample a scenario per trigger position.
 
 
-        trigger_table
+        #trigger_table
 
-        for scenario : potential_scenarios_definitions
+        #for scenario : potential_scenarios_definitions
 
 
 

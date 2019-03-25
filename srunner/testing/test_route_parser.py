@@ -40,7 +40,7 @@ class TestRouteGenerator(unittest.TestCase):
 
     def __init__(self, name='runTest'):
         unittest.TestCase.__init__(self, name)
-        self.root_route_file_position = 'srunner/testing/test_files'
+        self.root_route_file_position = 'srunner/challenge/'
 
 
     def test_route_parser(self):
