@@ -30,7 +30,7 @@ from srunner.challenge.envs.sensor_interface import CallBack, CANBusSensor, HDMa
 from srunner.challenge.autoagents.autonomous_agent import Track
 
 
-from srunner.scenariomanager.carla_data_provider import CarlaActorPool
+from srunner.scenariomanager.carla_data_provider import CarlaActorPool, CarlaDataProvider
 
 from srunner.scenarios.control_loss import ControlLoss
 from srunner.scenarios.follow_leading_vehicle import FollowLeadingVehicle
@@ -595,6 +595,8 @@ class ChallengeEvaluator(object):
 
             # Set the actor pool so the scenarios can prepare themselves when needed
             CarlaActorPool.set_world(self.world)
+            # Also se the Data provider pool.
+            CarlaDataProvider.set_world(self.world)
             # tick world so we can start.
             self.world.tick()
             # prepare route's trajectory
