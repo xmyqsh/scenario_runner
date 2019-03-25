@@ -60,7 +60,7 @@ class TestRouteGenerator(unittest.TestCase):
 
         # For each of the routes to be evaluated.
         for route_description in list_route_descriptions:
-
+            print (" TOWN: ", route_description['town_name'])
             challenge.world = client.load_world(route_description['town_name'])
             # Set the actor pool so the scenarios can prepare themselves when needed
             CarlaActorPool.set_world(challenge.world)
@@ -78,8 +78,8 @@ class TestRouteGenerator(unittest.TestCase):
 
             for trigger_id, possible_scenarios in potential_scenarios_definitions.items():
 
-                print ("For trigger ", trigger_id, " --  ", possible_scenarios[0]['trigger_position'])
+                print ("  For trigger ", trigger_id, " --  ", possible_scenarios[0]['trigger_position'])
                 for scenario in possible_scenarios:
-                    print ("     ", scenario['name'])
+                    print ("      ", scenario['name'])
 
             challenge.cleanup(ego=True)

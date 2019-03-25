@@ -42,7 +42,6 @@ class TestParseTrajector(unittest.TestCase):
         self.root_route_file_position = 'srunner/testing/test_files'
 
 
-
     def test_parse_trajectory(self):
 
         args = Arguments()

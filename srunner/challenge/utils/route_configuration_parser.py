@@ -64,7 +64,7 @@ def check_trigger_position(new_trigger, existing_triggers):
 
 
     for id, trigger in existing_triggers.items():
-        print (trigger)
+        #print (trigger)
         dx = trigger['x'] - new_trigger['x']
         dy = trigger['y'] - new_trigger['y']
         distance = math.sqrt(dx*dx + dy*dy)
@@ -132,7 +132,6 @@ def scan_route_for_scenarios(route_description, world_annotations):
     latest_trigger_id = 0
 
     for town_name, scenarios in world_annotations.items():
-        print (town_name)
         if town_name != route_description['town_name']:
             continue
 
@@ -155,10 +154,9 @@ def scan_route_for_scenarios(route_description, world_annotations):
                                            'other_actors': other_vehicles,
                                            'trigger_position': waypoint
                                            }
-                    print ("MATCH")
+
                     trigger_id = check_trigger_position(waypoint, existent_triggers)
                     if trigger_id is None:
-                        print (" new trigger")
                         # This trigger does not exist create a new reference on existent triggers
                         existent_triggers.update({latest_trigger_id: waypoint})
                         # Update a reference for this trigger on the possible scenarios
