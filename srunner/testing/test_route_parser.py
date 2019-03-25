@@ -60,6 +60,8 @@ class TestRouteGenerator(unittest.TestCase):
 
         # For each of the routes to be evaluated.
         for route_description in list_route_descriptions:
+            if route_description['town_name'] == 'Town03':
+                continue
             print (" TOWN: ", route_description['town_name'])
             challenge.world = client.load_world(route_description['town_name'])
             # Set the actor pool so the scenarios can prepare themselves when needed
