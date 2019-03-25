@@ -196,7 +196,7 @@ class ChallengeEvaluator(object):
 
         sampled_scenarios = []
 
-        for id, possible_scenarios in potential_scenarios_definitions.items():
+        for _, possible_scenarios in potential_scenarios_definitions.items():
 
             sampled_scenarios.append(random.choice(possible_scenarios))
 
@@ -596,8 +596,8 @@ class ChallengeEvaluator(object):
             # tick world so we can start.
             self.world.tick()
             # prepare route's trajectory
-            gps_route, world_coordinates_route = interpolate_trajectory(self.world,
-                                                                        route_description['trajectory'])
+            gps_route, route_description['trajectory'] = interpolate_trajectory(self.world,
+                                                                                route_description['trajectory'])
 
             potential_scenarios_definitions, existent_triggers = parser.scan_route_for_scenarios(route_description,
                                                                                                  world_annotations)
@@ -614,15 +614,16 @@ class ChallengeEvaluator(object):
             self.agent_instance.set_global_plan(gps_route)
 
             # prepare the ego car to run the route.
-            self.prepare_ego_car(world_coordinates_route[0][0].transform)  # It starts on the first wp of the route
+            self.prepare_ego_car(route_description['trajectory'][0][0].transform)  # It starts on the first wp of the route
             # build the master scenario based on the route and the target.
-            self.master_scenario = self.build_master_scenario(world_coordinates_route, route_description['town_name'])
+            self.master_scenario = self.build_master_scenario(route_description['trajectory'], route_description['town_name'])
             list_scenarios = [self.master_scenario]
             # build the instance based on the parsed definitions.
             list_scenarios += self.build_scenario_instances(sampled_scenarios_definitions,
                                                             route_description['town_name'])
 
             # Tick once to start the scenarios.
+            print (" Running these scenarios  --- ", list_scenarios)
             for scenario in list_scenarios:
                 scenario.scenario.scenario_tree.tick_once()
 
@@ -635,7 +636,7 @@ class ChallengeEvaluator(object):
                 self.ego_vehicle.apply_control(ego_action)
 
                 if args.route_visible:
-                    self.draw_waypoints(world_coordinates_route, vertical_shift=1.0, persistency=scenario.timeout)
+                    self.draw_waypoints(route_description['trajectory'], vertical_shift=1.0, persistency=scenario.timeout)
 
                 # time continues
                 self.world.tick()
