@@ -200,6 +200,8 @@ class ChallengeEvaluator(object):
         sampled_scenarios = []
 
         for id, possible_scenarios in potential_scenarios_definitions.items():
+            print ("id ", id)
+            print (possible_scenarios)
 
             sampled_scenarios.append(random.choice(possible_scenarios))
 
@@ -325,6 +327,7 @@ class ChallengeEvaluator(object):
         scenario_instance_vec = []
 
         for definition in scenario_definition_vec:
+
             # Get the class possibilities for this scenario number
             possibility_vec = number_class_translation[definition['name']]
             #  TODO for now I dont know how to disambiguate this part.
