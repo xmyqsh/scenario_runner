@@ -160,5 +160,5 @@ def scan_route_for_scenarios(route_description, world_annotations):
 
                     possible_scenarios[trigger_id].append(scenario_description)
 
-    return possible_scenarios
+    return possible_scenarios, existent_triggers
 
