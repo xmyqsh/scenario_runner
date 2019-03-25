@@ -40,8 +40,8 @@ from srunner.scenarios.opposite_vehicle_taking_priority import OppositeVehicleRu
 from srunner.scenarios.signalized_junction_left_turn import SignalizedJunctionLeftTurn
 from srunner.scenarios.signalized_junction_right_turn import SignalizedJunctionRightTurn
 from srunner.scenarios.no_signal_junction_crossing import NoSignalJunctionCrossing
+from srunner.scenarios.maneuver_opposite_direction import ManeuverOppositeDirection
 from srunner.scenarios.master import Master
-# TODO maybe the parsing and the building are actually different.
 
 # The configuration parser
 
@@ -60,20 +60,14 @@ number_class_translation = {
     "Scenario3": [DynamicObjectCrossing],
     "Scenario4": [VehicleTurningRight, VehicleTurningLeft],
     "Scenario5": [],
-    "Scenario6": [],
+    "Scenario6": [ManeuverOppositeDirection],
     "Scenario7": [OppositeVehicleRunningRedLight],
     "Scenario8": [SignalizedJunctionLeftTurn],
     "Scenario9": [SignalizedJunctionRightTurn],
     "Scenario10": [NoSignalJunctionCrossing]
 
 }
-
-
-# Import now all the possible scenarios
-
-from srunner.scenarios.challenge_basic import ChallengeBasic
-
-
+# Util functions
 def convert_json_to_actor(actor_dict):
     node = ET.Element('waypoint')
     node.set('x', actor_dict['x'])
@@ -88,8 +82,6 @@ def convert_json_to_transform(actor_dict):
     return carla.Transform(location=carla.Location(x=float(actor_dict['x']), y=float(actor_dict['y']),
                                                      z=float(actor_dict['z'])),
                             rotation=carla.Rotation(roll=0.0, pitch=0.0, yaw=float(actor_dict['yaw'])))
-
-
 
 
 class ChallengeEvaluator(object):
@@ -194,14 +186,17 @@ class ChallengeEvaluator(object):
             self.world.debug.draw_point(wp, size=0.1, color=carla.Color(0, 255, 0), life_time=persistency)
 
     def scenario_sampling(self, potential_scenarios_definitions):
+        """
+        The function used to sample the scenarios that are going to happen for this route.
+        :param potential_scenarios_definitions: all the scenarios to be sampled
+        :return: return the ones sampled for this case.
+        """
 
         # The idea is to randomly sample a scenario per trigger position.
 
         sampled_scenarios = []
 
         for id, possible_scenarios in potential_scenarios_definitions.items():
-            #print ("id ", id)
-            #print (possible_scenarios)
 
             sampled_scenarios.append(random.choice(possible_scenarios))
 
@@ -272,7 +267,6 @@ class ChallengeEvaluator(object):
             self.world.tick()
             time.sleep(0.1)
 
-    # convert to a better json
     def get_actors_instances(self, list_of_antagonist_actors):
         """
         Get the full list of actor instances.
@@ -588,21 +582,14 @@ class ChallengeEvaluator(object):
         # retrieve routes
         route_descriptions_list = parser.parse_routes_file(args.routes)
         # find and filter potential scenarios for each of the evaluated routes
-        potential_scenarios_list = [parser.scan_route_for_scenarios(route_description, world_annotations)
-                                    for route_description in route_descriptions_list]
-
         # For each of the routes and corresponding possible scenarios to be evaluated.
-        for route_description, potential_scenarios in zip(route_descriptions_list, potential_scenarios_list):
-
-            list_of_scenarios_definitions = self.scenario_sampling(potential_scenarios)
-
+        for route_description in route_descriptions_list:
             # setup world and client assuming that the CARLA server is up and running
             client = carla.Client(args.host, int(args.port))
             client.set_timeout(self.client_timeout)
 
             # load the self.world variable to be used during the route
             self.load_world(client, route_description['town_name'])
-
 
             # Set the actor pool so the scenarios can prepare themselves when needed
             CarlaActorPool.set_world(self.world)
@@ -611,6 +598,11 @@ class ChallengeEvaluator(object):
             # prepare route's trajectory
             gps_route, world_coordinates_route = interpolate_trajectory(self.world,
                                                                         route_description['trajectory'])
+
+            potential_scenarios_definitions, existent_triggers = parser.scan_route_for_scenarios(route_description,
+                                                                                                 world_annotations)
+            # Sample the scenarios to be used for this route instance.
+            sampled_scenarios_definitions = self.scenario_sampling(potential_scenarios_definitions)
             # create agent
             self.agent_instance = getattr(self.module_agent, self.module_agent.__name__)(args.config)
             correct_sensors, error_message = self.valid_sensors_configuration(self.agent_instance, self.track)
@@ -622,17 +614,14 @@ class ChallengeEvaluator(object):
             self.agent_instance.set_global_plan(gps_route)
 
             # prepare the ego car to run the route.
-            print (" Start Transform ", world_coordinates_route[0][0].transform)
             self.prepare_ego_car(world_coordinates_route[0][0].transform)  # It starts on the first wp of the route
             # build the master scenario based on the route and the target.
             self.master_scenario = self.build_master_scenario(world_coordinates_route, route_description['town_name'])
             list_scenarios = [self.master_scenario]
             # build the instance based on the parsed definitions.
-            list_scenarios += self.build_scenario_instances(list_of_scenarios_definitions,
+            list_scenarios += self.build_scenario_instances(sampled_scenarios_definitions,
                                                             route_description['town_name'])
 
-            print (" This route can have the following scenarios ")
-            print (list_scenarios)
             # Tick once to start the scenarios.
             for scenario in list_scenarios:
                 scenario.scenario.scenario_tree.tick_once()

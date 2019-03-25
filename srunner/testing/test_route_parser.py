@@ -27,7 +27,6 @@ inside a batch
 
 
 class Arguments():
-
     def __init__(self):
         self.agent = None
         self.use_docker = False

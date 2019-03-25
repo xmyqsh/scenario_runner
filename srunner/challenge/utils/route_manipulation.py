@@ -102,10 +102,6 @@ def interpolate_trajectory(world, waypoints_trajectory, hop_resolution = 2.0):
 
         waypoint = waypoints_trajectory[i]
         waypoint_next = waypoints_trajectory[i+1]
-        #print ("    BEGIN ",carla.Location(x=float(waypoint.attrib['x']),
-        #                                        y=float(waypoint.attrib['y']),
-        #                                        z=float(waypoint.attrib['z'])))
-
         interpolated_trace = grp.trace_route(carla.Location(x=float(waypoint.attrib['x']),
                                                 y=float(waypoint.attrib['y']),
                                                 z=float(waypoint.attrib['z'])),
@@ -113,14 +109,6 @@ def interpolate_trajectory(world, waypoints_trajectory, hop_resolution = 2.0):
                                                 y=float(waypoint_next.attrib['y']),
                                                 z=float(waypoint_next.attrib['z']))
                                  )
-
-        #for wp in interpolated_trace:
-
-        #    print (wp[0].transform.location, wp[0].transform.location)
-
-        #print("    END ", carla.Location(x=float(waypoint_next.attrib['x']),
-        #                                        y=float(waypoint_next.attrib['y']),
-        #                                        z=float(waypoint_next.attrib['z'])))
 
         route += interpolated_trace
 

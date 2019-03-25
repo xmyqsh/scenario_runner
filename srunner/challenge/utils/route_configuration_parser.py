@@ -8,27 +8,28 @@ import xml.etree.ElementTree as ET
 """
 
 
-NEW_TRIGGER_THRESHOLD = 3.0   # Threshold to say if a trigger position is new or repeated
+TRIGGER_THRESHOLD = 5.0   # Threshold to say if a trigger position is new or repeated, works for matching positions
+TRIGGER_ANGLE_THRESHOLD = 10  # Threshold to say if two angles can be considering matching when matching transforms.
 
 
 def parse_annotations_file(annotation_filename):
-    # Return the annotations of which positions where the scenarios are going to happen.\
+    """
+    Return the annotations of which positions where the scenarios are going to happen.
+    :param annotation_filename: the filename for the anotations file
+    :return:
+    """
 
     with open(annotation_filename, 'r') as f:
         annotation_dict = json.loads(f.read())
 
-    # Todo, add checks for file structure errors, such as weird names and things
-
-    return annotation_dict['current_maps'][0]  # We consider
+    return annotation_dict['current_maps'][0]  # the file has a current maps name that is an one element vec
 
 
 def parse_routes_file(route_filename):
     """
-        Returns a list of route elements that is where the challenge is going to happen.
-    Args
-        route_filename: the path to a set of routes.
-    Returns
-        List of dicts containing the waypoints, id and town of the routes
+    Returns a list of route elements that is where the challenge is going to happen.
+    :param route_filename: the path to a set of routes.
+    :return:  List of dicts containing the waypoints, id and town of the routes
     """
 
     list_route_descriptions = []
@@ -49,26 +50,20 @@ def parse_routes_file(route_filename):
     return list_route_descriptions
 
 
-def remove_redundancy(list_of_vehicles):
-    """
-       We have a redundant vec of dics. Eliminate it for now.
-    """
-    vehicle_dict = {}
-    for mono_dict in list_of_vehicles:
-        vehicle_dict.update(mono_dict)
-
-    return vehicle_dict
-
-
 def check_trigger_position(new_trigger, existing_triggers):
+    """
+
+    :param new_trigger:
+    :param existing_triggers:
+    :return:
+    """
 
 
     for id, trigger in existing_triggers.items():
-        #print (trigger)
         dx = trigger['x'] - new_trigger['x']
         dy = trigger['y'] - new_trigger['y']
         distance = math.sqrt(dx*dx + dy*dy)
-        if distance < NEW_TRIGGER_THRESHOLD:
+        if distance < TRIGGER_THRESHOLD:
             return id
 
     return None
@@ -83,14 +78,11 @@ def convert_waypoint_float(waypoint):
 
 
 
-
 def scan_route_for_scenarios(route_description, world_annotations):
 
     """
     Just returns a plain list of possible scenarios that can happen in this route by matching
     the locations from the scenario into the route description
-
-    For what I understood it does not matter where it actually matches!
 
     Returns
         A list of scenario definitions with their correspondent parameters
@@ -114,7 +106,7 @@ def scan_route_for_scenarios(route_description, world_annotations):
 
             dist_angle = math.sqrt(dyaw * dyaw + dpitch * dpitch)
             #print ("Point ", wtransform , "dists ", dist_angle, dist_position)
-            return dist_angle < 10 and dist_position < 5  # TODO  check this threshold, I have no idea
+            return dist_angle < 10 and dist_position < TRIGGER_THRESHOLD  # TODO  check this threshold, I have no idea
 
         # TODO this function can be optimized to run on Log(N) time
         for route_waypoint in route_description:
