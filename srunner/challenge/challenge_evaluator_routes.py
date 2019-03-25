@@ -18,6 +18,7 @@ import sys
 import os
 import json
 import time
+import random
 import py_trees
 
 import xml.etree.ElementTree as ET
@@ -194,19 +195,15 @@ class ChallengeEvaluator(object):
 
     def scenario_sampling(self, potential_scenarios_definitions):
 
-        # First we get all the possible trigger positions
-
         # The idea is to randomly sample a scenario per trigger position.
 
+        sampled_scenarios = []
 
-        #trigger_table
+        for id, possible_scenarios in potential_scenarios_definitions.items():
 
-        #for scenario : potential_scenarios_definitions
+            sampled_scenarios.append(random.choice(possible_scenarios))
 
-
-
-        # TODO add some sample techinique here
-        return potential_scenarios_definitions
+        return sampled_scenarios
 
     def setup_sensors(self, sensors, vehicle):
         """
@@ -338,10 +335,6 @@ class ChallengeEvaluator(object):
             else:
                 list_of_actor_conf_instances = []
             # Create an actor configuration for the ego-vehicle trigger position
-
-            print (definition['name'], " built with ",
-                   definition['other_actors'], " ego ",
-                   definition['trigger_position'] )
 
             egoactor_trigger_position = convert_json_to_transform(definition['trigger_position'])
 
