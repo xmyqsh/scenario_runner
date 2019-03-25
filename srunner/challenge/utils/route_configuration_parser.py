@@ -64,6 +64,7 @@ def check_trigger_position(new_trigger, existing_triggers):
 
 
     for id, trigger in existing_triggers.items():
+        print (trigger)
         dx = trigger['x'] - new_trigger['x']
         dy = trigger['y'] - new_trigger['y']
         distance = math.sqrt(dx*dx + dy*dy)
