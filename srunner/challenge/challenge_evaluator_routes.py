@@ -583,6 +583,7 @@ class ChallengeEvaluator(object):
         route_descriptions_list = parser.parse_routes_file(args.routes)
         # find and filter potential scenarios for each of the evaluated routes
         # For each of the routes and corresponding possible scenarios to be evaluated.
+        print (route_descriptions_list)
         for route_description in route_descriptions_list:
             # setup world and client assuming that the CARLA server is up and running
             client = carla.Client(args.host, int(args.port))
