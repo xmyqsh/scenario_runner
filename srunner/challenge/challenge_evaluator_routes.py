@@ -558,7 +558,7 @@ class ChallengeEvaluator(object):
 
             elif agent.track == Track.CAMERAS:
                 if not (sensor['type'].startswith('sensor.camera.rgb') or sensor['type'].startswith(
-                        'sensor.other.gnss')):
+                        'sensor.other.gnss') or sensor['type'].startswith('sensor.can_bus')):
                     return False, "Illegal sensor used for Track [{}]!".format(agent.track)
 
             elif agent.track == Track.ALL_SENSORS_HDMAP_WAYPOINTS:
@@ -618,7 +618,8 @@ class ChallengeEvaluator(object):
             # prepare the ego car to run the route.
             self.prepare_ego_car(route_description['trajectory'][0][0].transform)  # It starts on the first wp of the route
             # build the master scenario based on the route and the target.
-            self.master_scenario = self.build_master_scenario(route_description['trajectory'], route_description['town_name'])
+            self.master_scenario = self.build_master_scenario(route_description['trajectory'],
+                                                              route_description['town_name'])
             list_scenarios = [self.master_scenario]
             # build the instance based on the parsed definitions.
             list_scenarios += self.build_scenario_instances(sampled_scenarios_definitions,
@@ -669,7 +670,7 @@ if __name__ == '__main__':
     PARSER.add_argument("--config", type=str, help="Path to Agent's configuration file", default="")
     PARSER.add_argument('--debug', action="store_true", help='Run with debug output')
     PARSER.add_argument('--filename', type=str, help='Filename to store challenge results', default='results.json')
-    PARSER.add_argument('--split', type=str, help='Challenge split', default='dev_track_1')
+    PARSER.add_argument('--split', type=str, help='Challenge split', default='dev_track_2')
     PARSER.add_argument('--route-visible', dest='route_visible',
                         action="store_true", help='Run with a visible route')
     PARSER.add_argument('--show-to-participant', type=bool, help='Show results to participant?', default=True)
