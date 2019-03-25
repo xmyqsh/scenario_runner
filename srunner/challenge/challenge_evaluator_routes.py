@@ -586,7 +586,6 @@ class ChallengeEvaluator(object):
 
         for route_description in route_descriptions_list:
             # setup world and client assuming that the CARLA server is up and running
-            print ('route ', route_description)
             client = carla.Client(args.host, int(args.port))
             client.set_timeout(self.client_timeout)
 
