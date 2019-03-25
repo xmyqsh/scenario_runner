@@ -193,6 +193,18 @@ class ChallengeEvaluator(object):
             self.world.debug.draw_point(wp, size=0.1, color=carla.Color(0, 255, 0), life_time=persistency)
 
     def scenario_sampling(self, potential_scenarios_definitions):
+
+        # First we get all the possible trigger positions
+
+        # The idea is to randomly sample a scenario per trigger position.
+
+
+        trigger_table
+
+        for scenario : potential_scenarios_definitions
+
+
+
         # TODO add some sample techinique here
         return potential_scenarios_definitions
 

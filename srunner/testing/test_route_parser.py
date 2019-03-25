@@ -9,6 +9,14 @@ from pprint import pprint
 
 
 import srunner.challenge.utils.route_configuration_parser as parser
+from srunner.challenge.challenge_evaluator_routes import ChallengeEvaluator
+
+from srunner.scenariomanager.carla_data_provider import CarlaActorPool
+
+from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
+from srunner.challenge.utils.route_manipulation import interpolate_trajectory
+import carla
+
 
 """
 The idea of this test is to check if sampling is able to sample random sequencial images
@@ -17,64 +25,64 @@ inside a batch
 """
 
 
+
+class Arguments():
+
+    def __init__(self):
+        self.agent = None
+        self.use_docker = False
+        self.host = '127.0.0.1'
+        self.port = 2000
+        self.split = 'dev_track_1'
+
+
 class TestRouteGenerator(unittest.TestCase):
 
     def __init__(self, name='runTest'):
         unittest.TestCase.__init__(self, name)
         self.root_route_file_position = 'srunner/testing/test_files'
 
-    def test_scan_route_for_scenarios(self):
-        # Read the files going to be used for this test
-        filename = os.path.join(self.root_route_file_position, 'Town03_scenarios_AntagonistVehicleWorldSpace.json')
-        annotations = parser.parse_annotations_file(filename)
-        filename = os.path.join(self.root_route_file_position, 'routes_town06_test.xml')
-        routes_town06 = parser.parse_routes_file(filename)
-        filename = os.path.join(self.root_route_file_position, 'routes_town03_test.xml')
-        routes_town03 = parser.parse_routes_file(filename)
 
-        # The routes for this file is in a different town, no posible scenario is expected
-        for route in routes_town06:
-            posible_scenarios = parser.scan_route_for_scenarios(route, annotations)
-            self.assertEqual(len(posible_scenarios), 0)
+    def test_route_parser(self):
 
-        # For the positions into the first route route at least four scenarios can be placed
-        route = routes_town03[0]
-        posible_scenarios = parser.scan_route_for_scenarios(route, annotations)
-        print("##################")
-        print ('For The route ', route['id'], " We found these scenarios")
-        print ("##################")
-        pprint(posible_scenarios)
-        self.assertEqual(len(posible_scenarios), 4)
+        args = Arguments()
+        client = carla.Client(args.host, int(args.port))
+        client.set_timeout(25.0)
+        challenge = ChallengeEvaluator(args)
 
+        filename = os.path.join(self.root_route_file_position, 'all_towns_traffic_scenarios.json')
+        world_annotations = parser.parse_annotations_file(filename)
+        # retrieve routes
+        # Which type of file is expected ????
 
-    def test_scan_route_for_town01(self):
-        # Read the files going to be used for this test
-        filename = os.path.join(self.root_route_file_position, 'Town01_scenarios.json')
-        annotations = parser.parse_annotations_file(filename)
-        filename = os.path.join(self.root_route_file_position, 'routes_town06_test.xml')
-        routes_town06 = parser.parse_routes_file(filename)
-        filename = os.path.join(self.root_route_file_position, 'routes_town01.xml')
-        routes_town01 = parser.parse_routes_file(filename)
+        filename = os.path.join(self.root_route_file_position, 'routes_training.xml')
+        list_route_descriptions = parser.parse_routes_file(filename)
 
-        # The routes for this file is in a different town, no posible scenario is expected
-        for route in routes_town06:
-            posible_scenarios = parser.scan_route_for_scenarios(route, annotations)
-            self.assertEqual(len(posible_scenarios), 0)
+        # For each of the routes to be evaluated.
+        for route_description in list_route_descriptions:
+            #route_description = list_route_descriptions[0]
 
-        # For the positions into the first route route at least four scenarios can be placed
-        route = routes_town01[0]
-        posible_scenarios = parser.scan_route_for_scenarios(route, annotations)
-        print("##################")
-        print ('For The route ', route['id'], " We found these scenarios")
-        print ("##################")
-        pprint(posible_scenarios)
-        #self.assertEqual(len(posible_scenarios), 4)
+            challenge.world = client.load_world(route_description['town_name'])
+
+            # Set the actor pool so the scenarios can prepare themselves when needed
+            CarlaActorPool.set_world(challenge.world)
+
+            CarlaDataProvider.set_world(challenge.world)
+            # find and filter potential scenarios
+            # Returns the iterpolation in a different format
+
+            challenge.world.wait_for_tick()
+            gps_route, route_description['trajectory'] = interpolate_trajectory(challenge.world,
+                                                                                route_description['trajectory'])
 
 
+            potential_scenarios_definitions, existent_triggers = parser.scan_route_for_scenarios(route_description,
+                                                                                                 world_annotations)
 
+            for trigger_id, possible_scenarios in potential_scenarios_definitions.items():
 
-    def test_scenario_(self):
+                print ("For trigger ", trigger_id, " --  ", possible_scenarios[0]['trigger_position'])
+                for scenario in possible_scenarios:
+                    print ("     ", scenario['name'])
 
-        # It should be consistent after parsing
-        pass
-
+            challenge.cleanup(ego=True)

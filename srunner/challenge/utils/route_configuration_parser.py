@@ -8,6 +8,9 @@ import xml.etree.ElementTree as ET
 """
 
 
+NEW_TRIGGER_THRESHOLD = 3.0   # Threshold to say if a trigger position is new or repeated
+
+
 def parse_annotations_file(annotation_filename):
     # Return the annotations of which positions where the scenarios are going to happen.\
 
@@ -57,6 +60,22 @@ def remove_redundancy(list_of_vehicles):
     return vehicle_dict
 
 
+def check_trigger_position(new_trigger, existing_triggers):
+
+
+    for id, trigger in existing_triggers.items():
+        dx = trigger['x'] - new_trigger['x']
+        dy = trigger['y'] - new_trigger['y']
+        distance = math.sqrt(dx*dx + dy*dy)
+        if distance < NEW_TRIGGER_THRESHOLD:
+            return id
+
+    return None
+
+
+
+
+
 def scan_route_for_scenarios(route_description, world_annotations):
 
     """
@@ -96,7 +115,13 @@ def scan_route_for_scenarios(route_description, world_annotations):
 
         return False
 
-    possible_scenarios = []
+    # the triggers dictionaries:
+    existent_triggers = {}
+    # We have a table of IDs and trigger positions associated
+    possible_scenarios = {}
+
+    # Keep track of the trigger ids being added
+    latest_trigger_id = 0
 
     for town_name, scenarios in world_annotations.items():
         print (town_name)
@@ -106,7 +131,6 @@ def scan_route_for_scenarios(route_description, world_annotations):
         for scenario in scenarios:  # For each existent scenario
             scenario_type = scenario["scenario_type"]
             for event in scenario["available_event_configurations"]:
-                #print (event)
                 waypoint = event['transform']
                 if match_world_location_to_route(waypoint, route_description['trajectory']):
                     # We match a location for this scenario, create a scenario object so this scenario
@@ -123,7 +147,13 @@ def scan_route_for_scenarios(route_description, world_annotations):
                                            'trigger_position': waypoint
                                            }
                     print ("MATCH")
-                    possible_scenarios.append(scenario_description)
+                    trigger_id = check_trigger_position(possible_scenarios, existent_triggers)
+                    if trigger_id is None:
+                        # This trigger does not exist create a new reference on existent triggers
+                        existent_triggers.update({latest_trigger_id: waypoint})
+                        trigger_id = latest_trigger_id
+
+                    possible_scenarios[trigger_id].append(scenario_description)
 
     return possible_scenarios
 

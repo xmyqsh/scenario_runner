@@ -54,7 +54,6 @@ class TestScenarioBuilder(unittest.TestCase):
 
         # For each of the routes to be evaluated.
         for route_description in list_route_descriptions:
-            #route_description = list_route_descriptions[0]
 
             challenge.world = client.load_world(route_description['town_name'])
 
