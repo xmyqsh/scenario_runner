@@ -292,6 +292,7 @@ class ChallengeEvaluator(object):
         # TODO THIS NAME IS BIT WEIRD SINCE THE EGO VEHICLE  IS ALREADY THERE, IT IS MORE ABOUT THE TRANSFORM
         master_scenario_configuration.ego_vehicle = ActorConfigurationData('vehicle.lincoln.mkz2017',
                                                                            self.ego_vehicle.get_transform())
+
         return Master(self.world, self.ego_vehicle, master_scenario_configuration)
 
 
@@ -328,6 +329,7 @@ class ChallengeEvaluator(object):
             scenario_configuration.trigger_point = egoactor_trigger_position
             scenario_configuration.ego_vehicle = ActorConfigurationData('vehicle.lincoln.mkz2017',
                                                                         self.ego_vehicle.get_transform())
+
 
             scenario_instance = ScenarioClass(self.world, self.ego_vehicle, scenario_configuration)
             scenario_instance_vec.append(scenario_instance)
