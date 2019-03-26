@@ -48,7 +48,6 @@ class TestSpawn(unittest.TestCase):
         # retrieve routes
         # Which type of file is expected ????
 
-
         # For each of the routes to be evaluated.
         for town_name in world_annotations.keys():
             challenge.world = client.load_world(town_name)
@@ -58,6 +57,7 @@ class TestSpawn(unittest.TestCase):
 
             scenarios = world_annotations[town_name]
             for scenario in scenarios:  # For each existent scenario
+                print ("Scenario ", scenario)
                 for event in scenario["available_event_configurations"]:
                     waypoint = event['transform']
 
@@ -66,22 +66,26 @@ class TestSpawn(unittest.TestCase):
 
                     challenge.prepare_ego_car(convert_json_to_transform(waypoint))
 
+                    challenge.world.wait_for_tick()
                     if 'other_actors' in event:
                         if 'left' in event['other_actors']:
                             for other_waypoint in event['other_actors']['left']:
                                 challenge.prepare_ego_car(convert_json_to_transform(other_waypoint))
 
-                                print ("Spawn ", other_waypoint)
+                                challenge.world.wait_for_tick()
+                                print ("Spawn left", other_waypoint)
                         if 'right' in event['other_actors']:
                             for other_waypoint in event['other_actors']['right']:
                                 challenge.prepare_ego_car(convert_json_to_transform(other_waypoint))
 
-                                print ("Spawn ", other_waypoint)
+                                challenge.world.wait_for_tick()
+                                print ("Spawn right", other_waypoint)
                         if 'front' in event['other_actors']:
                             for other_waypoint in event['other_actors']['front']:
                                 challenge.prepare_ego_car(convert_json_to_transform(other_waypoint))
 
-                                print ("Spawn ", other_waypoint)
+                                challenge.world.wait_for_tick()
+                                print ("Spawn front", other_waypoint)
 
 
 
