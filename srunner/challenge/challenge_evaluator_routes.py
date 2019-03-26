@@ -162,7 +162,6 @@ class ChallengeEvaluator(object):
         if self.ego_vehicle is None:
             # TODO: the model is now hardcoded but that can change in a future.
             self.ego_vehicle = CarlaActorPool.setup_actor('vehicle.lincoln.mkz2017', start_transform, True)
-            print (" sapwn")
         else:
             self.ego_vehicle.set_transform(start_transform)
 
@@ -313,6 +312,8 @@ class ChallengeEvaluator(object):
         scenario_instance_vec = []
 
         for definition in scenario_definition_vec:
+            if definition['name'] == 'Scenario04':
+                continue
 
             # Get the class possibilities for this scenario number
             possibility_vec = number_class_translation[definition['name']]

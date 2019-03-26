@@ -1,0 +1,32 @@
+[{'name': 'Scenario9', 'trigger_position': {'pitch': '0', 'yaw': 180.0, 'z': 1.0, 'y': 55.38, 'x': 187.78},
+          'other_actors': {'front': [{'pitch': '0.0', 'yaw': '0.000061', 'z': '1.0', 'y': '59.38', 'x': '119.28'}], 'right': [{'pitch': '0.0', 'yaw': '90.0', 'z': '1.0', 'y': '20.38', 'x': '153.78'}]}},
+
+
+ {'name': 'Scenario9', 'trigger_position': {'pitch': '0', 'yaw': 0.0, 'z': 1.0, 'y': 2.26, 'x': 58.81},
+          'other_actors': {'front': [{'pitch': '0.0', 'yaw': '180.000015', 'z': '1.0', 'y': '-1.91', 'x': '127.17'}], 'right': [{'pitch': '0.0', 'yaw': '270.0', 'z': '1.0', 'y': '35.91', 'x': '92.99'}]}},
+
+
+ {'name': 'Scenario1', 'trigger_position': {'pitch': '0', 'yaw': 90.0, 'z': 1.0, 'y': 25.77, 'x': 334.54},
+            'other_actors': None},
+
+
+ {'name': 'Scenario7', 'trigger_position': {'pitch': '0', 'yaw': 90.0, 'z': 1.0, 'y': 297.43, 'x': 88.23},
+          'other_actors': {'right': [{'pitch': '0.0', 'yaw': '0.000031', 'z': '1.0', 'y': '330.65', 'x': '53.12'}], 'left': [{'pitch': '0.0', 'yaw': '180.000046', 'z': '1.0', 'y': '326.52', 'x': '127.39'}]}},
+
+ {'name': 'Scenario1', 'trigger_position': {'pitch': '0', 'yaw': 270.0, 'z': 1.0, 'y': 31.4, 'x': 158.1},
+          'other_actors': None},
+
+ {'name': 'Scenario8', 'trigger_position': {'pitch': '0', 'yaw': 90.0, 'z': 1.0, 'y': 165.27, 'x': 88.25},
+            'other_actors': {'front': [{'pitch': '0.0', 'yaw': '270.000061', 'z': '1.0', 'y': '234.27', 'x': '91.75'}], 'left': [{'pitch': '0.0', 'yaw': '180.000076', 'z': '1.0', 'y': '195.7', 'x': '127.25'}]}},
+
+
+ {'name': 'Scenario4', 'trigger_position': {'pitch': '0', 'yaw': 90.0, 'z': 1.0, 'y': 99.9, 'x': 88.25},
+           'other_actors': {'front': [{'pitch': '0.0', 'yaw': '270.000061', 'z': '1.0', 'y': '168.67', 'x': '92.78'}], 'right': [{'pitch': '0.0', 'yaw': '180.000061', 'z': '1.0', 'y': '129.17', 'x': '126.47'}]}},
+
+
+ {'name': 'Scenario8', 'trigger_position': {'pitch': '0', 'yaw': 90.0, 'z': 1.0, 'y': 25.23, 'x': 88.25},
+          'other_actors': {'front': [{'pitch': '0.0', 'yaw': '270.000061', 'z': '1.0', 'y': '93.99', 'x': '92.76'}], 'left': [{'pitch': '0.0', 'yaw': '180.000061', 'z': '1.0', 'y': '55.94', 'x': '126.92'}]}},
+
+
+ {'name': 'Scenario4', 'trigger_position': {'pitch': '0', 'yaw': 180.0, 'z': 1.0, 'y': -2.4, 'x': 122.3},
+          'other_actors': {'front': [{'pitch': '0.0', 'yaw': '0.000061', 'z': '1.0', 'y': '2.18', 'x': '52.70'}], 'left': [{'pitch': '0.0', 'yaw': '270.000061', 'z': '1.0', 'y': '36.17', 'x': '93.4'}]}}]
