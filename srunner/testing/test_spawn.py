@@ -62,6 +62,7 @@ class TestSpawn(unittest.TestCase):
                     waypoint = event['transform']
 
                     convert_waypoint_float(waypoint)
+                    print ("Spawn ", waypoint)
 
                     challenge.prepare_ego_car(convert_json_to_transform(waypoint))
 
@@ -69,12 +70,18 @@ class TestSpawn(unittest.TestCase):
                         if 'left' in event['other_actors']:
                             for other_waypoint in event['other_actors']['left']:
                                 challenge.prepare_ego_car(convert_json_to_transform(other_waypoint))
+
+                                print ("Spawn ", other_waypoint)
                         if 'right' in event['other_actors']:
                             for other_waypoint in event['other_actors']['right']:
                                 challenge.prepare_ego_car(convert_json_to_transform(other_waypoint))
+
+                                print ("Spawn ", other_waypoint)
                         if 'front' in event['other_actors']:
                             for other_waypoint in event['other_actors']['front']:
                                 challenge.prepare_ego_car(convert_json_to_transform(other_waypoint))
+
+                                print ("Spawn ", other_waypoint)
 
 
 
