@@ -7,7 +7,8 @@ from srunner.challenge.challenge_evaluator_routes import ChallengeEvaluator, con
 from srunner.scenariomanager.carla_data_provider import CarlaActorPool
 
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
-from srunner.challenge.utils.route_manipulation import interpolate_trajectory
+
+import traceback
 import carla
 
 
@@ -50,6 +51,7 @@ class TestSpawn(unittest.TestCase):
 
         # For each of the routes to be evaluated.
         print (" all keys ", world_annotations.keys())
+        list_failed = []
         for town_name in world_annotations.keys():
             if town_name == 'Town06':
                 continue
@@ -66,27 +68,40 @@ class TestSpawn(unittest.TestCase):
 
                     convert_waypoint_float(waypoint)
                     print ("Spawn ", waypoint)
+                    try:
+                        challenge.prepare_ego_car(convert_json_to_transform(waypoint))
+                    except:
+                        traceback.print_exc()
+                        list_failed.append((waypoint,town_name))
 
-                    challenge.prepare_ego_car(convert_json_to_transform(waypoint))
 
                     challenge.world.wait_for_tick()
                     if 'other_actors' in event:
                         if 'left' in event['other_actors']:
                             for other_waypoint in event['other_actors']['left']:
-                                challenge.prepare_ego_car(convert_json_to_transform(other_waypoint))
-
+                                try:
+                                    challenge.prepare_ego_car(convert_json_to_transform(other_waypoint))
+                                except:
+                                    traceback.print_exc()
+                                    list_failed.append((waypoint, town_name))
                                 challenge.world.wait_for_tick()
                                 print ("Spawn left", other_waypoint)
                         if 'right' in event['other_actors']:
                             for other_waypoint in event['other_actors']['right']:
-                                challenge.prepare_ego_car(convert_json_to_transform(other_waypoint))
-
+                                try:
+                                    challenge.prepare_ego_car(convert_json_to_transform(other_waypoint))
+                                except:
+                                    traceback.print_exc()
+                                    list_failed.append((waypoint, town_name))
                                 challenge.world.wait_for_tick()
                                 print ("Spawn right", other_waypoint)
                         if 'front' in event['other_actors']:
                             for other_waypoint in event['other_actors']['front']:
-                                challenge.prepare_ego_car(convert_json_to_transform(other_waypoint))
-
+                                try:
+                                    challenge.prepare_ego_car(convert_json_to_transform(other_waypoint))
+                                except:
+                                    traceback.print_exc()
+                                    list_failed.append((waypoint, town_name))
                                 challenge.world.wait_for_tick()
                                 print ("Spawn front", other_waypoint)
 
@@ -94,4 +109,4 @@ class TestSpawn(unittest.TestCase):
 
                     challenge.cleanup(ego=True)
 
-
+        print ("Failed Scenarios ", list_failed)
