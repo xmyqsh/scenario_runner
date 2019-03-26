@@ -77,3 +77,7 @@ class TestRouteGenerator(unittest.TestCase):
                     print ("      ", scenario['name'])
 
             challenge.cleanup(ego=True)
+
+
+Error: Unable to spawn vehicle vehicle.* at Transform(Location(x=93.4, y=36.17, z=1), Rotation(pitch=0, yaw=270, roll=0))
+Error: Unable to spawn vehicle vehicle.diamondback.century at Transform(Location(x=85.5913, y=139.9, z=0.2), Rotation(pitch=0, yaw=359.991, roll=0))
