@@ -17,7 +17,6 @@ import importlib
 import sys
 import os
 import json
-import time
 import random
 import py_trees
 
@@ -107,7 +106,6 @@ class ChallengeEvaluator(object):
 
         # CARLA world and scenario handlers
         self.world = None
-        self.manager = None
         self.agent_instance = None
 
         self.output_scenario = []
@@ -147,8 +145,6 @@ class ChallengeEvaluator(object):
         """
 
         self.cleanup(True)
-        if self.manager is not None:
-            del self.manager
         if self.world is not None:
             settings = self.world.get_settings()
             settings.synchronous_mode = False
@@ -586,7 +582,6 @@ class ChallengeEvaluator(object):
 
             # load the self.world variable to be used during the route
             self.load_world(client, route_description['town_name'])
-
             # Set the actor pool so the scenarios can prepare themselves when needed
             CarlaActorPool.set_world(self.world)
             # Also se the Data provider pool.

@@ -83,8 +83,7 @@ def scan_route_for_scenarios(route_description, world_annotations):
     Just returns a plain list of possible scenarios that can happen in this route by matching
     the locations from the scenario into the route description
 
-    Returns
-        A list of scenario definitions with their correspondent parameters
+    :return:  A list of scenario definitions with their correspondent parameters
     """
 
     def match_world_location_to_route(world_location, route_description):
@@ -122,10 +121,11 @@ def scan_route_for_scenarios(route_description, world_annotations):
     # Keep track of the trigger ids being added
     latest_trigger_id = 0
 
-    for town_name, scenarios in world_annotations.items():
+    for town_name in world_annotations.keys():
         if town_name != route_description['town_name']:
             continue
 
+        scenarios = world_annotations[town_name]
         for scenario in scenarios:  # For each existent scenario
             scenario_type = scenario["scenario_type"]
             for event in scenario["available_event_configurations"]:
@@ -134,7 +134,6 @@ def scan_route_for_scenarios(route_description, world_annotations):
                 if match_world_location_to_route(waypoint, route_description['trajectory']):
                     # We match a location for this scenario, create a scenario object so this scenario
                     # can be instantiated later
-
                     if 'other_actors' in event:
                         other_vehicles = event['other_actors']
                     else:

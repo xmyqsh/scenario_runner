@@ -1,12 +1,5 @@
 import unittest
 import os
-from pprint import pprint
-#import torch
-
-#from configs import g_conf, set_type_of_process, merge_with_yaml
-#from input import RandomSequenceSampler, RandomSampler
-#from utils.general import create_log_folder, create_exp_path
-
 
 import srunner.challenge.utils.route_configuration_parser as parser
 from srunner.challenge.challenge_evaluator_routes import ChallengeEvaluator

@@ -1,12 +1,5 @@
 import unittest
 import os
-from pprint import pprint
-#import torch
-
-#from configs import g_conf, set_type_of_process, merge_with_yaml
-#from input import RandomSequenceSampler, RandomSampler
-#from utils.general import create_log_folder, create_exp_path
-
 
 import srunner.challenge.utils.route_configuration_parser as parser
 from srunner.challenge.challenge_evaluator_routes import ChallengeEvaluator
@@ -34,7 +27,6 @@ class TestScenarioBuilder(unittest.TestCase):
     def __init__(self, name='runTest'):
         unittest.TestCase.__init__(self, name)
         self.root_route_file_position = 'srunner/challenge/'
-
 
 
     def test_build_scenarios(self):
@@ -69,10 +61,7 @@ class TestScenarioBuilder(unittest.TestCase):
             challenge.world.wait_for_tick()
             gps_route, route_description['trajectory'] = interpolate_trajectory(challenge.world,
                                                                                 route_description['trajectory'])
-            #print (" FULL ROUTE ")
-            #for wp in route_description['trajectory']:
 
-            #    print (wp[0].transform.location)
 
             potential_scenarios_definitions, existent_triggers = parser.scan_route_for_scenarios(route_description,
                                                                                                  world_annotations)
@@ -82,7 +71,6 @@ class TestScenarioBuilder(unittest.TestCase):
             # prepare route's trajectory
             challenge.prepare_ego_car(route_description['trajectory'][0][0].transform)
 
-
             # build the master scenario based on the route and the target.
             master_scenario = challenge.build_master_scenario(route_description['trajectory'], route_description['town_name'])
             list_scenarios = [master_scenario]
@@ -91,7 +79,6 @@ class TestScenarioBuilder(unittest.TestCase):
             # build the instance based on the parsed definitions.
             print (sampled_scenarios)
             list_scenarios += challenge.build_scenario_instances(sampled_scenarios, route_description['town_name'])
-
             print (" Scenarios present ", list_scenarios)
 
             challenge.cleanup(ego=True)
