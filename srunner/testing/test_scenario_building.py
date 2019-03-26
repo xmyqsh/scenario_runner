@@ -29,6 +29,54 @@ class TestScenarioBuilder(unittest.TestCase):
         self.root_route_file_position = 'srunner/challenge/'
 
 
+    def test_possible_spawns(self):
+
+        args = Arguments()
+        client = carla.Client(args.host, int(args.port))
+        client.set_timeout(25.0)
+        challenge = ChallengeEvaluator(args)
+
+        filename = os.path.join(self.root_route_file_position, 'all_towns_traffic_scenarios.json')
+        world_annotations = parser.parse_annotations_file(filename)
+        # retrieve routes
+        # Which type of file is expected ????
+
+        filename = os.path.join(self.root_route_file_position, 'routes_training.xml')
+        list_route_descriptions = parser.parse_routes_file(filename)
+
+        # For each of the routes to be evaluated.
+        for route_description in list_route_descriptions:
+
+            if route_description['town_name'] == 'Town03' or route_description['town_name'] == 'Town04':
+                continue
+            challenge.world = client.load_world(route_description['town_name'])
+
+            # Set the actor pool so the scenarios can prepare themselves when needed
+            CarlaActorPool.set_world(challenge.world)
+
+            CarlaDataProvider.set_world(challenge.world)
+            # find and filter potential scenarios
+            # Returns the iterpolation in a different format
+
+            challenge.world.wait_for_tick()
+            gps_route, route_description['trajectory'] = interpolate_trajectory(challenge.world,
+                                                                                route_description['trajectory'])
+
+
+            potential_scenarios_definitions, existent_triggers = parser.scan_route_for_scenarios(route_description,
+                                                                                                 world_annotations)
+
+            print (existent_triggers)
+
+
+            #challenge.prepare_ego_car(route_description['trajectory'][0][0].transform)
+            # Sample the scenarios
+
+
+            challenge.cleanup(ego=True)
+
+
+
     def test_build_scenarios(self):
 
         args = Arguments()

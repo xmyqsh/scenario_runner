@@ -11,15 +11,10 @@ from srunner.challenge.utils.route_manipulation import interpolate_trajectory
 import carla
 
 
-"""
-The idea of this test is to check if sampling is able to sample random sequencial images
-inside a batch
-
-"""
-
 
 
 class Arguments():
+
     def __init__(self):
         self.agent = None
         self.use_docker = False
@@ -27,15 +22,14 @@ class Arguments():
         self.port = 2000
         self.split = 'dev_track_1'
 
-
-class TestRouteGenerator(unittest.TestCase):
+class TestSpawn(unittest.TestCase):
 
     def __init__(self, name='runTest'):
         unittest.TestCase.__init__(self, name)
         self.root_route_file_position = 'srunner/challenge/'
 
 
-    def test_route_parser(self):
+    def test_possible_spawns(self):
 
         args = Arguments()
         client = carla.Client(args.host, int(args.port))
@@ -52,29 +46,33 @@ class TestRouteGenerator(unittest.TestCase):
 
         # For each of the routes to be evaluated.
         for route_description in list_route_descriptions:
-            if route_description['town_name'] == 'Town03' or route_description['town_name'] == 'Town01':
+
+            if route_description['town_name'] == 'Town03' or route_description['town_name'] == 'Town04':
                 continue
-            print (" TOWN: ", route_description['town_name'])
             challenge.world = client.load_world(route_description['town_name'])
+
             # Set the actor pool so the scenarios can prepare themselves when needed
             CarlaActorPool.set_world(challenge.world)
 
             CarlaDataProvider.set_world(challenge.world)
             # find and filter potential scenarios
-            # Returns the interpolation in a different format
+            # Returns the iterpolation in a different format
 
             challenge.world.wait_for_tick()
             gps_route, route_description['trajectory'] = interpolate_trajectory(challenge.world,
                                                                                 route_description['trajectory'])
 
+
             potential_scenarios_definitions, existent_triggers = parser.scan_route_for_scenarios(route_description,
                                                                                                  world_annotations)
 
-            for trigger_id, possible_scenarios in potential_scenarios_definitions.items():
+            print (existent_triggers)
 
-                print ("  For trigger ", trigger_id, " --  ", possible_scenarios[0]['trigger_position'])
-                for scenario in possible_scenarios:
-                    print ("      ", scenario['name'])
+
+            #challenge.prepare_ego_car(route_description['trajectory'][0][0].transform)
+            # Sample the scenarios
+
 
             challenge.cleanup(ego=True)
+
 
