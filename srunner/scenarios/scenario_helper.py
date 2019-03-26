@@ -130,8 +130,10 @@ def generate_target_waypoint(waypoint, turn=0):
             v_2 = vector(
                 wp_list[-3].transform.location,
                 wp_list[-2].transform.location)
+            print (v_1,v_2)
             vec_dots = np.dot(v_1, v_2)
             cos_wp = vec_dots/abs((np.linalg.norm(v_1)*np.linalg.norm(v_2)))
+            print (cos_wp)
             angle_wp = math.acos(cos_wp)
             if angle_wp < threshold:
                 break
