@@ -92,6 +92,6 @@ class TestSpawn(unittest.TestCase):
 
 
 
-            challenge.cleanup(ego=True)
+                    challenge.cleanup(ego=True)
 
 
