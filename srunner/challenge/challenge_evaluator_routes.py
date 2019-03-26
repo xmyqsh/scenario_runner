@@ -312,7 +312,7 @@ class ChallengeEvaluator(object):
         scenario_instance_vec = []
 
         for definition in scenario_definition_vec:
-            if definition['name'] == 'Scenario04':
+            if definition['name'] == 'Scenario4':
                 continue
 
             # Get the class possibilities for this scenario number
