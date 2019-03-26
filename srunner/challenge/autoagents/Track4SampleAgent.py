@@ -1,6 +1,4 @@
-import scipy.misc
-import carla
-from srunner.challenge.autoagents.autonomous_agent import AutonomousAgent
+
 from threading import Thread
 import math
 import sys
@@ -61,7 +59,6 @@ else:
         sys.stdout.flush()
         print_over_same_line.last_line_length = line_length
     print_over_same_line.last_line_length = 0
-
 
 
 def distance_vehicle(waypoint, vehicle_position):

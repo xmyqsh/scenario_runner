@@ -1,13 +1,12 @@
 from __future__ import print_function
 import math
 import json
-import numpy as np
 import xml.etree.ElementTree as ET
 """
     Module use to parse all the route and scenario configuration parameters .
 """
 
-# TODO  check this threshold, I have no idea
+# TODO  check this threshold, it could be a bit larger but not so large that we cluster scenarios.
 TRIGGER_THRESHOLD = 5.0   # Threshold to say if a trigger position is new or repeated, works for matching positions
 TRIGGER_ANGLE_THRESHOLD = 10  # Threshold to say if two angles can be considering matching when matching transforms.
 
@@ -52,19 +51,19 @@ def parse_routes_file(route_filename):
 
 def check_trigger_position(new_trigger, existing_triggers):
     """
-
+    Check if this trigger position already exists or if it is a new one.
     :param new_trigger:
     :param existing_triggers:
     :return:
     """
 
-
-    for id, trigger in existing_triggers.items():
+    for trigger_id in existing_triggers.keys():
+        trigger = existing_triggers[trigger_id]
         dx = trigger['x'] - new_trigger['x']
         dy = trigger['y'] - new_trigger['y']
         distance = math.sqrt(dx*dx + dy*dy)
         if distance < TRIGGER_THRESHOLD:
-            return id
+            return trigger_id
 
     return None
 

@@ -174,7 +174,6 @@ class ChallengeEvaluator(object):
     def draw_waypoints(self, waypoints, vertical_shift, persistency=-1):
         """
         Draw a list of waypoints at a certain height given in vertical_shift.
-
         :param waypoints: list or iterable container with the waypoints to draw
         :param vertical_shift: height in meters
         :return:
@@ -189,13 +188,10 @@ class ChallengeEvaluator(object):
         :param potential_scenarios_definitions: all the scenarios to be sampled
         :return: return the ones sampled for this case.
         """
-
         # The idea is to randomly sample a scenario per trigger position.
-
         sampled_scenarios = []
-
-        for _, possible_scenarios in potential_scenarios_definitions.items():
-
+        for trigger in potential_scenarios_definitions.keys():
+            possible_scenarios = potential_scenarios_definitions[trigger]
             sampled_scenarios.append(random.choice(possible_scenarios))
 
         return sampled_scenarios
@@ -280,7 +276,6 @@ class ChallengeEvaluator(object):
                 sublist_of_actors.append(convert_json_to_actor(actor_def))
 
             return sublist_of_actors
-
 
         list_of_actors = []
         # Parse vehicles to the left
