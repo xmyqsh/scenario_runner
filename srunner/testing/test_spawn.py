@@ -49,6 +49,7 @@ class TestSpawn(unittest.TestCase):
         # Which type of file is expected ????
 
         # For each of the routes to be evaluated.
+        print (" aall keys ", world_annotations.keys())
         for town_name in world_annotations.keys():
             challenge.world = client.load_world(town_name)
             CarlaActorPool.set_world(challenge.world)
