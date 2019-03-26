@@ -65,7 +65,7 @@ class TestSpawn(unittest.TestCase):
 
                     challenge.prepare_ego_car(convert_json_to_transform(waypoint))
 
-                    if event['other_actors'] is not None:
+                    if 'other_actors' in event:
                         if 'left' in event['other_actors']:
                             for other_waypoint in event['other_actors']['left']:
                                 challenge.prepare_ego_car(convert_json_to_transform(other_waypoint))
