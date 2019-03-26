@@ -18,10 +18,10 @@ from srunner.scenarios.basic_scenario import *
 CHALLENGE_BASIC_SCENARIOS = ["ChallengeBasic"]
 
 
-class Master(BasicScenario):
+class MasterScenario(BasicScenario):
 
     """
-    Implementation of a dummy scenario
+    Implementation of a  Master scenario that controls the route.
     """
 
     category = "Master"
@@ -45,9 +45,9 @@ class Master(BasicScenario):
         else:
             raise ValueError("Master scenario must have a route")
 
-        super(Master, self).__init__("ChallengeBasic", ego_vehicle=ego_vehicle, config=config,
-                                     world=world, debug_mode=debug_mode,
-                                     terminate_on_failure=True, criteria_enable=criteria_enable)
+        super(MasterScenario, self).__init__("ChallengeBasic", ego_vehicle=ego_vehicle, config=config,
+                                             world=world, debug_mode=debug_mode,
+                                             terminate_on_failure=True, criteria_enable=criteria_enable)
 
     def _create_behavior(self):
         """

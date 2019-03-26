@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
     Module use to parse all the route and scenario configuration parameters .
 """
 
-
+# TODO  check this threshold, I have no idea
 TRIGGER_THRESHOLD = 5.0   # Threshold to say if a trigger position is new or repeated, works for matching positions
 TRIGGER_ANGLE_THRESHOLD = 10  # Threshold to say if two angles can be considering matching when matching transforms.
 
@@ -105,8 +105,8 @@ def scan_route_for_scenarios(route_description, world_annotations):
             dpitch = float(w1['pitch']) % 360 - wtransform.rotation.pitch % 360
 
             dist_angle = math.sqrt(dyaw * dyaw + dpitch * dpitch)
-            #print ("Point ", wtransform , "dists ", dist_angle, dist_position)
-            return dist_angle < 10 and dist_position < TRIGGER_THRESHOLD  # TODO  check this threshold, I have no idea
+
+            return dist_angle < TRIGGER_ANGLE_THRESHOLD and dist_position < TRIGGER_THRESHOLD
 
         # TODO this function can be optimized to run on Log(N) time
         for route_waypoint in route_description:

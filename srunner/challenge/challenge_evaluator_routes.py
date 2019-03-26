@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (c) 2018-2019 Intel Labs.
+# Copyright (c) 2018-2019 Intel Corporation.
 # authors: German Ros (german.ros@intel.com), Felipe Codevilla (felipe.alcm@gmail.com)
 #
 # This work is licensed under the terms of the MIT license.
@@ -34,14 +34,14 @@ from srunner.scenariomanager.carla_data_provider import CarlaActorPool, CarlaDat
 
 from srunner.scenarios.control_loss import ControlLoss
 from srunner.scenarios.follow_leading_vehicle import FollowLeadingVehicle
-from srunner.scenarios.object_crash_vehicle import StationaryObjectCrossing, DynamicObjectCrossing
+from srunner.scenarios.object_crash_vehicle import  DynamicObjectCrossing
 from srunner.scenarios.object_crash_intersection import VehicleTurningRight, VehicleTurningLeft
 from srunner.scenarios.opposite_vehicle_taking_priority import OppositeVehicleRunningRedLight
 from srunner.scenarios.signalized_junction_left_turn import SignalizedJunctionLeftTurn
 from srunner.scenarios.signalized_junction_right_turn import SignalizedJunctionRightTurn
 from srunner.scenarios.no_signal_junction_crossing import NoSignalJunctionCrossing
 from srunner.scenarios.maneuver_opposite_direction import ManeuverOppositeDirection
-from srunner.scenarios.master import Master
+from srunner.scenarios.master_scenario import MasterScenario
 
 # The configuration parser
 
@@ -56,7 +56,7 @@ from srunner.challenge.utils.route_manipulation import interpolate_trajectory
 number_class_translation = {
 
     "Scenario1": [ControlLoss],
-    "Scenario2": [FollowLeadingVehicle],   # ToDO there is more than one class depending on the scenario configuraiton
+    "Scenario2": [FollowLeadingVehicle],   # TODO there is more than one class depending on the scenario configuration
     "Scenario3": [DynamicObjectCrossing],
     "Scenario4": [VehicleTurningRight, VehicleTurningLeft],
     "Scenario5": [],
@@ -113,10 +113,8 @@ class ChallengeEvaluator(object):
         # first we instantiate the Agent
         if args.agent is not None:
             module_name = os.path.basename(args.agent).split('.')[0]
-            module_spec = importlib.util.spec_from_file_location(module_name, args.agent)
-            self.module_agent = importlib.util.module_from_spec(module_spec)
-            module_spec.loader.exec_module(self.module_agent)
-
+            sys.path.insert(0, os.path.dirname(args.agent))
+            self.module_agent = importlib.import_module(module_name)
         self._sensors_list = []
         self._hop_resolution = 2.0
 
@@ -262,10 +260,11 @@ class ChallengeEvaluator(object):
             self._sensors_list.append(sensor)
 
         # check that all sensors have initialized their data structure
+
         while not self.agent_instance.all_sensors_ready():
             print(" waiting for one data reading from sensors...")
             self.world.tick()
-            time.sleep(0.1)
+            self.world.wait_for_tick()
 
     def get_actors_instances(self, list_of_antagonist_actors):
         """
@@ -308,7 +307,7 @@ class ChallengeEvaluator(object):
                                                                            self.ego_vehicle.get_transform())
         master_scenario_configuration.trigger_point = self.ego_vehicle.get_transform()
 
-        return Master(self.world, self.ego_vehicle, master_scenario_configuration)
+        return MasterScenario(self.world, self.ego_vehicle, master_scenario_configuration)
 
 
     def build_scenario_instances(self, scenario_definition_vec, town_name):
@@ -705,7 +704,7 @@ if __name__ == '__main__':
         sys.exit(0)
 
     ARGUMENTS.carla_root = CARLA_ROOT
-
+    challenge_evaluator = None
     try:
         challenge_evaluator = ChallengeEvaluator(ARGUMENTS)
         challenge_evaluator.run(ARGUMENTS)

@@ -83,7 +83,6 @@ class HumanInterface():
             if self._surface is not None:
                 self._display.blit(self._surface, (0, 0))
             pygame.display.flip()
-            print (" Refresh sensor ")
 
         pygame.quit()
 
@@ -97,7 +96,6 @@ class HumanAgent(AutonomousAgent):
         self.current_control.throttle = 1.0
         self.current_control.brake = 0.0
         self.current_control.hand_brake = False
-
         self._hic = HumanInterface(self)
         self._thread = Thread(target=self._hic.run)
         self._thread.start()
@@ -142,7 +140,6 @@ class HumanAgent(AutonomousAgent):
 
     def run_step(self, input_data):
         self.agent_engaged = True
-        print (" Ran STEP for control ", self.current_control)
         return self.current_control
 
     def destroy(self):
