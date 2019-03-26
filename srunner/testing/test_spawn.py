@@ -2,7 +2,7 @@ import unittest
 import os
 
 import srunner.challenge.utils.route_configuration_parser as parser
-from srunner.challenge.challenge_evaluator_routes import ChallengeEvaluator
+from srunner.challenge.challenge_evaluator_routes import ChallengeEvaluator, convert_json_to_transform
 
 from srunner.scenariomanager.carla_data_provider import CarlaActorPool
 
@@ -12,6 +12,13 @@ import carla
 
 
 
+
+def convert_waypoint_float(waypoint):
+
+    waypoint['x'] = float(waypoint['x'])
+    waypoint['y'] = float(waypoint['y'])
+    waypoint['z'] = float(waypoint['z'])
+    waypoint['yaw'] = float(waypoint['yaw'])
 
 class Arguments():
 
@@ -41,36 +48,34 @@ class TestSpawn(unittest.TestCase):
         # retrieve routes
         # Which type of file is expected ????
 
-        filename = os.path.join(self.root_route_file_position, 'routes_training.xml')
-        list_route_descriptions = parser.parse_routes_file(filename)
 
         # For each of the routes to be evaluated.
-        for route_description in list_route_descriptions:
-
-            if route_description['town_name'] == 'Town03' or route_description['town_name'] == 'Town04':
-                continue
-            challenge.world = client.load_world(route_description['town_name'])
-
-            # Set the actor pool so the scenarios can prepare themselves when needed
+        for town_name in world_annotations.keys():
+            challenge.world = client.load_world(town_name)
             CarlaActorPool.set_world(challenge.world)
 
             CarlaDataProvider.set_world(challenge.world)
-            # find and filter potential scenarios
-            # Returns the iterpolation in a different format
 
-            challenge.world.wait_for_tick()
-            gps_route, route_description['trajectory'] = interpolate_trajectory(challenge.world,
-                                                                                route_description['trajectory'])
+            scenarios = world_annotations[town_name]
+            for scenario in scenarios:  # For each existent scenario
+                for event in scenario["available_event_configurations"]:
+                    waypoint = event['transform']
 
+                    convert_waypoint_float(waypoint)
 
-            potential_scenarios_definitions, existent_triggers = parser.scan_route_for_scenarios(route_description,
-                                                                                                 world_annotations)
+                    challenge.prepare_ego_car(convert_json_to_transform(waypoint))
 
-            print (existent_triggers)
+                    if event['other_actors'] is not None:
+                        if 'left' in event['other_actors']:
+                            for other_waypoint in event['other_actors']['left']:
+                                challenge.prepare_ego_car(convert_json_to_transform(other_waypoint))
+                        if 'right' in event['other_actors']:
+                            for other_waypoint in event['other_actors']['right']:
+                                challenge.prepare_ego_car(convert_json_to_transform(other_waypoint))
+                        if 'front' in event['other_actors']:
+                            for other_waypoint in event['other_actors']['front']:
+                                challenge.prepare_ego_car(convert_json_to_transform(other_waypoint))
 
-
-            #challenge.prepare_ego_car(route_description['trajectory'][0][0].transform)
-            # Sample the scenarios
 
 
             challenge.cleanup(ego=True)
