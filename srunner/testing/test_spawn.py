@@ -52,12 +52,12 @@ class TestSpawn(unittest.TestCase):
         for town_name in world_annotations.keys():
             challenge.world = client.load_world(town_name)
             CarlaActorPool.set_world(challenge.world)
-
             CarlaDataProvider.set_world(challenge.world)
+            print ("Town Name ", town_name)
 
             scenarios = world_annotations[town_name]
             for scenario in scenarios:  # For each existent scenario
-                print ("Scenario ", scenario)
+                print ("Scenario ", scenario['scenario_type'])
                 for event in scenario["available_event_configurations"]:
                     waypoint = event['transform']
 
