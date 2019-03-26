@@ -62,6 +62,7 @@ class ActorConfigurationData(object):
     """
     This is a configuration base class to hold model and transform attributes
     """
+
     def __init__(self, model, transform, autopilot=False, random=False):
         self.model = model
         self.transform = transform
@@ -164,7 +165,7 @@ def parse_scenario_configuration(file_name, scenario_name):
             new_config.target = TargetConfiguration(target)
 
         for route in scenario.iter("route"):
-            route_conf =RouteConfiguration()
+            route_conf = RouteConfiguration()
             new_config.route = route_conf.parse_xml(route)
 
         for other_actor in scenario.iter("other_actor"):

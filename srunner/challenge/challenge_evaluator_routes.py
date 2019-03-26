@@ -34,7 +34,7 @@ from srunner.scenariomanager.carla_data_provider import CarlaActorPool, CarlaDat
 
 from srunner.scenarios.control_loss import ControlLoss
 from srunner.scenarios.follow_leading_vehicle import FollowLeadingVehicle
-from srunner.scenarios.object_crash_vehicle import  DynamicObjectCrossing
+from srunner.scenarios.object_crash_vehicle import DynamicObjectCrossing
 from srunner.scenarios.object_crash_intersection import VehicleTurningRight, VehicleTurningLeft
 from srunner.scenarios.opposite_vehicle_taking_priority import OppositeVehicleRunningRedLight
 from srunner.scenarios.signalized_junction_left_turn import SignalizedJunctionLeftTurn
@@ -46,11 +46,10 @@ from srunner.scenarios.master_scenario import MasterScenario
 # The configuration parser
 
 from srunner.scenarios.config_parser import ActorConfiguration, ScenarioConfiguration, \
-                                            RouteConfiguration, ActorConfigurationData
+    RouteConfiguration, ActorConfigurationData
 from srunner.scenariomanager.traffic_events import TrafficEvent, TrafficEventType
 
 from srunner.challenge.utils.route_manipulation import interpolate_trajectory
-
 
 
 number_class_translation = {
@@ -68,6 +67,8 @@ number_class_translation = {
 
 }
 # Util functions
+
+
 def convert_json_to_actor(actor_dict):
     node = ET.Element('waypoint')
     node.set('x', actor_dict['x'])
@@ -77,11 +78,12 @@ def convert_json_to_actor(actor_dict):
 
     return ActorConfiguration(node)
 
+
 def convert_json_to_transform(actor_dict):
 
     return carla.Transform(location=carla.Location(x=float(actor_dict['x']), y=float(actor_dict['y']),
-                                                     z=float(actor_dict['z'])),
-                            rotation=carla.Rotation(roll=0.0, pitch=0.0, yaw=float(actor_dict['yaw'])))
+                                                   z=float(actor_dict['z'])),
+                           rotation=carla.Rotation(roll=0.0, pitch=0.0, yaw=float(actor_dict['yaw'])))
 
 
 class ChallengeEvaluator(object):
@@ -304,7 +306,6 @@ class ChallengeEvaluator(object):
 
         return MasterScenario(self.world, self.ego_vehicle, master_scenario_configuration)
 
-
     def build_scenario_instances(self, scenario_definition_vec, town_name):
         """
             Based on the parsed route and possible scenarios, build all the scenario classes.
@@ -460,13 +461,13 @@ class ChallengeEvaluator(object):
 
             return_message += "\n=================================="
 
-        current_statistics = { 'id': route_id,
-                               'score_composed': score_composed,
-                               'score_route': score_route,
-                               'score_penalty': score_penalty,
-                               'result': result,
-                               'help_text': return_message
-                             }
+        current_statistics = {'id': route_id,
+                              'score_composed': score_composed,
+                              'score_route': score_route,
+                              'score_penalty': score_penalty,
+                              'result': result,
+                              'help_text': return_message
+                              }
 
         self.statistics_routes.append(current_statistics)
 
@@ -478,9 +479,9 @@ class ChallengeEvaluator(object):
         help_message = ""
 
         for stats in self.statistics_routes:
-            score_composed  += stats['score_composed'] / float(n_routes)
-            score_route     += stats['score_route'] / float(n_routes)
-            score_penalty   += stats['score_penalty'] / float(n_routes)
+            score_composed += stats['score_composed'] / float(n_routes)
+            score_route += stats['score_route'] / float(n_routes)
+            score_penalty += stats['score_penalty'] / float(n_routes)
             help_message += "{}\n\n".format(stats['help_text'])
 
         if self.phase == 'validation' or self.phase == 'test':
@@ -491,15 +492,15 @@ class ChallengeEvaluator(object):
             'submission_status': 'FINISHED',
             'stderr': help_message,
             'results': [
-            {
-                'split': self.phase,
-                'show_to_participant': show_to_participant,
-                'accuracies': {
-                                'avg. route points': score_route,
-                                'infraction points': score_penalty,
-                                'total avg.': score_composed
-                              }
-             }],
+                {
+                    'split': self.phase,
+                    'show_to_participant': show_to_participant,
+                    'accuracies': {
+                        'avg. route points': score_route,
+                        'infraction points': score_penalty,
+                        'total avg.': score_composed
+                    }
+                }],
         }
 
         with open(filename, "w+") as fd:
@@ -512,15 +513,15 @@ class ChallengeEvaluator(object):
             'submission_status': 'FAILED',
             'stderr': error_message,
             'results': [
-            {
-                'split': self.phase,
-                'show_to_participant': show_to_participant,
-                'accuracies': {
-                                'avg. route points': 0,
-                                'infraction points': 0,
-                                'total avg.': 0
-                              }
-             }],
+                {
+                    'split': self.phase,
+                    'show_to_participant': show_to_participant,
+                    'accuracies': {
+                        'avg. route points': 0,
+                        'infraction points': 0,
+                        'total avg.': 0
+                    }
+                }],
         }
 
         with open(filename, "w+") as fd:
@@ -559,7 +560,7 @@ class ChallengeEvaluator(object):
                 if sensor['type'].startswith('sensor.scene_layout') or sensor['type'].startswith('sensor.object_finder'):
                     return False, "Illegal sensor used for Track [{}]!".format(agent.track)
             else:
-                if not (sensor['type'].startswith('sensor.scene_layout')  or sensor['type'].startswith(
+                if not (sensor['type'].startswith('sensor.scene_layout') or sensor['type'].startswith(
                         'sensor.object_finder') or sensor['type'].startswith(
                         'sensor.other.gnss')):
                     return False, "Illegal sensor used for Track [{}]!".format(agent.track)
@@ -611,7 +612,8 @@ class ChallengeEvaluator(object):
             self.agent_instance.set_global_plan(gps_route)
 
             # prepare the ego car to run the route.
-            self.prepare_ego_car(route_description['trajectory'][0][0].transform)  # It starts on the first wp of the route
+            # It starts on the first wp of the route
+            self.prepare_ego_car(route_description['trajectory'][0][0].transform)
             # build the master scenario based on the route and the target.
             self.master_scenario = self.build_master_scenario(route_description['trajectory'],
                                                               route_description['town_name'])
@@ -634,7 +636,8 @@ class ChallengeEvaluator(object):
                 self.ego_vehicle.apply_control(ego_action)
 
                 if args.route_visible:
-                    self.draw_waypoints(route_description['trajectory'], vertical_shift=1.0, persistency=scenario.timeout)
+                    self.draw_waypoints(route_description['trajectory'],
+                                        vertical_shift=1.0, persistency=scenario.timeout)
 
                 # time continues
                 self.world.tick()
@@ -673,7 +676,6 @@ if __name__ == '__main__':
                         help='Name of the route to be executed. Point to the route_xml_file to be executed.')
     PARSER.add_argument('--scenarios',
                         help='Name of the scenario annotation file to be mixed with the route.')
-
 
     ARGUMENTS = PARSER.parse_args()
 
