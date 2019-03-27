@@ -55,10 +55,10 @@ class TestScenarioBuilder(unittest.TestCase):
             CarlaActorPool.set_world(challenge.world)
 
             CarlaDataProvider.set_world(challenge.world)
-            print (" WE HAVE THIS   ACTORS ", challenge.world.get_actors())
-            for actor in challenge.world.get_actors():
-                if 'static.prop' in actor.type_id:
-                    actor.destroy()
+            #print (" WE HAVE THIS   ACTORS ", challenge.world.get_actors())
+            #for actor in challenge.world.get_actors():
+            #    if 'static.prop' in actor.type_id:
+            #        actor.destroy()
             # find and filter potential scenarios
             # Returns the iterpolation in a different format
 
@@ -73,7 +73,11 @@ class TestScenarioBuilder(unittest.TestCase):
             sampled_scenarios = challenge.scenario_sampling(potential_scenarios_definitions)
 
             # prepare route's trajectory
-            challenge.prepare_ego_car(route_description['trajectory'][0][0].transform)
+
+            carla_map = CarlaDataProvider.get_map()
+            reference_waypoint = carla_map.get_waypoint(route_description['trajectory'][0][0].transform)
+
+            challenge.prepare_ego_car(reference_waypoint.transform)
 
             # build the master scenario based on the route and the target.
             master_scenario = challenge.build_master_scenario(route_description['trajectory'], route_description['town_name'])
