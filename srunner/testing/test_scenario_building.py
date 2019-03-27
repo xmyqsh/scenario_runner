@@ -75,7 +75,7 @@ class TestScenarioBuilder(unittest.TestCase):
             # prepare route's trajectory
 
             carla_map = CarlaDataProvider.get_map()
-            reference_waypoint = carla_map.get_waypoint(route_description['trajectory'][0][0].transform)
+            reference_waypoint = carla_map.get_waypoint(route_description['trajectory'][0][0].transform.location)
 
             challenge.prepare_ego_car(reference_waypoint.transform)
 
