@@ -55,7 +55,7 @@ class TestScenarioBuilder(unittest.TestCase):
             CarlaActorPool.set_world(challenge.world)
 
             CarlaDataProvider.set_world(challenge.world)
-            print (" WE HAVE THIS NUMBER OF ACTORS ", len(challenge.world.get_actors()))
+            print (" WE HAVE THIS   ACTORS ", challenge.world.get_actors())
             # find and filter potential scenarios
             # Returns the iterpolation in a different format
 
