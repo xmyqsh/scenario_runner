@@ -56,6 +56,9 @@ class TestScenarioBuilder(unittest.TestCase):
 
             CarlaDataProvider.set_world(challenge.world)
             print (" WE HAVE THIS   ACTORS ", challenge.world.get_actors())
+            for actor in challenge.world.get_actors():
+                if 'static.prop' in actor.type_id:
+                    print (actor.get_transform().location)
             # find and filter potential scenarios
             # Returns the iterpolation in a different format
 
