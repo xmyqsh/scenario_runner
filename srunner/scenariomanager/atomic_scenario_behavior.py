@@ -334,6 +334,7 @@ class InTimeToArrivalToLocation(AtomicBehavior):
             time_to_arrival = distance / velocity
 
         if time_to_arrival < self._time:
+            print("Some Scenario Was Triggered")
             new_status = py_trees.common.Status.SUCCESS
 
         self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
@@ -378,7 +379,7 @@ class InTimeToArrivalToVehicle(AtomicBehavior):
 
         # if velocity is too small, simply use a large time to arrival
         time_to_arrival = self._max_time_to_arrival
-
+        print (time_to_arrival)
         if current_velocity > other_velocity:
             time_to_arrival = 2 * distance / (current_velocity - other_velocity)
 
@@ -741,8 +742,11 @@ class AddNoiseToVehicle(AtomicBehavior):
         Set steer to steer_value and throttle to throttle_value until reaching full stop
         """
         self._control = self._actor.get_control()
+        print (" CURRENT CONTROL ", self._control)
         self._control.steer = self._steer_value
         self._control.throttle = self._throttle_value
+
+        print (" UPDATED CONTROL ", self._control)
         new_status = py_trees.common.Status.SUCCESS
 
         self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
@@ -1018,6 +1022,7 @@ class HandBrakeVehicle(AtomicBehavior):
         """
         Set handbrake
         """
+        print ("Set the hand branke as ", self._hand_brake_value)
         new_status = py_trees.common.Status.SUCCESS
         if self._type == 'vehicle':
             self._control.hand_brake = self._hand_brake_value
@@ -1077,6 +1082,8 @@ class ActorTransformSetter(AtomicBehavior):
         Transform actor
         """
         new_status = py_trees.common.Status.RUNNING
+
+        print (" TRIGGERED, RESPAWN ACTOR")
 
         self._actor.set_velocity(carla.Vector3D(0, 0, 0))
         self._actor.set_angular_velocity(carla.Vector3D(0, 0, 0))

@@ -1,8 +1,5 @@
 <?xml version="1.0"?>
 <scenarios>
-    <scenario name="VehicleTurningRight_1" type="VehicleTurningRight" town="Town01">
-        <ego_vehicle x="130" y="55" z="0" yaw="180" model="vehicle.lincoln.mkz2017" />
-    </scenario>
     <scenario name="VehicleTurningLeft_1" type="VehicleTurningLeft" town="Town01">
         <ego_vehicle x="130" y="55" z="0" yaw="180" model="vehicle.lincoln.mkz2017" />
     </scenario>

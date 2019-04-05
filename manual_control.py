@@ -224,6 +224,7 @@ class KeyboardControl(object):
         if not self._autopilot_enabled:
             self._parse_keys(pygame.key.get_pressed(), clock.get_time())
             world.vehicle.apply_control(self._control)
+            print ("APPLY CONTROL ", self._control)
 
     def _parse_keys(self, keys, milliseconds):
         self._control.throttle = 1.0 if keys[K_UP] or keys[K_w] else 0.0
@@ -616,7 +617,7 @@ def game_loop(args):
 
         clock = pygame.time.Clock()
         while True:
-            clock.tick_busy_loop(60)
+            clock.tick_busy_loop(600)
             if controller.parse_events(world, clock):
                 return
             if not world.tick(clock):

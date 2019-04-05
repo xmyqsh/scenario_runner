@@ -24,6 +24,7 @@ VEHICLE_TURNING_SCENARIOS = [
 ]
 
 
+
 class VehicleTurningRight(BasicScenario):
 
     """
@@ -130,6 +131,7 @@ class VehicleTurningRight(BasicScenario):
 
         after_timer_actor.add_child(post_timer_velocity_actor)
         after_timer_actor.add_child(post_timer_traverse_actor)
+
         return root
 
     def _create_test_criteria(self):
@@ -206,6 +208,7 @@ class VehicleTurningLeft(BasicScenario):
 
         first_vehicle = CarlaActorPool.request_new_actor('vehicle.diamondback.century', actor_transform)
         self.other_actors.append(first_vehicle)
+
 
     def _create_behavior(self):
         """

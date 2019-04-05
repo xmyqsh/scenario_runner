@@ -190,7 +190,7 @@ class DynamicObjectCrossing(BasicScenario):
         x_static = x_ego + shift * (x_cycle - x_ego)
         y_static = y_ego + shift * (y_cycle - y_ego)
 
-        transform2 = carla.Transform(carla.Location(x_static, y_static, transform.location.z + 0.01))
+        transform2 = carla.Transform(carla.Location(x_static, y_static, transform.location.z ))
         static = CarlaActorPool.request_new_actor('static.prop.vendingmachine', transform2)
         static.set_simulate_physics(True)
         self.other_actors.append(static)
