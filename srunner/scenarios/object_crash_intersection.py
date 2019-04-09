@@ -46,9 +46,9 @@ class VehicleTurningRight(BasicScenario):
         self._wmap = CarlaDataProvider.get_map()
         self._reference_waypoint = self._wmap.get_waypoint(config.trigger_point.location)
         self._other_actor_transform = None
-
+        self._total_number_of_tries = 10  # This is the number of times it attemps to spawn something moving around
+        self._debug_mode = debug_mode
         self._num_lane_changes = 0
-
         super(VehicleTurningRight, self).__init__("VehicleTurningRight",
                                                   ego_vehicle,
                                                   config,
@@ -78,7 +78,7 @@ class VehicleTurningRight(BasicScenario):
         """
         Custom initialization
         """
-
+        _attempts = 0
         waypoint = self._reference_waypoint
         waypoint = generate_target_waypoint(waypoint, 1)
         _start_distance = 8
@@ -101,10 +101,19 @@ class VehicleTurningRight(BasicScenario):
                 first_vehicle.set_simulate_physics(enabled=False)
 
                 break
-            except RuntimeError:  # TODO MAKE SPECIFIC EXCEPTION
+            except RuntimeError as r:  # TODO MAKE SPECIFIC EXCEPTION
                 # In the case there is an object just move a little bit and retry
                 print (" Base transform is blocking objects ", self._other_actor_transform)
                 _start_distance += 0.5
+                _attempts += 1
+                if _attempts > self._total_number_of_tries:  # We tried too much so we just do not initialized
+                    print(" Too many Attempts Could not spawn object on base transform",
+                          self._reference_waypoint.transform)
+                    if self._debug_mode:
+                        raise r
+                    else:
+                        self._initialization_status = False
+
         # Set the transform to -500 z after we are able to spawn it
         actor_transform = carla.Transform(
             carla.Location(self._other_actor_transform.location.x,
@@ -113,8 +122,6 @@ class VehicleTurningRight(BasicScenario):
             self._other_actor_transform.rotation)
         first_vehicle.set_transform(actor_transform)
         self.other_actors.append(first_vehicle)
-
-
 
     def _create_behavior(self):
         """
@@ -145,7 +152,7 @@ class VehicleTurningRight(BasicScenario):
                 "Synchronization of actor and ego vehicle",
                 policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
             after_timer_actor = py_trees.composites.Parallel(
-                "After timout actor will cross the remaining lane_width",
+                "After timeout actor will cross the remaining lane_width",
                 policy=py_trees.common.ParallelPolicy.SUCCESS_ON_ONE)
 
             # building the tree
@@ -202,7 +209,8 @@ class VehicleTurningLeft(BasicScenario):
         self._wmap = CarlaDataProvider.get_map()
         self._reference_waypoint = self._wmap.get_waypoint(config.trigger_point.location)
         self._other_actor_transform = None
-
+        self._total_number_of_tries = 10  # This is the number of times it attempts to spawn something moving around
+        self._debug_mode = debug_mode
         self._num_lane_changes = 0
 
         super(VehicleTurningLeft, self).__init__("VehicleTurningLeft",
@@ -235,7 +243,7 @@ class VehicleTurningLeft(BasicScenario):
         """
         Custom initialization
         """
-
+        _attempts = 0
         waypoint = self._reference_waypoint
         waypoint = generate_target_waypoint(waypoint, -1)
         _start_distance = 8
@@ -258,10 +266,19 @@ class VehicleTurningLeft(BasicScenario):
                 first_vehicle.set_simulate_physics(enabled=False)
 
                 break
-            except RuntimeError:  # TODO MAKE SPECIFIC EXCEPTION
+            except RuntimeError as r:  # TODO MAKE SPECIFIC EXCEPTION
                 # In the case there is an object just move a little bit and retry
                 print(" Base transform is blocking objects ", self._other_actor_transform)
                 _start_distance += 0.5
+                _attempts += 1
+                if _attempts > self._total_number_of_tries:  # We tried too much so we just do not initialized
+                    print (" Too many Attempts Could not spawn object on base transform",
+                           self._reference_waypoint.transform)
+                    if self._debug_mode:
+                        raise r
+                    else:
+                        self._initialization_status = False
+
             # Set the transform to -500 z after we are able to spawn it
         actor_transform = carla.Transform(
             carla.Location(self._other_actor_transform.location.x,

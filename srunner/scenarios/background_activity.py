@@ -31,14 +31,15 @@ class BackgroundActivity(BasicScenario):
         Setup all relevant parameters and create scenario
         """
         self.config = config
+        self.debug_mode = debug_mode
 
         super(BackgroundActivity, self).__init__("BackgroundActivity",
-                                             ego_vehicle,
-                                             config,
-                                             world,
-                                             debug_mode,
-                                             terminate_on_failure=True,
-                                             criteria_enable=True)
+                                                 ego_vehicle,
+                                                 config,
+                                                 world,
+                                                 debug_mode,
+                                                 terminate_on_failure=True,
+                                                 criteria_enable=True)
 
     def _initialize_actors(self, config):
         for actor in config.other_actors:
@@ -48,8 +49,12 @@ class BackgroundActivity(BasicScenario):
                                                                  hero=False,
                                                                  autopilot=actor.autopilot,
                                                                  random_location=actor.random_location)
+
             if new_actors is None:
-                raise Exception("Error: Unable to add actor {} at {}".format(actor.model, actor.transform))
+                if self.debug_mode:
+                    raise Exception("Error: Unable to add actor {} at {}".format(actor.model, actor.transform))
+                else:
+                    continue
 
             for actor in new_actors:
                 self.other_actors.append(actor)

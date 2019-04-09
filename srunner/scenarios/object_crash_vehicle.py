@@ -148,6 +148,8 @@ class DynamicObjectCrossing(BasicScenario):
         self._walker_yaw = 0
         self._initialization_status = True
         self._num_lane_changes = 1
+        self._total_number_of_tries = 10  # This is the number of times it attempts to spawn something moving around
+        self._debug_mode = debug_mode
 
         super(DynamicObjectCrossing, self).__init__("Dynamicobjectcrossing",
                                                     ego_vehicle,
@@ -193,7 +195,6 @@ class DynamicObjectCrossing(BasicScenario):
         else:
 
             self._other_actor_target_velocity = self._other_actor_target_velocity * self._num_lane_changes
-
             first_vehicle = CarlaActorPool.request_new_actor('vehicle.diamondback.century', transform)
             first_vehicle.set_simulate_physics(enabled=False)
             return first_vehicle
@@ -225,7 +226,7 @@ class DynamicObjectCrossing(BasicScenario):
         """
         Custom initialization
         """
-
+        _attempts = 0
         # cyclist transform
         _start_distance = 10
         # We start by getting and waypoint in the closest sidewalk.
@@ -249,12 +250,20 @@ class DynamicObjectCrossing(BasicScenario):
                 blocker = self._spawn_blocker(self.transform)
 
                 break
-            except RuntimeError:
+            except RuntimeError as r:
                 # We keep retrying until we spawn
-                print (" Base transform is blocking objects ", self.transform)
+                print(" Base transform is blocking objects ", self.transform)
                 _start_distance += 0.5
+                _attempts += 1
+                if _attempts > self._total_number_of_tries:  # We tried too much so we just do not initialized
+                    print(" Too many Attempts Could not spawn object on base transform",
+                          self._reference_waypoint.transform)
+                    if self._debug_mode:
+                        raise r
+                    else:
+                        self._initialization_status = False
 
-        # Now that we found a posible position we just put the vehicle to the underground
+        # Now that we found a possible position we just put the vehicle to the underground
         disp_transform = carla.Transform(
             carla.Location(self.transform.location.x,
                            self.transform.location.y,

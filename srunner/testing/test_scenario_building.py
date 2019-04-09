@@ -10,7 +10,13 @@ from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
 from srunner.challenge.utils.route_manipulation import interpolate_trajectory
 import carla
 
+def convert_transform_to_location(transform_vec):
 
+    location_vec = []
+    for transform_tuple in transform_vec:
+        location_vec.append((transform_tuple[0].location, transform_tuple[1]))
+
+    return location_vec
 
 
 class Arguments():
@@ -22,7 +28,7 @@ class Arguments():
         self.port = 2000
         self.split = 'dev_track_1'
         self.route_visible = False
-        self.debug = 0
+        self.debug = 1
         self.background = True
 
 class TestScenarioBuilder(unittest.TestCase):
@@ -39,7 +45,7 @@ class TestScenarioBuilder(unittest.TestCase):
         client.set_timeout(25.0)
         challenge = ChallengeEvaluator(args)
 
-        filename = os.path.join(self.root_route_file_position, 'all_towns_traffic_scenarios1_3_4_6.json')
+        filename = os.path.join(self.root_route_file_position, 'all_towns_traffic_scenarios.json')
         world_annotations = parser.parse_annotations_file(filename)
         # retrieve routes
         # Which type of file is expected ????
@@ -48,7 +54,6 @@ class TestScenarioBuilder(unittest.TestCase):
         list_route_descriptions = parser.parse_routes_file(filename)
         # For each of the routes to be evaluated.
         for route_description in list_route_descriptions:
-
             #if route_description['town_name'] == 'Town01' :#or route_description['town_name'] == 'Town03':
             #    continue
             print (" TOWN  ", route_description['town_name'])
@@ -63,6 +68,8 @@ class TestScenarioBuilder(unittest.TestCase):
             challenge.world.wait_for_tick()
             gps_route, route_description['trajectory'] = interpolate_trajectory(challenge.world,
                                                                                 route_description['trajectory'])
+
+            CarlaDataProvider.set_ego_vehicle_route(convert_transform_to_location(route_description['trajectory']))
 
             potential_scenarios_definitions, existent_triggers = parser.scan_route_for_scenarios(route_description,
                                                                                                  world_annotations)
