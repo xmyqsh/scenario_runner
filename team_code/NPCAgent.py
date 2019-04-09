@@ -46,7 +46,7 @@ class NPCAgent(AutonomousAgent):
 
         return sensors
 
-    def run_step(self, input_data):
+    def run_step(self, input_data, timestamp):
         control = carla.VehicleControl()
         control.steer = 0.0
         control.throttle = 0.0
