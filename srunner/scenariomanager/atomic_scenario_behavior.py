@@ -943,6 +943,8 @@ class TrafficJamChecker(AtomicBehavior):
                 if (current_game_time - self.table_blocked_actors[actor_id]['time']) > self.HARD_NUMBER_BLOCKS:
                     list_actors_to_destroy.append(actor_id)
 
+                    print("ACTOR ", actor_id, " BLOCKED  stop")
+
                     if self.debug:
                         self.world.debug.draw_point(current_location,
                                                     size=1.3,
@@ -961,6 +963,7 @@ class TrafficJamChecker(AtomicBehavior):
                                                         size=1.3,
                                                         color=carla.Color(0, 0, 255),
                                                         life_time=5)
+                        print ("ACTOR ", actor_id, " BLOCKED in intersection")
                         list_actors_to_destroy.append(actor_id)
 
         for actor_id in list_actors_to_destroy:
