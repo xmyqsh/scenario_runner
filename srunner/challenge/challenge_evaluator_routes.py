@@ -273,6 +273,7 @@ class ChallengeEvaluator(object):
 
         # setup sensors
         if self.agent_instance is not None:
+            print ("SETUP SENSORS AGAIN")
             self.setup_sensors(self.agent_instance.sensors(), self.ego_vehicle)
 
     def draw_waypoints(self, waypoints, vertical_shift, persistency=-1):

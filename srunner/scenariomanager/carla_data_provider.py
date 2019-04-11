@@ -434,6 +434,8 @@ class CarlaActorPool(object):
         Remove an actor from the pool using its ID
         """
         if actor_id in CarlaActorPool._carla_actor_pool:
+
+            print(" REMOVE ACTOR id", actor_id, " TYPE: ", CarlaActorPool._carla_actor_pool[actor_id].type_id)
             CarlaActorPool._carla_actor_pool[actor_id].destroy()
             CarlaActorPool._carla_actor_pool[actor_id] = None
             CarlaActorPool._carla_actor_pool.pop(actor_id)

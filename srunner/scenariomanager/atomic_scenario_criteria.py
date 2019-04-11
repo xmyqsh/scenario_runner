@@ -264,6 +264,7 @@ class CollisionTest(Criterion):
             self.test_status = "SUCCESS"
 
         if self._terminate_on_failure and (self.test_status == "FAILURE"):
+            print (" TERMINATE DUE TO COLLISION")
             new_status = py_trees.common.Status.FAILURE
 
         self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
@@ -335,6 +336,7 @@ class KeepLaneTest(Criterion):
             self.test_status = "SUCCESS"
 
         if self._terminate_on_failure and (self.test_status == "FAILURE"):
+            print ("LANE FAIL ")
             new_status = py_trees.common.Status.FAILURE
 
         self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
@@ -401,6 +403,7 @@ class ReachedRegionTest(Criterion):
                 self.test_status = "RUNNING"
 
         if self.test_status == "SUCCESS":
+            print ("REACH THE OBJECTIVE")
             new_status = py_trees.common.Status.SUCCESS
 
         self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
@@ -447,7 +450,7 @@ class OnSidewalkTest(Criterion):
                 onsidewalk_event.set_message('Agent invaded the sidewalk')
                 onsidewalk_event.set_dict({'x': current_location.x, 'y': current_location.y})
                 self.list_traffic_events.append(onsidewalk_event)
-
+                print ("INVADED SIDEWALK")
                 self.test_status = "FAILURE"
                 self._onsidewalk_active = True
 
@@ -488,6 +491,7 @@ class WrongLaneTest(Criterion):
         new_status = py_trees.common.Status.RUNNING
 
         if self._terminate_on_failure and (self.test_status == "FAILURE"):
+            print (" WRONG LANE TERMINATION")
             new_status = py_trees.common.Status.FAILURE
 
         self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))

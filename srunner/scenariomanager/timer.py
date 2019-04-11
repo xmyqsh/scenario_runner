@@ -88,6 +88,7 @@ class TimeOut(py_trees.behaviour.Behaviour):
             new_status = py_trees.common.Status.RUNNING
         else:
             new_status = py_trees.common.Status.SUCCESS
+            print ("TIMEOUT  ", new_status)
             self.timeout = True
 
         self.logger.debug("%s.update()[%s->%s]" %

@@ -25,7 +25,6 @@ class DummyAgent(AutonomousAgent):
              'id': 'LIDAR'}
 
 
-        """
         sensors = [{'type': 'sensor.camera.rgb', 'x': 0.7, 'y': 0.0, 'z': 1.60, 'roll':0.0, 'pitch':0.0, 'yaw': 0.0,
                     'width': 800, 'height': 600, 'fov':100, 'id': 'Center'},
                    {'type': 'sensor.camera.rgb', 'x': 0.7, 'y': -0.4, 'z': 1.60, 'roll': 0.0, 'pitch': 0.0,
@@ -39,7 +38,8 @@ class DummyAgent(AutonomousAgent):
                    {'type': 'sensor.hd_map', 'reading_frequency': 1, 'id': 'hdmap'},
                   ]
 
-        return sensors
+        """
+        return []
 
     def run_step(self, input_data, timestamp):
         print("=====================>")
@@ -56,7 +56,7 @@ class DummyAgent(AutonomousAgent):
         # RETURN CONTROL
         control = carla.VehicleControl()
         control.steer = 0.0
-        control.throttle = 0.0
+        control.throttle = 1.0
         control.brake = 0.0
         control.hand_brake = False
 

@@ -58,6 +58,9 @@ class HumanInterface():
         while not self._parent.agent_engaged:
             time.sleep(0.5)
 
+
+        print ( " AGENT ENGAGED !")
+
         controller = KeyboardControl()
         while not self.quit:
             self._clock.tick_busy_loop(20)
@@ -84,6 +87,7 @@ class HumanInterface():
                 self._display.blit(self._surface, (0, 0))
             pygame.display.flip()
 
+        print (" QUITING")
         pygame.quit()
 
 
@@ -101,6 +105,7 @@ class HumanAgent(AutonomousAgent):
         self._hic = HumanInterface(self)
         self._thread = Thread(target=self._hic.run)
         self._thread.start()
+        print (" STARTED NEW THREAD.")
 
 
     def sensors(self):
@@ -129,7 +134,7 @@ class HumanAgent(AutonomousAgent):
                     'yaw': -45.0, 'width': 300, 'height': 200, 'fov': 100, 'id': 'Left'},
 
                    {'type': 'sensor.camera.rgb', 'x': 0.7, 'y':0.4, 'z':1.60, 'roll':0.0, 'pitch':0.0, 'yaw':45.0,
-                    'width':300, 'height':200, 'fov': 100, 'id': 'Right'},
+                    'width': 300, 'height':200, 'fov': 100, 'id': 'Right'},
 
                    {'type': 'sensor.camera.rgb', 'x': -1.8, 'y': 0, 'z': 1.60, 'roll': 0.0, 'pitch': 0.0,
                     'yaw': 180.0, 'width': 300, 'height': 200, 'fov': 130, 'id': 'Rear'},
@@ -147,6 +152,7 @@ class HumanAgent(AutonomousAgent):
     def destroy(self):
         self._hic.quit = True
         self._thread.join()
+        print ( "THREAD JOIN ")
 
 
 class KeyboardControl(object):
