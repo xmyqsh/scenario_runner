@@ -233,6 +233,13 @@ class AverageVelocityTest(Criterion):
 
         return new_status
 
+def compute_distance(l1, l2):
+
+    dx = l1.x - l2.x
+    dy = l1.y - l2.y
+    dz = l1.z - l2.z
+
+    return math.sqrt(dx*dx + dy*dy + dz*dz)
 
 class CollisionTest(Criterion):
 
@@ -301,6 +308,8 @@ class CollisionTest(Criterion):
         collision_event.set_dict({'type': event.other_actor.type_id, 'id': event.other_actor.id})
         collision_event.set_message("Agent collided against object with type={} and id={}".format(
             event.other_actor.type_id, event.other_actor.id))
+        print (" DISTANCE ", compute_distance(event.other_actor.get_transform().location, self.actor.get_transform().location))
+        print ("COLLISION  " , event.other_actor.type_id, event.other_actor.id)
 
         self.list_traffic_events.append(collision_event)
         self.actual_value += 1

@@ -134,6 +134,14 @@ def convert_transform_to_location(transform_vec):
 Z_DISTANCE_AVOID_COLLISION = 0.5  # z vallue to add in oder to avoid spawning vehicles to close to the ground
 
 
+def compute_distance(l1, l2):
+
+    dx = l1.x - l2.x
+    dy = l1.y - l2.y
+    dz = l1.z - l2.z
+
+    return math.sqrt(dx*dx + dy*dy + dz*dz)
+
 def find_weather_presets():
     rgx = re.compile('.+?(?:(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|$)')
     name = lambda x: ' '.join(m.group(0) for m in rgx.finditer(x))
@@ -267,7 +275,7 @@ class ChallengeEvaluator(object):
         # Otherwise spawn ego vehicle
         if self.ego_vehicle is None:
             # TODO: the model is now hardcoded but that can change in a future.
-            self.ego_vehicle = CarlaActorPool.setup_actor('vehicle.lincoln.mkz2017', start_transform, True)
+            self.ego_vehicle = CarlaActorPool.request_new_actor('vehicle.lincoln.mkz2017', start_transform, hero=True)
         else:
             self.ego_vehicle.set_transform(start_transform)
 
@@ -446,7 +454,7 @@ class ChallengeEvaluator(object):
         random = True
 
         if town_name == 'Town01' or town_name == 'Town02':
-            amount = 120
+            amount = 200
         elif town_name == 'Town03' or 'Town05':
             amount = 120
         elif town_name == 'Town04':
@@ -906,15 +914,19 @@ class ChallengeEvaluator(object):
                                                              route_description['town_name'],
                                                              timeout=route_timeout)
 
+        for actor in self.world.get_actors():
+            if 'vehicle' in actor.type_id:
+                print (compute_distance(actor.get_transform().location, self.ego_vehicle.get_transform().location))
         # Tick once to start the scenarios.
         if self.debug > 0:
             print(" Running these scenarios  --- ", self.list_scenarios)
 
         for scenario in self.list_scenarios:
             scenario.scenario.scenario_tree.tick_once()
-
+        print (" WILL START THE ROUTE")
         # main loop!
         self.run_route(route_description['trajectory'])
+        print (" FINISHED THE ROUTE")
 
     def run(self, args):
         """
@@ -977,19 +989,27 @@ class ChallengeEvaluator(object):
                 # If something goes wrong, still take the current score, and continue
                 try:
                     self.load_environment_and_run(args, world_annotations, route_description)
+
                 except:
-                    pass
+                    print (" CRASH ON  THE ROUTE")
+                    import traceback
+                    traceback.print_exc()
 
                 # statistics recording
+                print ("Recorded")
                 self.record_route_statistics(route_description['id'])
+                print (" Compute the score so far")
                 client.stop_recorder()
 
                 # clean up
+
+                print (" Apply settings ")
                 settings = self.world.get_settings()
                 settings.synchronous_mode = False
                 self.world.apply_settings(settings)
-
+                print (" Clean UP ")
                 self.agent_instance.destroy()
+                print(" Destroy agent ")
                 self.cleanup(ego=True)
                 for scenario in self.list_scenarios:
                     # Reset scenario status for proper cleanup

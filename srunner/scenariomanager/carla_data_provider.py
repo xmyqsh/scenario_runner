@@ -344,7 +344,12 @@ class CarlaActorPool(object):
         FutureActor = carla.command.FutureActor     # pylint: disable=invalid-name
 
         blueprint_library = CarlaActorPool._world.get_blueprint_library()
-
+        # We start by finding the hero position, if hero is false, so we don't place anything on hero position
+        if not hero:
+            hero_actor = CarlaActorPool.get_hero_actor()
+        else:
+            hero_actor = None
+        print (" HERO ACTOR IS ", hero_actor)
         batch = []
         for _ in range(amount):
             # Get vehicle by model
@@ -360,6 +365,12 @@ class CarlaActorPool(object):
                 if CarlaActorPool._spawn_index >= len(CarlaActorPool._spawn_points):
                     CarlaActorPool._spawn_index = len(CarlaActorPool._spawn_points)
                     spawn_point = None
+                elif hero_actor is not None:
+                    spawn_point = CarlaActorPool._spawn_points[CarlaActorPool._spawn_index]
+                    CarlaActorPool._spawn_index += 1
+                    # if the spawn point is to close to hero we just ignore this position
+                    if hero_actor.get_transform().location.distance(spawn_point.location) < 8.0:
+                        spawn_point = None
                 else:
                     spawn_point = CarlaActorPool._spawn_points[CarlaActorPool._spawn_index]
                     CarlaActorPool._spawn_index += 1
@@ -415,6 +426,24 @@ class CarlaActorPool(object):
 
         CarlaActorPool._carla_actor_pool[actor.id] = actor
         return actor
+    @staticmethod
+    def actor_id_exists(actor_id):
+        """
+        Check if a certain id is still at the simulation
+        """
+        if actor_id in CarlaActorPool._carla_actor_pool:
+            return True
+        else:
+            return False
+    @staticmethod
+    def get_hero_actor():
+        print ("IDS")
+        print (CarlaActorPool._carla_actor_pool)
+        for actor_id in CarlaActorPool._carla_actor_pool:
+            print (actor_id)
+            if CarlaActorPool._carla_actor_pool[actor_id].attributes['role_name'] == 'hero':
+                return CarlaActorPool._carla_actor_pool[actor_id]
+        return None
 
     @staticmethod
     def get_actor_by_id(actor_id):
@@ -435,7 +464,7 @@ class CarlaActorPool(object):
         """
         if actor_id in CarlaActorPool._carla_actor_pool:
 
-            print(" REMOVE ACTOR id", actor_id, " TYPE: ", CarlaActorPool._carla_actor_pool[actor_id].type_id)
+            # print(" REMOVE ACTOR id", actor_id, " TYPE: ", CarlaActorPool._carla_actor_pool[actor_id].type_id)
             CarlaActorPool._carla_actor_pool[actor_id].destroy()
             CarlaActorPool._carla_actor_pool[actor_id] = None
             CarlaActorPool._carla_actor_pool.pop(actor_id)

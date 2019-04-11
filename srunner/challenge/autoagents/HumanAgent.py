@@ -55,7 +55,7 @@ class HumanInterface():
         pygame.display.set_caption("Human Agent")
 
     def run(self):
-        while not self._parent.agent_engaged:
+        while not self._parent.agent_engaged and not self.quit:
             time.sleep(0.5)
 
 
@@ -92,6 +92,7 @@ class HumanInterface():
 
 
 class HumanAgent(AutonomousAgent):
+
 
     def setup(self, path_to_conf_file):
         self.track = Track.ALL_SENSORS_HDMAP_WAYPOINTS
