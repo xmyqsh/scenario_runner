@@ -147,7 +147,13 @@ def get_scenario_type(scenario, match_position, trajectory):
                     return 0
                 return None
         return None
-
+    elif scenario == 'Scenario8':
+        for tuple_wp_turn in trajectory[match_position:]:
+            if RoadOption.LANEFOLLOW != tuple_wp_turn[1]:
+                if RoadOption.LEFT == tuple_wp_turn[1]:
+                    return 0
+                return None
+        return None
     return 0
 
 
