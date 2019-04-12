@@ -454,13 +454,13 @@ class ChallengeEvaluator(object):
         random = True
 
         if town_name == 'Town01' or town_name == 'Town02':
-            amount = 120
+            amount = 0
         elif town_name == 'Town03' or 'Town05':
-            amount = 120
+            amount = 0
         elif town_name == 'Town04':
-            amount = 200
+            amount = 0
         elif town_name == 'Town06' or town_name == 'Town07':
-            amount = 150
+            amount = 0
         else:
             amount = 1
 

@@ -1156,6 +1156,7 @@ class ActorTransformSetter(AtomicBehavior):
         """
         new_status = py_trees.common.Status.RUNNING
         if self._actor.is_alive:
+            print (" SET TRANSFORM ")
             self._actor.set_velocity(carla.Vector3D(0, 0, 0))
             self._actor.set_angular_velocity(carla.Vector3D(0, 0, 0))
             self._actor.set_transform(self._transform)
@@ -1163,6 +1164,7 @@ class ActorTransformSetter(AtomicBehavior):
                 self._actor.set_simulate_physics(enabled=True)
             new_status = py_trees.common.Status.SUCCESS
         else:
+            print ( " ACTOR IS GONE ")
             # For some reason the actor is gone...
             new_status = py_trees.common.Status.FAILURE
         return new_status
@@ -1208,6 +1210,7 @@ class ActorSource(AtomicBehavior):
 
             if not spawn_point_blocked:
                 try:
+                    print ("SPAWN ACTOR")
                     new_actor = CarlaActorPool.request_new_actor(np.random.choice(self._actor_types), self._spawn_point)
                     self._actor_limit -= 1
                     self._queue.put(new_actor)
