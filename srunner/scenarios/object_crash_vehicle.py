@@ -153,7 +153,7 @@ class DynamicObjectCrossing(BasicScenario):
         self.timeout = timeout
         self._trigger_location = config.trigger_point.location
         # Total Number of attempts to relocate a vehicle before spawning
-        self._number_of_attempts = 20
+        self._number_of_attempts = 10
         # Number of attempts made so far
         self._spawn_attempted = 0
 
@@ -222,8 +222,6 @@ class DynamicObjectCrossing(BasicScenario):
                                                          spawn_point_wp.transform.location.z + 0.3))
 
         static = CarlaActorPool.request_new_actor('static.prop.vendingmachine', self.transform2)
-        static.set_simulate_physics(enabled=False)
-
         return static
 
     def _initialize_actors(self, config):
@@ -257,7 +255,7 @@ class DynamicObjectCrossing(BasicScenario):
             except RuntimeError as r:
                 # We keep retrying until we spawn
                 print("Base transform is blocking objects ", self.transform)
-                _start_distance += 0.4
+                _start_distance += 0.3
                 self._spawn_attempted += 1
                 if self._spawn_attempted >= self._number_of_attempts:
                     raise r
@@ -277,6 +275,7 @@ class DynamicObjectCrossing(BasicScenario):
 
         first_vehicle.set_transform(disp_transform)
         blocker.set_transform(prop_disp_transform)
+        blocker.set_simulate_physics(enabled=False)
         self.other_actors.append(first_vehicle)
         self.other_actors.append(blocker)
 

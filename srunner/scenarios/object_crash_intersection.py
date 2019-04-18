@@ -77,7 +77,7 @@ class VehicleTurningRight(BasicScenario):
         # Timeout of scenario in seconds
         self.timeout = timeout
         # Total Number of attempts to relocate a vehicle before spawning
-        self._number_of_attempts = 20
+        self._number_of_attempts = 5
         # Number of attempts made so far
         self._spawn_attempted = 0
 
@@ -121,7 +121,7 @@ class VehicleTurningRight(BasicScenario):
             except RuntimeError as r:
                 # In the case there is an object just move a little bit and retry
                 print (" Base transform is blocking objects ", self._other_actor_transform)
-                _start_distance += 0.4
+                _start_distance += 0.3
                 self._spawn_attempted += 1
                 if self._spawn_attempted >= self._number_of_attempts:
                     raise r
@@ -228,7 +228,7 @@ class VehicleTurningLeft(BasicScenario):
         # Timeout of scenario in seconds
         self.timeout = timeout
         # Total Number of attempts to relocate a vehicle before spawning
-        self._number_of_attempts = 20
+        self._number_of_attempts = 5
         # Number of attempts made so far
         self._spawn_attempted = 0
 
@@ -270,7 +270,7 @@ class VehicleTurningLeft(BasicScenario):
             except RuntimeError as r:
                 # In the case there is an object just move a little bit and retry
                 print(" Base transform is blocking objects ", self._other_actor_transform)
-                _start_distance += 0.4
+                _start_distance += 0.3
                 self._spawn_attempted += 1
                 if self._spawn_attempted >= self._number_of_attempts:
                     raise r
