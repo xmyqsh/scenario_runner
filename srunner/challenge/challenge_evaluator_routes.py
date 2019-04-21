@@ -173,15 +173,15 @@ class ChallengeEvaluator(object):
 
         if phase_codename == 'dev':
             split_name = 'dev_split'
-            self.routes =  '{}/srunner/challenge/routes_devtest.xml'.format(scenario_runner_root)
+            self.routes = '{}/srunner/challenge/routes_devtest.xml'.format(scenario_runner_root)
             repetitions = 1
         elif phase_codename == 'validation':
             split_name = 'val_split'
-            self.routes =  '{}/srunner/challenge/routes_testprep.xml'.format(scenario_runner_root)
+            self.routes = '{}/srunner/challenge/routes_testprep.xml'.format(scenario_runner_root)
             repetitions = 3
         elif phase_codename == 'test':
             split_name = 'test_split'
-            self.routes =  '{}/srunner/challenge/routes_testchallenge.xml'.format(scenario_runner_root)
+            self.routes = '{}/srunner/challenge/routes_testchallenge.xml'.format(scenario_runner_root)
             repetitions = 3
         else:
             # debug mode
@@ -329,7 +329,7 @@ class ChallengeEvaluator(object):
 
             for position in range(start, end):
                 self.world.debug.draw_point(waypoints[position][0].location + carla.Location(z=vertical_shift),
-                                       size=0.2, color=color, life_time=persistency)
+                                            size=0.2, color=color, life_time=persistency)
 
         self.world.debug.draw_point(waypoints[0][0].location + carla.Location(z=vertical_shift), size=0.2,
                                     color=carla.Color(0, 0, 255), life_time=persistency)
@@ -348,7 +348,6 @@ class ChallengeEvaluator(object):
                 # If the scenarios have equal positions then it is true.
                 if compare_scenarios(scenario_choice, existent_scenario):
                     return True
-
             return False
 
         # The idea is to randomly sample a scenario per trigger position.
@@ -613,16 +612,16 @@ class ChallengeEvaluator(object):
 
             # ego vehicle acts
             self.ego_vehicle.apply_control(ego_action)
-            if self.debug:
-                spectator = self.world.get_spectator()
-                ego_trans = self.ego_vehicle.get_transform()
-                spectator.set_transform(carla.Transform(ego_trans.location + carla.Location(z=50),
+            #if self.debug:
+            spectator = self.world.get_spectator()
+            ego_trans = self.ego_vehicle.get_transform()
+            spectator.set_transform(carla.Transform(ego_trans.location + carla.Location(z=50),
                                                         carla.Rotation(pitch=-90)))
 
             if self.route_visible:
                 turn_positions_and_labels = clean_route(trajectory)
                 self.draw_waypoints(trajectory, turn_positions_and_labels,
-                                    vertical_shift=1.0, persistency=50000.0)
+                                vertical_shift=1.0, persistency=50000.0)
                 self.route_visible = False
 
             # time continues
@@ -632,7 +631,7 @@ class ChallengeEvaluator(object):
             # check for scenario termination
             for i, _ in enumerate(self.list_scenarios):
 
-                if self.debug==1:
+                if self.debug==2:
                     behavior = self.list_scenarios[i].scenario.scenario_tree.children[0]
                     if behavior.tip():
                         print("{} {} {} {}".format(self.list_scenarios[i].scenario.scenario_tree.name,

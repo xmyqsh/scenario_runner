@@ -30,14 +30,14 @@ def get_opponent_transform(_start_distance, waypoint, trigger_location):
     Calculate the transform of the adversary
     """
 
-    offset = {"orientation": 270, "position": 90, "z": 0.5, "k": 0.7}
+    offset = {"orientation": 270, "position": 90, "z": 0.5, "k": 1.1}
     _wp = waypoint.next(_start_distance)
     if _wp:
         _wp = _wp[-1]
     else:
         raise RuntimeError("Cannot get next waypoint !")
 
-    lane_width = _wp.lane_width
+    lane_width = _wp.lane_width # This is very bad
     location = _wp.transform.location
     orientation_yaw = _wp.transform.rotation.yaw + offset["orientation"]
     position_yaw = _wp.transform.rotation.yaw + offset["position"]
@@ -152,7 +152,7 @@ class VehicleTurningRight(BasicScenario):
 
         if self._ego_route is not None:
             trigger_distance = InTriggerDistanceToLocationAlongRoute(self.ego_vehicle, self._ego_route,
-                                                                     self.other_actors[0].get_location(), 15)
+                                                                     self.other_actors[0].get_location(), 22)
         else:
             trigger_distance = InTriggerDistanceToVehicle(self.other_actors[0], self.ego_vehicle, 20)
 
@@ -298,7 +298,7 @@ class VehicleTurningLeft(BasicScenario):
         lane_width = lane_width + (1.10 * lane_width * self._num_lane_changes)
         if self._ego_route is not None:
             trigger_distance = InTriggerDistanceToLocationAlongRoute(self.ego_vehicle, self._ego_route,
-                                                                     self.other_actors[0].get_location(), 15)
+                                                                     self.other_actors[0].get_location(), 22)
         else:
             trigger_distance = InTriggerDistanceToVehicle(self.other_actors[0], self.ego_vehicle, 25)
 

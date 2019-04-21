@@ -656,6 +656,80 @@ class InRouteTest(Criterion):
 
         return new_status
 
+class StopProblem(Criterion):
+
+    """
+    Check if an actor is stopped for too long
+    """
+
+    def __init__(self, actor, name="StopProblem", terminate_on_failure=True):
+        """
+        """
+        super(StopProblem, self).__init__(name, actor, 0, terminate_on_failure=terminate_on_failure)
+        self.logger.debug("%s.__init__()" % (self.__class__.__name__))
+        self._actor = actor
+        self._world = actor.get_world()
+        self._time_stopped_start = 0.0
+        self._time_stopped_end = 0.0
+        self._speed_thresh = 2.0
+        self._started = False
+        self._stop_thresh = 6.0
+
+
+
+    @staticmethod
+    def length(v):
+        return math.sqrt(v.x**2 + v.y**2 + v.z**2)
+
+    def _get_forward_speed(self):
+
+        velocity = self._actor.get_velocity()
+        transform = self._actor.get_transform()
+        vel_np = np.array([velocity.x, velocity.y, velocity.z])
+        pitch = np.deg2rad(transform.rotation.pitch)
+        yaw = np.deg2rad(transform.rotation.yaw)
+        orientation = np.array([np.cos(pitch) * np.cos(yaw), np.cos(pitch) * np.sin(yaw), np.sin(pitch)])
+        speed = np.dot(vel_np, orientation)
+        return speed
+
+    def update(self):
+        """
+        Check if the actor is running a red light
+        """
+        new_status = py_trees.common.Status.RUNNING
+
+        location = self._actor.get_transform().location
+        if location is None:
+            return new_status
+
+        if self._get_forward_speed() < self._speed_thresh and not self._started:
+
+            self._world.tick()
+            self._time_stopped_start = self._world.wait_for_tick().elapsed_seconds
+            self._started = True
+            #print("Stopped ", self._time_stopped_start)
+
+        elif self._get_forward_speed() >= self._speed_thresh:  # The vehicle is actually moving.
+            self._started = False
+        else:  # The forward speed is low keep monitoring the end time
+
+            self._world.tick()
+            self._time_stopped_end = self._world.wait_for_tick().elapsed_seconds
+
+            #print("Kept Stopped for ", self._time_stopped_end - self._time_stopped_start)
+            if self._time_stopped_end - self._time_stopped_start > self._stop_thresh:  # time stopped
+                print ("Failure due to stopping")
+                self.test_status = "FAILURE"
+                self._started = False
+                self._time_stopped_start = 0.0
+                self._time_stopped_end = 0.0
+
+        if self._terminate_on_failure and (self.test_status == "FAILURE"):
+            new_status = py_trees.common.Status.FAILURE
+
+        self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
+
+        return new_status
 
 class RouteCompletionTest(Criterion):
 
@@ -710,6 +784,7 @@ class RouteCompletionTest(Criterion):
                     self._traffic_event.set_dict({'route_completed': self._percentage_route_completed})
                     self._traffic_event.set_message(
                         "Agent has completed > {:.2f}% of the route".format(self._percentage_route_completed))
+                    print ("PERCENTAGE COMPLETED ", self._percentage_route_completed)
 
             if self._percentage_route_completed > 98.0 and location.distance(self.target) < self.DISTANCE_THRESHOLD:
                 route_completion_event = TrafficEvent(event_type=TrafficEventType.ROUTE_COMPLETED)
