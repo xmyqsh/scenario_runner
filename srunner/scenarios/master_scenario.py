@@ -90,9 +90,9 @@ class MasterScenario(BasicScenario):
 
         completion_criterion = RouteCompletionTest(self.ego_vehicle, route=route)
 
-        wrong_way_criterion = WrongLaneTest(self.ego_vehicle)
+        wrong_way_criterion = WrongLaneTest(self.ego_vehicle, terminate_on_failure=True)
 
-        onsidewalk_criterion = OnSidewalkTest(self.ego_vehicle)
+        onsidewalk_criterion = OnSidewalkTest(self.ego_vehicle, terminate_on_failure=True)
 
         red_light_criterion = RunningRedLightTest(self.ego_vehicle)
 

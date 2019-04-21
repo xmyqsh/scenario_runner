@@ -415,7 +415,7 @@ class OnSidewalkTest(Criterion):
     """
     MAX_INVASION_ALLOWED = 2.0  # meters
 
-    def __init__(self, actor, optional=False, name="WrongLaneTest"):
+    def __init__(self, actor, terminate_on_failure=False, optional=False, name="WrongLaneTest"):
         """
         Construction with sensor setup
         """
@@ -425,6 +425,7 @@ class OnSidewalkTest(Criterion):
         self._actor = actor
         self._map = CarlaDataProvider.get_map()
         self._onsidewalk_active = False
+        self._terminate_on_failure = terminate_on_failure
 
     def update(self):
         """
@@ -433,6 +434,7 @@ class OnSidewalkTest(Criterion):
         new_status = py_trees.common.Status.RUNNING
 
         if self._terminate_on_failure and (self.test_status == "FAILURE"):
+            print("FAILURE SIDEWALK")
             new_status = py_trees.common.Status.FAILURE
 
         current_location = self._actor.get_location()
@@ -463,7 +465,7 @@ class WrongLaneTest(Criterion):
     """
     MAX_ALLOWED_ANGLE = 140.0
 
-    def __init__(self, actor, optional=False, name="WrongLaneTest"):
+    def __init__(self, actor, terminate_on_failure=False, optional=False, name="WrongLaneTest"):
         """
         Construction with sensor setup
         """
@@ -476,6 +478,7 @@ class WrongLaneTest(Criterion):
         self._infractions = 0
         self._last_lane_id = None
         self._last_road_id = None
+        self._terminate_on_failure = terminate_on_failure
 
         blueprint = self._world.get_blueprint_library().find('sensor.other.lane_invasion')
         self._lane_sensor = self._world.spawn_actor(blueprint, carla.Transform(), attach_to=self.actor)
@@ -488,6 +491,7 @@ class WrongLaneTest(Criterion):
         new_status = py_trees.common.Status.RUNNING
 
         if self._terminate_on_failure and (self.test_status == "FAILURE"):
+            print ( "FAILURE WRONG LANE")
             new_status = py_trees.common.Status.FAILURE
 
         self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
@@ -784,7 +788,7 @@ class RouteCompletionTest(Criterion):
                     self._traffic_event.set_dict({'route_completed': self._percentage_route_completed})
                     self._traffic_event.set_message(
                         "Agent has completed > {:.2f}% of the route".format(self._percentage_route_completed))
-                    print ("PERCENTAGE COMPLETED ", self._percentage_route_completed)
+
 
             if self._percentage_route_completed > 98.0 and location.distance(self.target) < self.DISTANCE_THRESHOLD:
                 route_completion_event = TrafficEvent(event_type=TrafficEventType.ROUTE_COMPLETED)
