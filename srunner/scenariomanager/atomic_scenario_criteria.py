@@ -598,7 +598,7 @@ class InRouteTest(Criterion):
     """
     The test is a success if the actor is never outside route
     """
-    DISTANCE_THRESHOLD = 10.0 # meters
+    DISTANCE_THRESHOLD = 10.0  # meters
     WINDOWS_SIZE = 2
 
     def __init__(self, actor, radius, route, offroad_max, name="InRouteTest", terminate_on_failure=False):
@@ -689,7 +689,7 @@ class RouteCompletionTest(Criterion):
         """
         new_status = py_trees.common.Status.RUNNING
 
-        print("===== route completed = {}".format(self._percentage_route_completed))
+        #print("===== route completed = {}".format(self._percentage_route_completed))
         location = CarlaDataProvider.get_location(self._actor)
         if location is None:
             return new_status

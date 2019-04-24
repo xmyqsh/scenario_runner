@@ -268,7 +268,6 @@ class ChallengeEvaluator(object):
         CarlaActorPool.cleanup()
         CarlaDataProvider.cleanup()
 
-
         if ego and self.ego_vehicle is not None:
             self.ego_vehicle.destroy()
             self.ego_vehicle = None
@@ -502,7 +501,7 @@ class ChallengeEvaluator(object):
         elif town_name == 'Town04':
             amount = 200
         elif town_name == 'Town06' or town_name == 'Town07':
-            amount = 150
+            amount = 120
         else:
             amount = 1
 
@@ -613,11 +612,11 @@ class ChallengeEvaluator(object):
 
             # ego vehicle acts
             self.ego_vehicle.apply_control(ego_action)
-            if self.debug:
-                spectator = self.world.get_spectator()
-                ego_trans = self.ego_vehicle.get_transform()
-                spectator.set_transform(carla.Transform(ego_trans.location + carla.Location(z=50),
-                                                        carla.Rotation(pitch=-90)))
+            #if self.debug:
+            #    spectator = self.world.get_spectator()
+            #    ego_trans = self.ego_vehicle.get_transform()
+            #    spectator.set_transform(carla.Transform(ego_trans.location + carla.Location(z=50),
+            #                                            carla.Rotation(pitch=-90)))
 
             if self.route_visible:
                 turn_positions_and_labels = clean_route(trajectory)
@@ -632,7 +631,7 @@ class ChallengeEvaluator(object):
             # check for scenario termination
             for i, _ in enumerate(self.list_scenarios):
 
-                if self.debug==1:
+                if self.debug==3:
                     behavior = self.list_scenarios[i].scenario.scenario_tree.children[0]
                     if behavior.tip():
                         print("{} {} {} {}".format(self.list_scenarios[i].scenario.scenario_tree.name,
@@ -1126,6 +1125,8 @@ class ChallengeEvaluator(object):
                     self._current_route_broke = False
                     self.load_environment_and_run(args, world_annotations, route_description)
                 except Exception as e:
+                    import traceback
+                    traceback.print_exc()
                     if self._system_error or not self.agent_instance:
                         print(e)
                         sys.exit(-1)
